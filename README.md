@@ -1,24 +1,28 @@
-# README
+# Rails 8 Application
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is a Ruby on Rails 8 application.
 
-Things you may want to cover:
+## Ruby version
 
-* Ruby version
+- Ruby 3.3.6
 
-* System dependencies
+## Rails version
 
-* Configuration
+- Rails 8.0.2
 
-* Database creation
+## System dependencies
 
-* Database initialization
+- Node.js (>= 18.16.0)
+- Yarn (>= 1.22.22)
+- PostgreSQL (>= 17.4)
 
-* How to run the test suite
+## Services
 
-* Services (job queues, cache servers, search engines, etc.)
+- Solid Trifecta (Solid Cable, Solid Cache, Solid Queue) 
 
-* Deployment instructions
+## Installation
 
-* ...
+- `git clone https://github.com/ed-dev-oc/brgy_health.git`
+- `cd brgy_health`
+- `rails db:create`
+- `rails db:migrate`
