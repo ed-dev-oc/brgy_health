@@ -26,3 +26,4 @@ This is a Ruby on Rails 8 application.
 - `cd brgy_health`
 - `rails db:create`
 - `rails db:migrate`
+- `bin/dev`
