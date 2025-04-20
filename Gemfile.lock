@@ -101,6 +101,9 @@ GEM
     crass (1.0.6)
     cssbundling-rails (1.4.3)
       railties (>= 6.0.0)
+    data_migrate (11.3.0)
+      activerecord (>= 6.1)
+      railties (>= 6.1)
     date (3.4.1)
     debug (1.10.0)
       irb (~> 1.10)
@@ -371,6 +374,7 @@ DEPENDENCIES
   brakeman
   capybara
   cssbundling-rails
+  data_migrate (~> 11.3)
   debug
   jbuilder
   jsbundling-rails
