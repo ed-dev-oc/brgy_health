@@ -68,6 +68,8 @@ gem "view_component", "~> 3.21"
 
 gem "data_migrate", "~> 11.3"
 
+gem "public_uid", "~> 2.2"
+
 gem "ruby-lsp", "~> 0.23.14", group: :development
 
 gem "htmlbeautifier", "~> 1.4", group: :development
