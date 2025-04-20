@@ -1,7 +1,5 @@
----
-title: "[Subtask] <Description of Work>"
-description: A smaller, specific piece of work that belongs to a larger feature.
----
+# [Subtask] <Title of Feature>
+## Description: A smaller, specific piece of work that belongs to a larger feature.
 
 ## 🔹 Related Feature
 

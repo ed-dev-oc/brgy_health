@@ -1,7 +1,6 @@
----
-title: "[Feature] <Title of Feature>"
-description: Create a new high-level feature request with clear goals, tasks, and subtask breakdowns.
----
+# [Feature] <Title of Feature>
+## Description: 
+- Create a new high-level feature request with clear goals, tasks, and subtask breakdowns.
 
 ## 🎯 Goal
 
