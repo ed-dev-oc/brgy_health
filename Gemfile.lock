@@ -210,6 +210,8 @@ GEM
       date
       stringio
     public_suffix (6.0.1)
+    public_uid (2.2.0)
+      activerecord (> 4.2)
     puma (6.6.0)
       nio4r (~> 2.0)
     raabro (1.4.0)
@@ -381,6 +383,7 @@ DEPENDENCIES
   kamal
   pg (~> 1.1)
   propshaft
+  public_uid (~> 2.2)
   puma (>= 5.0)
   rails (~> 8.0.2)
   rubocop-rails-omakase

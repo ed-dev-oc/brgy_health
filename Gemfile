@@ -67,3 +67,5 @@ end
 gem "view_component", "~> 3.21"
 
 gem "data_migrate", "~> 11.3"
+
+gem "public_uid", "~> 2.2"
