@@ -63,3 +63,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "data_migrate", "~> 11.3"
