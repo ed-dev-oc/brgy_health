@@ -24,12 +24,15 @@ Steps to manually test this PR:
 2. Click on '...'
 3. See the result
 
-## ✅ Checklist
+### ✅ Pull Request Checklist
 
-- [ ] My code follows the code style of this project
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] I have added necessary documentation (if appropriate)
-- [ ] I have linked the related issue
+- [ ] Code is clean, readable, and follows our style guide.
+- [ ] Feature/bugfix works as expected — manually tested if needed.
+- [ ] No debug logs or commented-out code left behind.
+- [ ] Tests added/updated (if applicable) and all tests are passing.
+- [ ] Docs or comments updated (if needed).
+- [ ] PR is clear, focused, and linked to relevant issue/ticket.
+- [ ] Up to date with the target branch (rebased/merged).
 
 ## 🗒 Additional Notes
 
