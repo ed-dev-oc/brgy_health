@@ -51,6 +51,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  gem "rspec-rails", "~> 7.0.0"
+  gem "rails-controller-testing", "~> 1.0"
 end
 
 group :development do
@@ -63,3 +66,15 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "view_component", "~> 3.21"
+
+gem "data_migrate", "~> 11.3"
+
+gem "public_uid", "~> 2.2"
+
+gem "ruby-lsp", "~> 0.23.14", group: :development
+
+gem "htmlbeautifier", "~> 1.4", group: :development
+
+gem "letter_opener", "~> 1.10", group: :development

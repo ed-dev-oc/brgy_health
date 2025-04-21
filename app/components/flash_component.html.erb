@@ -1,0 +1,10 @@
+<%= helpers.turbo_frame_tag :flash do %>
+  <% @flash.each do |type, message| %>
+    <div data-controller="flash" data-action="click->flash#close_message" style="z-index: 1060;" class="<%= css_class(type) %>">
+      <div class="d-flex my-1 gap-2">
+        <i class="bi <%= icon(type) %>"></i>
+        <p class="m-0"><%= message %></p>
+      </div>
+    </div>
+  <% end %>
+<% end %>
