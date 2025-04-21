@@ -23,6 +23,9 @@
   </head>
 
   <body>
+    <% flash[:alert] = "Test."  %>
+    <%= render(FlashComponent.new(flash: flash)) %>
+
     <%= yield %>
   </body>
 </html>
