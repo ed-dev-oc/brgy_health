@@ -11,4 +11,8 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "pages#home"
+
+  namespace :super_admin do
+    resources :dashboard, only: [ :index ]
+  end
 end
