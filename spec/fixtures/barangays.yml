@@ -1,0 +1,17 @@
+lao:
+  id: 1
+  name: "Lao"
+  slug: "lao"
+  subdivision_type: 1
+  region: "Region VIII"
+  province: "Leyte"
+  city: "Ormoc"
+
+bagong_buhay:
+  id: 2
+  name: "Bagong Buhay"
+  slug: "bagong-buhay"
+  subdivision_type: 2
+  region: "Region VIII"
+  province: "Leyte"
+  city: "Ormoc" 

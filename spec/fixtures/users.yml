@@ -1,0 +1,56 @@
+# spec/fixtures/users.yml
+super_admin:
+  id: 1
+  public_uid: "11111"
+  first_name: "Super"
+  middle_name: nil
+  last_name: "Admin"
+  suffix: nil
+  email: "super_admin@test.com"
+  phone_number: "09090002154"
+  barangay_id: nil
+  subdivision_id: nil
+  role: 0
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+
+admin:
+  id: 2
+  public_uid: "22222"
+  first_name: "Admin"
+  middle_name: nil
+  last_name: "User"
+  suffix: nil
+  email: "admin@test.com"
+  phone_number: "09092222154"
+  barangay_id: 1
+  subdivision_id: 1
+  role: 1
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+
+staff:
+  id: 3
+  public_uid: "33333"
+  first_name: "Staff"
+  middle_name: nil
+  last_name: "User"
+  suffix: nil
+  email: "staff@test.com"
+  phone_number: "09093332154"
+  barangay_id: 1
+  subdivision_id: 1
+  role: 2
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+
+patient:
+  id: 4
+  public_uid: "44444"
+  first_name: "Patient"
+  middle_name: nil
+  last_name: "User"
+  suffix: nil
+  email: "patient@test.com"
+  phone_number: "09094442154"
+  barangay_id: 1
+  subdivision_id: 1
+  role: 3
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>  
