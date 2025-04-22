@@ -11,7 +11,7 @@ class User < ApplicationRecord
 
   enum :role, [ :super_admin, :admin, :staff, :patient ]
 
-  validates :email, :phone_number, uniqueness: true
+  validates :email, :phone_number, :public_uid, uniqueness: true
 
   validates :first_name, uniqueness: {
     scope: [ :middle_name, :last_name, :suffix ],
