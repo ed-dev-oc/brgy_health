@@ -1,0 +1,2 @@
+class BarangayController < ApplicationController
+end
