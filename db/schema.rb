@@ -23,7 +23,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_091339) do
     t.string "city"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_barangays_on_name", unique: true
+    t.string "subdomain"
     t.index ["region", "province", "city", "name"], name: "index_barangays_on_region_and_province_and_city_and_name", unique: true
     t.index ["region", "province", "city", "slug"], name: "index_barangays_on_region_and_province_and_city_and_slug", unique: true
   end
