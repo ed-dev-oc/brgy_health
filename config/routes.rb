@@ -13,7 +13,7 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
 
-  constraints(SubdomainConstraint.new) do
+  constraints(Constraints::SubdomainConstraint.new) do
     # root "barangay/pages#home"
     get "/", to: "barangay/pages#home"
     get "/:page", to: "barangay/pages#show"
