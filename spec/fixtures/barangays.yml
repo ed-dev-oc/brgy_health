@@ -6,6 +6,7 @@ lao:
   region: "Region VIII"
   province: "Leyte"
   city: "Ormoc"
+  subdomain: "lao"
 
 bagong_buhay:
   id: 2
@@ -15,3 +16,4 @@ bagong_buhay:
   region: "Region VIII"
   province: "Leyte"
   city: "Ormoc" 
+  subdomain: "bagong-buhay"
