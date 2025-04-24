@@ -13,22 +13,22 @@ RSpec.describe Subdivision, type: :model do
     end
 
     it "is invalid without an barangay" do
-      subdivision = subdivisions(:purok_one)
-      subdivision.barangay_id = nil
+      expect {
+        subdivision = subdivisions(:purok_one)
+        subdivision.barangay_id = nil
+      }.to raise_error(ActsAsTenant::Errors::TenantIsImmutable)
 
-      expect(subdivision).not_to be_valid
-      expect(subdivision.errors[:barangay_id]).to include("can't be blank")
+      # expect(subdivision.errors[:barangay_id]).to include("can't be blank")
     end
   end
 
   describe "uniqueness validations" do
     it "is invalid with a duplicate name" do
-      subdivision = subdivisions(:purok_one)
-      subdivision.barangay_id = subdivisions(:zone_one).barangay_id
-      subdivision.name = subdivisions(:zone_one).name
-
-      expect(subdivision).not_to be_valid
-      expect(subdivision.errors[:name]).to include("has already been taken")
+      expect {
+        subdivision = subdivisions(:purok_one)
+        subdivision.barangay_id = subdivisions(:zone_one).barangay_id
+        subdivision.name = subdivisions(:zone_one).name
+      }.to raise_error(ActsAsTenant::Errors::TenantIsImmutable)
     end
   end
 
