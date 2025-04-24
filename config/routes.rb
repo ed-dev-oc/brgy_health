@@ -1,4 +1,4 @@
-require "constraints/subdomain_constraint"
+require Rails.root.join("lib", "constraints", "subdomain_constraint")
 
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
