@@ -82,3 +82,5 @@ gem "letter_opener", "~> 1.10", group: :development
 gem "devise", "~> 4.9"
 
 gem "friendly_id", "~> 5.5"
+
+gem "acts_as_tenant", "~> 1.0"

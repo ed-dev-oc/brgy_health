@@ -1,0 +1,2 @@
+module Barangay::PagesHelper
+end
