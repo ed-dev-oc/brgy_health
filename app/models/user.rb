@@ -22,21 +22,28 @@ class User < ApplicationRecord
   validates :first_name, :last_name, :email, :role, presence: true
   validates :barangay_id, presence: true, unless: -> { self.role == "super_admin" }
 
-  before_create :add_flag_require_validation, if: -> { self.role == "admin" }
-  after_validation :add_flags
+  before_create :add_admin_flag_require_validation, if: -> { self.role == "admin" }
+  before_create :add_requirements_flags
+  before_update :remove_requirements_flags
 
   private
 
-  def add_flags
+  def add_requirements_flags
     if self.role != "super_admin"
       self.flag_list.add("no_subdivision") if self.subdivision.nil?
     end
 
     self.flag_list.add("no_phone_number") if self.phone_number.nil?
-    # self.flag_list.add("no_profile") if self.profile.attached?
+    # self.flag_list.add("no_profile") unless self.profile.attached?
   end
 
-  def add_flag_require_validation
+  def remove_requirements_flags
+    self.flag_list.remove("no_subdivision") if self.subdivision_id.present?
+    self.flag_list.remove("no_phone_number") if self.phone_number.present?
+    # self.flag_list.remove("no_profile") if self.profile.attached?
+  end
+
+  def add_admin_flag_require_validation
     self.flag_list.add("require_validation")
   end
 end

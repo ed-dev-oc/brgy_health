@@ -167,5 +167,36 @@ RSpec.describe User, type: :model do
       expect(admin.flag_list).to include("no_phone_number")
       expect(admin.flag_list).not_to include("require_validation")
     end
+
+    it "has no flag no subdivision when user added a subdivision" do
+      user = User.create!(
+        email: "user_test@test.com",
+        first_name: "Barangay",
+        last_name: "User",
+        role: 1,
+        barangay_id: 1,
+        password: "password123",
+        password_confirmation: "password123")
+
+      user.update(subdivision_id: 1)
+
+      expect(user.flag_list).not_to include("no_subdivision")
+    end
+
+    it "has no flag no phone_number when user added a phone_number" do
+      user = User.create!(
+        email: "user_test@test.com",
+        first_name: "Barangay",
+        last_name: "User",
+        role: 1,
+        barangay_id: 1,
+        password: "password123",
+        password_confirmation: "password123")
+
+      user.phone_number = "09099992154"
+      user.save
+
+      expect(user.flag_list).not_to include("no_phone_number")
+    end
   end
 end
