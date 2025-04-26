@@ -62,6 +62,35 @@ RSpec.describe Barangay, type: :model do
       barangay.save
 
       expect(barangay.slug).to eq("bagong-buhay")
+      expect(barangay.subdomain).to eq("bagong-buhay")
+    end
+
+    it "is valid name are equal to subdomain" do
+      barangay = barangays(:bagong_buhay)
+      barangay.slug = nil
+      barangay.subdomain = nil
+      barangay.save
+
+      expect(barangay.slug).to eq("bagong-buhay")
+      expect(barangay.subdomain).to eq("bagong-buhay")
+    end
+
+    it "will add city to slug when slug is already taken" do
+      barangay = barangays(:bagong_buhay)
+      barangay.name = barangays(:lao).name
+      barangay.save
+
+      expect(barangay.slug).to eq("lao-ormoc")
+      expect(barangay.subdomain).to eq("lao-ormoc")
+    end
+
+    it "will add province to slug when slug name with city is already taken" do
+      barangay = barangays(:bagong_buhay)
+      barangay.name = barangays(:san_isidro).name
+      barangay.save
+
+      expect(barangay.slug).to eq("san-isidro-ormoc-leyte")
+      expect(barangay.subdomain).to eq("san-isidro-ormoc-leyte")
     end
   end
 end
