@@ -92,22 +92,80 @@ RSpec.describe User, type: :model do
       expect(users(:super_admin)).to be_valid
     end
 
-    it "has a invalid barangay and subdivision" do
+    it "has a invalid barangay" do
       admin = users(:admin)
       admin.barangay = nil
-      admin.subdivision = nil
 
       staff = users(:staff)
       staff.barangay = nil
-      staff.subdivision = nil
 
       patient = users(:patient)
       patient.barangay = nil
-      patient.subdivision = nil
 
       expect(staff).not_to be_valid
       expect(patient).not_to be_valid
       expect(admin).not_to be_valid
+    end
+  end
+
+  describe "flags validations" do
+    it "has a flag if no phone_number is set for super admin" do
+      admin = User.create!(
+        email: "super_admin_test@test.com",
+        first_name: "Super",
+        last_name: "Admin",
+        role: 0,
+        password: "password123",
+        password_confirmation: "password123")
+
+      expect(admin.flag_list).to include("no_phone_number")
+      expect(admin.flag_list).not_to include("no_subdivision")
+      expect(admin.flag_list).not_to include("require_validation")
+    end
+
+    it "has a flag if no subdivision, not validated, and no phone_number is set for admin" do
+      admin = User.create!(
+        email: "admin_test@test.com",
+        first_name: "Barangay",
+        last_name: "Admin",
+        role: 1,
+        barangay_id: 1,
+        password: "password123",
+        password_confirmation: "password123")
+
+      expect(admin.flag_list).to include("no_phone_number")
+      expect(admin.flag_list).to include("no_subdivision")
+      expect(admin.flag_list).to include("require_validation")
+    end
+
+    it "has a flag if no subdivision and no phone_number is set for staff" do
+      admin = User.create!(
+        email: "admin_test@test.com",
+        first_name: "Barangay",
+        last_name: "Admin",
+        role: 2,
+        barangay_id: 1,
+        password: "password123",
+        password_confirmation: "password123")
+
+      expect(admin.flag_list).to include("no_subdivision")
+      expect(admin.flag_list).to include("no_phone_number")
+      expect(admin.flag_list).not_to include("require_validation")
+    end
+
+    it "has a flag if no subdivision and no phone_number is set for patient" do
+      admin = User.create!(
+        email: "admin_test@test.com",
+        first_name: "Barangay",
+        last_name: "Admin",
+        role: 3,
+        barangay_id: 1,
+        password: "password123",
+        password_confirmation: "password123")
+
+      expect(admin.flag_list).to include("no_subdivision")
+      expect(admin.flag_list).to include("no_phone_number")
+      expect(admin.flag_list).not_to include("require_validation")
     end
   end
 end
