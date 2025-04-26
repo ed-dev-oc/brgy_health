@@ -8,6 +8,7 @@ class User < ApplicationRecord
 
   belongs_to :barangay, optional: true
   belongs_to :subdivision, optional: true
+  acts_as_taggable_on :flags
 
   enum :role, [ :super_admin, :admin, :staff, :patient ]
 
@@ -18,6 +19,24 @@ class User < ApplicationRecord
     message: "with this full name already exists"
   }
 
-  validates :first_name, :last_name, :email, :phone_number, :role, presence: true
-  validates :barangay_id, :subdivision_id, presence: true, unless: -> { self.role == "super_admin" }
+  validates :first_name, :last_name, :email, :role, presence: true
+  validates :barangay_id, presence: true, unless: -> { self.role == "super_admin" }
+
+  before_create :add_flag_require_validation, if: -> { self.role == "admin" }
+  after_validation :add_flags
+
+  private
+
+  def add_flags
+    if self.role != "super_admin"
+      self.flag_list.add("no_subdivision") if self.subdivision.nil?
+    end
+
+    self.flag_list.add("no_phone_number") if self.phone_number.nil?
+    # self.flag_list.add("no_profile") if self.profile.attached?
+  end
+
+  def add_flag_require_validation
+    self.flag_list.add("require_validation")
+  end
 end
