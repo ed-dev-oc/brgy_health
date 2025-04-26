@@ -84,3 +84,5 @@ gem "devise", "~> 4.9"
 gem "friendly_id", "~> 5.5"
 
 gem "acts_as_tenant", "~> 1.0"
+
+gem "acts-as-taggable-on", "~> 12.0"
