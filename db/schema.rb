@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_22_104247) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_27_091339) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,6 +26,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_22_104247) do
     t.index ["name"], name: "index_barangays_on_name", unique: true
     t.index ["region", "province", "city", "name"], name: "index_barangays_on_region_and_province_and_city_and_name", unique: true
     t.index ["region", "province", "city", "slug"], name: "index_barangays_on_region_and_province_and_city_and_slug", unique: true
+  end
+
+  create_table "health_programs", force: :cascade do |t|
+    t.bigint "barangay_id", null: false
+    t.string "name"
+    t.text "description"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barangay_id"], name: "index_health_programs_on_barangay_id"
   end
 
   create_table "subdivisions", force: :cascade do |t|
@@ -66,6 +76,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_22_104247) do
     t.index ["subdivision_id"], name: "index_users_on_subdivision_id"
   end
 
+  add_foreign_key "health_programs", "barangays"
   add_foreign_key "subdivisions", "barangays"
   add_foreign_key "users", "barangays"
   add_foreign_key "users", "subdivisions"
