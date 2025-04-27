@@ -1,0 +1,11 @@
+<% if ActsAsTenant.current_tenant.present? %>
+  <h2><%= ActsAsTenant.current_tenant.name %> Log In</h2>
+
+  <%= render partial: "devise/sessions/barangay_form" %>
+<% else %>
+  <h2>Main Log In</h2>
+
+  <%= render partial: "devise/sessions/main_form" %>
+<% end %>
+
+<%= render "devise/shared/links" %>

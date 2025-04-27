@@ -10,9 +10,12 @@ class User < ApplicationRecord
   belongs_to :subdivision, optional: true
   acts_as_taggable_on :flags
 
+  accepts_nested_attributes_for :barangay
+
   enum :role, [ :super_admin, :admin, :staff, :patient ]
 
-  validates :email, :phone_number, :public_uid, uniqueness: true
+  validates :email, :public_uid, uniqueness: true
+  validates :phone_number, uniqueness: true, allow_blank: true
 
   validates :first_name, uniqueness: {
     scope: [ :middle_name, :last_name, :suffix ],
@@ -20,7 +23,8 @@ class User < ApplicationRecord
   }
 
   validates :first_name, :last_name, :email, :role, presence: true
-  validates :barangay_id, presence: true, unless: -> { self.role == "super_admin" }
+  validates :barangay, presence: true, unless: -> { self.role == "super_admin" }
+  # validate :barangay_already_have_admin, if: -> { self.role == "admin" }
 
   before_create :add_admin_flag_require_validation, if: -> { self.role == "admin" }
   before_create :add_requirements_flags
