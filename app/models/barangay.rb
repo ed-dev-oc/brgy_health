@@ -5,6 +5,7 @@ class Barangay < ApplicationRecord
   has_many :subdivisions
   has_many :users
   acts_as_taggable_on :flags
+  has_many :health_programs
 
   enum :subdivision_type, [ :both, :purok, :zone ]
   validates :name, :region, :province, :city, presence: true
