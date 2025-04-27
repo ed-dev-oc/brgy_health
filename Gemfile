@@ -78,3 +78,7 @@ gem "ruby-lsp", "~> 0.23.14", group: :development
 gem "htmlbeautifier", "~> 1.4", group: :development
 
 gem "letter_opener", "~> 1.10", group: :development
+
+gem "devise", "~> 4.9"
+
+gem "friendly_id", "~> 5.5"
