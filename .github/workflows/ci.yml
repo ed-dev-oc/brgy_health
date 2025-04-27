@@ -76,12 +76,17 @@ jobs:
       #     # REDIS_URL: redis://localhost:6379/0
       #   run: bin/rails db:test:prepare test test:system
       
+      - name: Precompile assets
+        env:
+          RAILS_ENV: test
+        run: bin/rails assets:clobber && bin/rails assets:precompile
+
       - name: Run RSpec tests
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
         run: |
-          bin/rails db:prepare
+          bin/rails db:test:prepare
           bundle exec rspec
 
       - name: Keep screenshots from failed system tests

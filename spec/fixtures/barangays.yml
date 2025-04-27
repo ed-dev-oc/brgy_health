@@ -1,0 +1,40 @@
+lao:
+  id: 1
+  name: "Lao"
+  slug: "lao"
+  subdivision_type: 1
+  region: "Region VIII"
+  province: "Leyte"
+  city: "Ormoc"
+  subdomain: "lao"
+
+bagong_buhay:
+  id: 2
+  name: "Bagong Buhay"
+  slug: "bagong-buhay"
+  subdivision_type: 2
+  region: "Region VIII"
+  province: "Leyte"
+  city: "Ormoc" 
+  subdomain: "bagong-buhay"
+
+san_isidro:
+  id: 3
+  name: "San Isidro"
+  slug: "san-isidro"
+  subdivision_type: 2
+  region: "IV-A (CALABARZON)"
+  province: "Batangas"
+  city: "Lipa" 
+  subdomain: "san-isidro"
+
+san_isidro_ormoc:
+  id: 4
+  name: "San Isidro"
+  slug: "san-isidro-ormoc"
+  subdivision_type: 2
+  region: "Region VIII"
+  province: "Leyte"
+  city: "Ormoc" 
+  subdomain: "san-isidro-ormoc"
+
