@@ -23,6 +23,8 @@ Rails.application.routes.draw do
 
     namespace :admin do
       resources :dashboard, only: [ :index ]
+
+      resources :health_programs
     end
   end
 
