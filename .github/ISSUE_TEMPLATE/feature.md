@@ -1,6 +1,6 @@
 ---
  name: 🚀 Feature Request (Main Task)
- description: Create a new high-level feature request with clear goals, tasks, and subtask breakdowns.
+ about: Create a new high-level feature request with clear goals, tasks, and subtask breakdowns.
  title: "[Feature] <Title of Feature>"
  labels: ["feature"]
  assignees: []

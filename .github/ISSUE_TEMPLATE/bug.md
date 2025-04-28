@@ -1,6 +1,6 @@
 ---
 name: 🐞 Bug Report
-description: Report a reproducible issue or unexpected behavior in the system.
+about: Report a reproducible issue or unexpected behavior in the system.
 title: "[Bug] <Short Description>"
 labels: ["bug"]
 assignees: []
