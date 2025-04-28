@@ -28,6 +28,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_27_091339) do
     t.index ["region", "province", "city", "slug"], name: "index_barangays_on_region_and_province_and_city_and_slug", unique: true
   end
 
+  create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
+  end
+
   create_table "health_programs", force: :cascade do |t|
     t.bigint "barangay_id", null: false
     t.string "name"
