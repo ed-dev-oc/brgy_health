@@ -42,7 +42,7 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def unauthorized_super_admin_access?(user)
-    user.role != :super_admin && ActsAsTenant.current_tenant.blank?
+    user&.role != :super_admin && ActsAsTenant.current_tenant.blank?
   end
 
   def handle_validation_required

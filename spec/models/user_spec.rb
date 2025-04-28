@@ -93,18 +93,20 @@ RSpec.describe User, type: :model do
     end
 
     it "has a invalid barangay" do
-      admin = users(:admin)
-      admin.barangay = nil
+      ActsAsTenant.with_mutable_tenant do
+        admin = users(:admin)
+        admin.barangay = nil
 
-      staff = users(:staff)
-      staff.barangay = nil
+        staff = users(:staff)
+        staff.barangay = nil
 
-      patient = users(:patient)
-      patient.barangay = nil
+        patient = users(:patient)
+        patient.barangay = nil
 
-      expect(staff).not_to be_valid
-      expect(patient).not_to be_valid
-      expect(admin).not_to be_valid
+        expect(staff).not_to be_valid
+        expect(patient).not_to be_valid
+        expect(admin).not_to be_valid
+      end
     end
   end
 
