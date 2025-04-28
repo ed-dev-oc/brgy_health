@@ -93,7 +93,7 @@ RSpec.configure do |config|
 =end
 
   config.before(:suite) do
-    $default_barangay = Barangay.find_or_create_by!(name: "San Isidro", region: "Region 1", province: "Province 1", city: "City 1")
+    $default_barangay = Barangay.find_or_create_by!(name: "San Isidro", region: "IV-A (CALABARZON)", province: "Batangas", city: "Lipa")
   end
 
   config.before(:each) do |example|
