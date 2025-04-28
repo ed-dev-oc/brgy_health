@@ -1,0 +1,14 @@
+class Announcement < ApplicationRecord
+  generate_public_uid generator: PublicUid::Generators::NumberRandom.new
+
+  acts_as_tenant :barangay
+  belongs_to :posted_by, class_name: "User"
+  enum :status, [ :draft, :active, :canceled, :completed, :archived ]
+
+  validates :name, :start_date, :end_date, :open_time, :close_time, :location, :max_patients, :audience, :status, presence: true
+  validates :start_date, comparison: { greater_than_or_equal_to: -> { Time.current }, message: "must be in the future" }
+  validates :end_date, comparison: { greater_than: :start_date, message: "must be after the start date" }
+  validates :open_time, comparison: { less_than: :close_time, message: "must be before the close time" }
+  validates :close_time, comparison: { greater_than: :open_time, message: "must be after the open time" }
+  validates :max_patients, numericality: { only_integer: true, greater_than_or_equal_to: 1, message: "must be a positive whole number" }
+end
