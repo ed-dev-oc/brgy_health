@@ -1,3 +1,11 @@
+---
+ name: 🔧 Subtask
+ description: A smaller, specific piece of work that belongs to a larger feature.
+ title: "[Subtask] <Description of Work>"
+ labels: ["subtask"]
+ assignees: []
+ ---
+
 # [Subtask] <Title of Feature>
 ## Description: A smaller, specific piece of work that belongs to a larger feature.
 
