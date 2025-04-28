@@ -1,9 +1,10 @@
 ---
-name: 🐞 Bug Report
-description: Report a reproducible issue or unexpected behavior in the system.
+name: "\U0001F41E Bug Report"
+about: Report a reproducible issue or unexpected behavior in the system.
 title: "[Bug] <Short Description>"
-labels: ["bug"]
-assignees: []
+labels: bug
+assignees: ''
+
 ---
 
 ## 🔍 Description
