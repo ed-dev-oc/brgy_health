@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @announcement %>
+
+<div>
+  <%= link_to "Edit this announcement", edit_admin_announcement_path(@announcement.public_uid) %> |
+  <%= link_to "Back to announcements", admin_announcements_path %>
+
+  <%= link_to "Destroy this announcement", admin_announcement_path(@announcement.public_uid), data: { turbo_method: :DELETE, turbo_confirm: "Are you sure?" } %>
+</div>

@@ -16,13 +16,19 @@ Rails.application.routes.draw do
   constraints(Constraints::SubdomainConstraint.new) do
     # root "barangay/pages#home"
     get "/", to: "barangay/pages#home"
-    get "/:page", to: "barangay/pages#show"
 
-    namespace :barangay do
+    scope module: "barangay" do
+      resources :pages, only: [] do
+        get :contact_us, on: :collection
+        get :about_us, on: :collection
+      end
+
+      resources :announcements, only: [ :index, :show ]
     end
 
     namespace :admin do
       resources :dashboard, only: [ :index ]
+      resources :announcements
     end
   end
 

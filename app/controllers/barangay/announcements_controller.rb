@@ -1,0 +1,21 @@
+class Barangay::AnnouncementsController < BarangayController
+  before_action :set_announcement, only: [ :show ]
+
+  def index
+    @q = Announcement.ransack(params[:q])
+    @pagy, @announcements = pagy(@q.result(distinct: true))
+  end
+
+  def show
+  end
+
+  private
+
+  def set_announcement
+    @announcement = Announcement.find_by_public_uid(params.expect(:id))
+
+    if @announcement.nil?
+      redirect_to announcements_path, status: :see_other, alert: "Announcement not found."
+    end
+  end
+end
