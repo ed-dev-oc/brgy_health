@@ -4,8 +4,9 @@ class Announcement < ApplicationRecord
   acts_as_tenant :barangay
   belongs_to :posted_by, class_name: "User"
   enum :status, [ :draft, :active, :canceled, :completed, :archived ]
+  has_rich_text :description
 
-  validates :name, :start_date, :end_date, :open_time, :close_time, :location, :max_patients, :audience, :status, presence: true
+  validates :name, :description, :start_date, :end_date, :open_time, :close_time, :location, :max_patients, :audience, :status, presence: true
   validates :start_date, comparison: { greater_than_or_equal_to: -> { Time.current }, message: "must be in the future" }
   validates :end_date, comparison: { greater_than: :start_date, message: "must be after the start date" }
   validates :open_time, comparison: { less_than: :close_time, message: "must be before the close time" }

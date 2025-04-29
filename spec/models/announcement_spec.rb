@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Announcement, type: :model do
-  fixtures :announcements
+  fixtures :announcements, :action_text_rich_texts
 
   describe "presence validations" do
     it "is invalid without a name" do
@@ -10,6 +10,14 @@ RSpec.describe Announcement, type: :model do
 
       expect(announcement).not_to be_valid
       expect(announcement.errors[:name]).to include("can't be blank")
+    end
+
+    it "is invalid without a description" do
+      announcement = announcements(:first_announcement)
+      announcement.description = nil
+
+      expect(announcement).not_to be_valid
+      expect(announcement.errors[:description]).to include("can't be blank")
     end
 
     it "is invalid without a start_date" do

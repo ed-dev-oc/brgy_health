@@ -1,0 +1,15 @@
+first_announcement_description:
+  record_type: Announcement
+  record_id: <%= ActiveRecord::FixtureSet.identify(:first_announcement) %>
+  name: description
+  body: <div>This is the rich text content</div>
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+second_announcement_description:
+  record_type: Announcement
+  record_id: <%= ActiveRecord::FixtureSet.identify(:second_announcement) %>
+  name: description
+  body: <div>This is the rich text content</div>
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
