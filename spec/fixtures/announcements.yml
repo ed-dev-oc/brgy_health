@@ -4,7 +4,6 @@ first_announcement:
   posted_by_id: 1
   # health_program_id: 1
   name: "Free Vaccination Drive"
-  # description: "Free vaccination for all ages."
   start_date: <%= Time.current.advance(days: 1).change(hour: 8, min: 0, sec: 0) %>
   end_date: <%= Time.current.advance(days: 6).change(hour: 17, min: 0, sec: 0) %>
   open_time: <%= Time.current.advance(days: 1).change(hour: 8, min: 0, sec: 0) %>
@@ -20,7 +19,6 @@ second_announcement:
   posted_by_id: 2
   # health_program_id: 2
   name: "Nutrition Seminar"
-  # description: "Learn about healthy eating habits."
   start_date: <%= Time.current.advance(days: 1).change(hour: 8, min: 0, sec: 0) %>
   end_date: <%= Time.current.advance(days: 6).change(hour: 17, min: 0, sec: 0) %>
   open_time: <%= Time.current.advance(days: 1).change(hour: 8, min: 0, sec: 0) %>
