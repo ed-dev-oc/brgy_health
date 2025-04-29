@@ -1,0 +1,13 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Announcements" %>
+
+<h1>Announcements</h1>
+
+<div id="announcements">
+  <% @announcements.each do |announcement| %>
+    <%= render announcement %>
+  <% end %>
+</div>
+
+<%= link_to "New announcement", new_admin_announcement_path %>

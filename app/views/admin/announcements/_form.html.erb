@@ -1,0 +1,63 @@
+<%= form_with(model: announcement, url: announcement.persisted? ? admin_announcement_path(announcement.public_uid) : admin_announcements_path) do |form| %>
+  <% if announcement.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(announcement.errors.count, "error") %> prohibited this announcement from being saved:</h2>
+
+      <ul>
+        <% announcement.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <div class="mb-3">
+      <%= form.label :name, "Title", class: "form-label" %>
+      <%= form.text_field :name, required: true, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :start_date, class: "form-label" %>
+      <%= form.datetime_field :start_date, required: true, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :end_date, class: "form-label" %>
+      <%= form.datetime_field :end_date, required: true, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :open_time, class: "form-label" %>
+      <%= form.time_field :open_time, required: true, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :close_time, class: "form-label" %>
+      <%= form.time_field :close_time, required: true, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :location, class: "form-label" %>
+      <%= form.text_field :location, required: true, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :audience, class: "form-label" %>
+      <%= form.text_field :audience, placeholder: "All Residents", required: true, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :max_patients, class: "form-label" %>
+      <%= form.number_field :max_patients, required: true, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :status, class: "form-label" %>
+      <%= form.select :status, 
+        options_for_select(Announcement.statuses.map { |key, value| [key.titleize, key] }, announcement.status ), 
+        { prompt: "Select a status" }, 
+        { class: "form-select", required: true }
+      %>
+    </div>
+    <div class="mb-3">
+      <%= form.label :description, class: "form-label" %>
+      <%= form.rich_text_area :description, class: "overflow-auto", required: true %>
+    </div>
+    <div class="mb-3">
+      <%= form.submit %>
+    </div>
+  </div>
+<% end %>
