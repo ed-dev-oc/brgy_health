@@ -3,7 +3,8 @@ class Admin::AnnouncementsController < AdminController
 
   # GET /admin/announcements or /admin/announcements.json
   def index
-    @announcements = Announcement.all
+    @q = Announcement.ransack(params[:q])
+    @pagy, @announcements = pagy(@q.result(distinct: true))
   end
 
   # GET /admin/announcements/1 or /admin/announcements/1.json

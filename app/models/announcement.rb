@@ -17,4 +17,8 @@ class Announcement < ApplicationRecord
   validates :open_time, comparison: { less_than: :close_time, message: "must be before the close time" }
   validates :close_time, comparison: { greater_than: :open_time, message: "must be after the open time" }
   validates :max_patients, numericality: { only_integer: true, greater_than_or_equal_to: 1, message: "must be a positive whole number" }
+
+  def self.ransackable_attributes(auth_object = nil)
+    [ "audience", "barangay_id", "close_time", "created_at", "end_date", "id", "location", "max_patients", "name", "open_time", "posted_by_id", "public_uid", "start_date", "status", "updated_at" ]
+  end
 end
