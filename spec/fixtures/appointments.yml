@@ -6,7 +6,7 @@ first_appointment:
   patient_id: 4
   scheduled_at: <%= Time.current.advance(days: 1).change(hour: 8, min: 0, sec: 0) %>
   reason: "Vaccination"
-  notes: "None"
+  notes: 
   follow_up_id:
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
@@ -19,7 +19,7 @@ follow_up_appointment:
   patient_id: 4
   scheduled_at: <%= Time.current.advance(days: 2).change(hour: 8, min: 0, sec: 0) %>
   reason: "Vaccination"
-  notes: "None"
+  notes: 
   follow_up_id: <%= ActiveRecord::FixtureSet.identify(:first_appointment) %>
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
