@@ -1,0 +1,25 @@
+first_appointment:
+  public_uid: "11111"
+  barangay_id: 1
+  announcement_id: <%= ActiveRecord::FixtureSet.identify(:first_announcement) %>
+  health_worker_id: 2
+  patient_id: 4
+  scheduled_at: <%= Time.current.advance(days: 1).change(hour: 8, min: 0, sec: 0) %>
+  reason: "Vaccination"
+  notes: "None"
+  follow_up_id:
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+follow_up_appointment:
+  public_uid: "11111"
+  barangay_id: 1
+  announcement_id: <%= ActiveRecord::FixtureSet.identify(:first_announcement) %>
+  health_worker_id: 2
+  patient_id: 4
+  scheduled_at: <%= Time.current.advance(days: 2).change(hour: 8, min: 0, sec: 0) %>
+  reason: "Vaccination"
+  notes: "None"
+  follow_up_id: <%= ActiveRecord::FixtureSet.identify(:first_appointment) %>
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
