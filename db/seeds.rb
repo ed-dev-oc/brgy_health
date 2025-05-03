@@ -121,7 +121,7 @@ lao_patient_appointment = Appointment.create!(
   patient_id: lao_patient.id,
   scheduled_at: lao_announcement.start_date.change(hour: 8, minute: 0, second: 0),
   reason: "Vaccination Drive",
-  notes: "None",
+  notes: nil,
   follow_up_id: nil
 )
 
@@ -132,7 +132,7 @@ Appointment.create!(
   patient_id: lao_patient.id,
   scheduled_at: lao_announcement.start_date.change(hour: 8, minute: 0, second: 0),
   reason: "Vaccination Drive Follow Up",
-  notes: "None",
+  notes: nil,
   follow_up_id: lao_patient_appointment.id
 )
 
@@ -143,7 +143,7 @@ san_isidro_patient_appointment = Appointment.create!(
   patient_id: san_isidro_patient.id,
   scheduled_at: san_isidro_announcement.start_date.change(hour: 8, minute: 0, second: 0),
   reason: "Vaccination Drive",
-  notes: "None",
+  notes: nil,
   follow_up_id: nil
 )
 
@@ -154,6 +154,6 @@ Appointment.create!(
   patient_id: san_isidro_patient.id,
   scheduled_at: san_isidro_announcement.start_date.change(hour: 8, minute: 0, second: 0),
   reason: "Vaccination Drive Follow Up",
-  notes: "None",
+  notes: nil,
   follow_up_id: san_isidro_patient_appointment.id
 )
