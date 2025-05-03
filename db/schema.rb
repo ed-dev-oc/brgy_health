@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_29_165058) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_03_124207) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -70,6 +70,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_165058) do
     t.index ["barangay_id"], name: "index_announcements_on_barangay_id"
     t.index ["posted_by_id"], name: "index_announcements_on_posted_by_id"
     t.index ["public_uid"], name: "index_announcements_on_public_uid", unique: true
+  end
+
+  create_table "appointments", force: :cascade do |t|
+    t.string "public_uid"
+    t.bigint "barangay_id", null: false
+    t.bigint "announcement_id", null: false
+    t.bigint "health_worker_id"
+    t.bigint "patient_id", null: false
+    t.datetime "scheduled_at"
+    t.string "reason"
+    t.string "notes"
+    t.bigint "follow_up_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["announcement_id"], name: "index_appointments_on_announcement_id"
+    t.index ["barangay_id"], name: "index_appointments_on_barangay_id"
+    t.index ["follow_up_id"], name: "index_appointments_on_follow_up_id"
+    t.index ["health_worker_id"], name: "index_appointments_on_health_worker_id"
+    t.index ["patient_id"], name: "index_appointments_on_patient_id"
   end
 
   create_table "barangays", force: :cascade do |t|
@@ -162,6 +181,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_165058) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "announcements", "barangays"
   add_foreign_key "announcements", "users", column: "posted_by_id"
+  add_foreign_key "appointments", "announcements"
+  add_foreign_key "appointments", "appointments", column: "follow_up_id"
+  add_foreign_key "appointments", "barangays"
+  add_foreign_key "appointments", "users", column: "health_worker_id"
+  add_foreign_key "appointments", "users", column: "patient_id"
   add_foreign_key "subdivisions", "barangays"
   add_foreign_key "taggings", "tags"
   add_foreign_key "users", "barangays"
