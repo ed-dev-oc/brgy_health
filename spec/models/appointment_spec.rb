@@ -62,4 +62,28 @@ RSpec.describe Appointment, type: :model do
       expect(appointment).not_to be_valid
     end
   end
+
+  describe 'set flag' do
+    it 'is pending by default' do
+      appointment = Appointment.new(
+        barangay: sample_barangay,
+        announcement: sample_announcement,
+        health_worker: health_worker,
+        patient: patient,
+        reason: "Vaccination",
+        scheduled_at: sample_announcement.start_date
+      )
+      appointment.save
+
+      expect(appointment.flag_list).to include("pending")
+    end
+
+    it 'is completed when notes are saved' do
+      upcoming_appointment.notes = "None"
+      upcoming_appointment.save
+
+      expect(upcoming_appointment.flag_list).not_to include("pending")
+      expect(upcoming_appointment.flag_list).to include("completed")
+    end
+  end
 end
