@@ -5,3 +5,7 @@ import * as bootstrap from "bootstrap"
 
 import "trix"
 import "@rails/actiontext"
+
+Turbo.StreamActions.redirect = function () {
+  Turbo.visit(this.target)
+}

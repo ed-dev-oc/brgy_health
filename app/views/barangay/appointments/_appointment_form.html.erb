@@ -1,0 +1,17 @@
+<%= form_with(model: appointment, url: announcement_appointments_path(announcement.public_uid)) do |form| %>
+  <% if appointment.errors.any? %>
+    <div class="text-danger"><%= appointment.errors.full_messages.to_sentence %></div>
+  <% end %>
+
+  <div class="my-2">
+    <%= form.label :scheduled_at, class: "form-label" %>
+    <%= form.datetime_field :scheduled_at, class: "form-control" %>
+  </div>
+  <div class="my-2">
+    <%= form.label :notes, class: "form-label" %>
+    <%= form.text_area :notes, rows: 3, class: "form-control" %>
+  </div>
+  <div class="my-2">
+    <%= form.submit "Submit", class: "btn btn-primary" %>
+  </div>
+<% end %>

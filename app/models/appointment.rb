@@ -6,6 +6,8 @@ class Appointment < ApplicationRecord
   belongs_to :follow_up, foreign_key: :follow_up_id, class_name: "Appointment", optional: true
   acts_as_taggable_on :flags
 
+  attribute :scheduled_at, :datetime, default: -> { Time.current.change(hour: 9, minute: 0, second: 0) }
+
   validates :scheduled_at, presence: true
 
   after_create :set_flags

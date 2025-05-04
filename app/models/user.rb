@@ -9,6 +9,9 @@ class User < ApplicationRecord
   acts_as_tenant :barangay, optional: true
   belongs_to :subdivision, optional: true
   has_many :announcements, foreign_key: :posted_by_id
+  has_many :appointments, foreign_key: :patient_id
+  has_many :appointments_as_health_worker, foreign_key: :health_worker_id, class_name: "Appointment"
+
   acts_as_taggable_on :flags
 
   accepts_nested_attributes_for :barangay

@@ -1,3 +1,8 @@
 <%= render @announcement %>
 
+<% if user_signed_in? %>
+  <%= link_to "Set Appointment", "#", class: "btn btn-primary", data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "form")}"} %>
+  <%= render partial: "barangay/announcements/modal_form" %>
+<% end %>
+
 <%= link_to "View all Announcements", announcements_path %>
