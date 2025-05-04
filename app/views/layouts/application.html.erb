@@ -24,7 +24,8 @@
 
   <body>
     <%= render(FlashComponent.new(flash: flash)) %>
-
-    <%= yield %>
+    <div class="container">
+      <%= yield %>
+    </div>
   </body>
 </html>

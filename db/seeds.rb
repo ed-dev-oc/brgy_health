@@ -67,7 +67,7 @@ lao_patient = User.create!(
   phone_number: "09093332154",
   password: "test123",
   password_confirmation: "test123",
-  role: :admin,
+  role: :patient,
   barangay_id: lao_barangay.id,
   subdivision_id: lao_subdivision.id
 )
@@ -79,7 +79,7 @@ san_isidro_patient = User.create!(
   phone_number: "09094442154",
   password: "test123",
   password_confirmation: "test123",
-  role: :admin,
+  role: :patient,
   barangay_id: san_isidro_barangay.id,
   subdivision_id: san_isidro_subdivision.id
 )

@@ -1,0 +1,11 @@
+<%= turbo_stream.replace :flash do %>
+  <%= render FlashComponent.new(flash: flash) %>
+<% end %>
+
+<% if @appointment.persisted? %>
+  <%= turbo_stream.action(:redirect, appointments_path) %>
+<% else %>
+  <%= turbo_stream.replace dom_id(Appointment.new(announcement: @announcement)),
+    partial: "barangay/appointments/appointment_form",
+    locals: { appointment: @appointment, announcement: @announcement } %>
+<% end %>
