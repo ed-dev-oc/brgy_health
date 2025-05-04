@@ -1,0 +1,2 @@
+module Barangay::AppointmentsHelper
+end

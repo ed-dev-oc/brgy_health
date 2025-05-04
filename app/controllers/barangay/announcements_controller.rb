@@ -7,6 +7,7 @@ class Barangay::AnnouncementsController < BarangayController
   end
 
   def show
+    @appointment = Appointment.new(announcement: @announcement)
   end
 
   private

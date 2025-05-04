@@ -23,7 +23,11 @@ Rails.application.routes.draw do
         get :about_us, on: :collection
       end
 
-      resources :announcements, only: [ :index, :show ]
+      resources :announcements, only: [ :index, :show ] do
+        resources :appointments, only: [ :create ]
+      end
+
+      resources :appointments, only: [ :index ]
     end
 
     namespace :admin do
