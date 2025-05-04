@@ -1,6 +1,7 @@
 class Barangay::AppointmentsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_announcement, only: %i[create]
+  before_action :set_appointment, only: %i[flag_as_cancelled]
 
   def index
     @q = current_user.appointments.ransack(params[:q])
@@ -20,10 +21,28 @@ class Barangay::AppointmentsController < ApplicationController
     end
   end
 
+  def flag_as_cancelled
+    @appointment.flag_list = []
+    @appointment.flag_list.add("cancelled")
+    if @appointment.save
+      redirect_to appointments_path, notice: "Appointment was successfully cancelled."
+    else
+      redirect_to appointments_path, alert: "Appointment failed to be cancelled."
+    end
+  end
+
   private
 
   def appointment_params
     params.require(:appointment).permit(:scheduled_at, :notes)
+  end
+
+  def set_appointment
+    @appointment = Appointment.find_by_public_uid(params.expect(:id))
+
+    if @appointment.nil?
+      redirect_to appointments_path, status: :see_other, alert: "Appointment not found."
+    end
   end
 
   def set_announcement

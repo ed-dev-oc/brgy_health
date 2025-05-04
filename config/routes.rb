@@ -27,7 +27,11 @@ Rails.application.routes.draw do
         resources :appointments, only: [ :create ]
       end
 
-      resources :appointments, only: [ :index ]
+      resources :appointments, only: [ :index ] do
+        member do
+          patch :flag_as_cancelled
+        end
+      end
     end
 
     namespace :admin do
