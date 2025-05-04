@@ -1,1 +1,33 @@
-<%= @appointments.count %>
+  <%= search_form_for @q, url: appointments_path do |f| %>
+  <%= f.label :announcement_name_cont %>
+  <%= f.search_field :announcement_name_cont %>
+
+  <%= f.submit %>
+<% end %>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Announcement</th>
+      <th scope="col">Scheduled</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @appointments.each do |appointment| %>
+      <tr>
+        <td><%= appointment.public_uid %></td>
+        <td><%= appointment.announcement.name %></td>
+        <td><%= appointment.scheduled_at.to_formatted_s(:long) %></td>
+        <td>
+          <% if appointment.flag_list.exclude?("cancelled") %>
+            <%= link_to "Cancel", flag_as_cancelled_appointment_path(appointment.public_uid), data: { turbo_method: :PATCH, turbo_confirm: "Are you sure?" }, class: "btn btn-danger" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>

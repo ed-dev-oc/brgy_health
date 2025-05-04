@@ -1,4 +1,6 @@
 class Appointment < ApplicationRecord
+  generate_public_uid generator: PublicUid::Generators::NumberRandom.new
+
   belongs_to :barangay
   belongs_to :announcement
   belongs_to :health_worker, optional: true, foreign_key: :health_worker_id, class_name: "User"
@@ -12,6 +14,14 @@ class Appointment < ApplicationRecord
 
   after_create :set_flags
   after_update :completed_appointment
+
+  def self.ransackable_attributes(auth_object = nil)
+    [ "announcement_id", "barangay_id", "created_at", "follow_up_id", "health_worker_id", "id", "notes", "patient_id", "public_uid", "reason", "scheduled_at", "updated_at" ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    [ "announcement", "barangay", "base_tags", "flag_taggings", "flags", "follow_up", "health_worker", "patient", "taggings" ]
+  end
 
   private
 
