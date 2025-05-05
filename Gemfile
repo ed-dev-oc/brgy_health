@@ -91,3 +91,5 @@ gem "acts-as-taggable-on", "~> 12.0"
 gem "pagy", "~> 9.3"
 
 gem "ransack", "~> 4.3"
+
+gem "noticed", "~> 2.6"

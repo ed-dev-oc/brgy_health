@@ -15,6 +15,10 @@ class Barangay < ApplicationRecord
 
   after_validation :set_subdomain_from_slug
 
+  def admin_and_staff
+    users.where(role: [ :admin, :staff ])
+  end
+
   private
 
   def slug_candidates
