@@ -1,4 +1,4 @@
-<%= form_with(model: admin_health_program) do |form| %>
+<%= form_with(model: [:admin, admin_health_program]) do |form| %>
   <% if admin_health_program.errors.any? %>
     <div style="color: red">
       <h2><%= pluralize(admin_health_program.errors.count, "error") %> prohibited this admin_health_program from being saved:</h2>
@@ -11,8 +11,8 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :barangay_id, style: "display: block" %>
+  <div style="display: none">
+    <%= form.label :barangay_id %>
     <%= form.text_field :barangay_id %>
   </div>
 
@@ -28,7 +28,7 @@
 
   <div>
     <%= form.label :status, style: "display: block" %>
-    <%= form.number_field :status %>
+    <%= form.select :status, [["Active", "active"], ["Inactive", "inactive"]], {}, { style: "width: 13%" } %>
   </div>
 
   <div>
