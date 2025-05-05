@@ -11,7 +11,6 @@ RSpec.describe Appointment, type: :model do
   let(:follow_up_appointment) { appointments(:follow_up_appointment) }
 
   describe 'associations' do
-    it { is_expected.to belong_to(:barangay) }
     it { is_expected.to belong_to(:announcement) }
     it { is_expected.to belong_to(:health_worker).optional.class_name('User') }
     it { is_expected.to belong_to(:patient).class_name('User') }
@@ -75,15 +74,14 @@ RSpec.describe Appointment, type: :model do
       )
       appointment.save
 
-      expect(appointment.flag_list).to include("pending")
+      expect(appointment.status).to eq("pending")
     end
 
     it 'is completed when notes are saved' do
       upcoming_appointment.notes = "None"
       upcoming_appointment.save
 
-      expect(upcoming_appointment.flag_list).not_to include("pending")
-      expect(upcoming_appointment.flag_list).to include("completed")
+      expect(upcoming_appointment.status).to eq("completed")
     end
   end
 end
