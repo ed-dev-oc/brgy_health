@@ -10,6 +10,7 @@ first_appointment:
   follow_up_id:
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
+  status: 1
 
 follow_up_appointment:
   public_uid: "11111"
@@ -23,3 +24,4 @@ follow_up_appointment:
   follow_up_id: <%= ActiveRecord::FixtureSet.identify(:first_appointment) %>
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
+  status: 1
