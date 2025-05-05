@@ -3,16 +3,17 @@ class Admin::HealthProgramsController < ApplicationController
 
   # GET /admin/health_programs or /admin/health_programs.json
   def index
-    @admin_health_programs = Admin::HealthProgram.all
+    @admin_health_programs = HealthProgram.all
   end
 
   # GET /admin/health_programs/1 or /admin/health_programs/1.json
   def show
+    
   end
 
   # GET /admin/health_programs/new
   def new
-    @admin_health_program = Admin::HealthProgram.new
+    @admin_health_program = HealthProgram.new
   end
 
   # GET /admin/health_programs/1/edit
@@ -21,12 +22,13 @@ class Admin::HealthProgramsController < ApplicationController
 
   # POST /admin/health_programs or /admin/health_programs.json
   def create
-    @admin_health_program = Admin::HealthProgram.new(admin_health_program_params)
+    @admin_health_program = HealthProgram.new(admin_health_program_params)
 
     respond_to do |format|
       if @admin_health_program.save
-        format.html { redirect_to @admin_health_program, notice: "Health program was successfully created." }
-        format.json { render :show, status: :created, location: @admin_health_program }
+        format.html { redirect_to [:admin, @admin_health_program], notice: "Health program was successfully created." }
+        format.json { render :show, status: :created, location: [:admin, @admin_health_program] }
+
       else
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @admin_health_program.errors, status: :unprocessable_entity }
@@ -38,8 +40,8 @@ class Admin::HealthProgramsController < ApplicationController
   def update
     respond_to do |format|
       if @admin_health_program.update(admin_health_program_params)
-        format.html { redirect_to @admin_health_program, notice: "Health program was successfully updated." }
-        format.json { render :show, status: :ok, location: @admin_health_program }
+        format.html { redirect_to [:admin, @admin_health_program], notice: "Health program was successfully updated." }
+        format.json { render :show, status: :ok, location: [admin, @admin_health_program] }
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @admin_health_program.errors, status: :unprocessable_entity }
@@ -60,11 +62,11 @@ class Admin::HealthProgramsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_admin_health_program
-      @admin_health_program = Admin::HealthProgram.find(params.expect(:id))
+      @admin_health_program = HealthProgram.find(params.require(:id))
     end
 
     # Only allow a list of trusted parameters through.
     def admin_health_program_params
-      params.expect(admin_health_program: [ :barangay_id, :name, :description, :status ])
+      params.require(:health_program).permit(:barangay_id, :name, :description, :status)
     end
 end

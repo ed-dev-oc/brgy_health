@@ -6,5 +6,6 @@
   <%= link_to "Edit this health program", edit_admin_health_program_path(@admin_health_program) %> |
   <%= link_to "Back to health programs", admin_health_programs_path %>
 
-  <%= button_to "Destroy this health program", @admin_health_program, method: :delete %>
+  <%= button_to "Destroy this health program", [:admin, @admin_health_program], method: :delete, data: { confirm: "Are you sure?" } %>
+
 </div>

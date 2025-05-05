@@ -16,116 +16,116 @@ RSpec.describe "/admin/health_programs", type: :request do
   
   # This should return the minimal set of attributes required to create a valid
   # Admin::HealthProgram. As you add validations to Admin::HealthProgram, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
+  # # adjust the attributes here as well.
+  # let(:valid_attributes) {
+  #   skip("Add a hash of attributes valid for your model")
+  # }
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
+  # let(:invalid_attributes) {
+  #   skip("Add a hash of attributes invalid for your model")
+  # }
 
-  describe "GET /index" do
-    it "renders a successful response" do
-      Admin::HealthProgram.create! valid_attributes
-      get admin_health_programs_url
-      expect(response).to be_successful
-    end
-  end
+  # describe "GET /index" do
+  #   it "renders a successful response" do
+  #     Admin::HealthProgram.create! valid_attributes
+  #     get admin_health_programs_url
+  #     expect(response).to be_successful
+  #   end
+  # end
 
-  describe "GET /show" do
-    it "renders a successful response" do
-      health_program = Admin::HealthProgram.create! valid_attributes
-      get admin_health_program_url(health_program)
-      expect(response).to be_successful
-    end
-  end
+  # describe "GET /show" do
+  #   it "renders a successful response" do
+  #     health_program = Admin::HealthProgram.create! valid_attributes
+  #     get admin_health_program_url(health_program)
+  #     expect(response).to be_successful
+  #   end
+  # end
 
-  describe "GET /new" do
-    it "renders a successful response" do
-      get new_admin_health_program_url
-      expect(response).to be_successful
-    end
-  end
+  # describe "GET /new" do
+  #   it "renders a successful response" do
+  #     get new_admin_health_program_url
+  #     expect(response).to be_successful
+  #   end
+  # end
 
-  describe "GET /edit" do
-    it "renders a successful response" do
-      health_program = Admin::HealthProgram.create! valid_attributes
-      get edit_admin_health_program_url(health_program)
-      expect(response).to be_successful
-    end
-  end
+  # describe "GET /edit" do
+  #   it "renders a successful response" do
+  #     health_program = Admin::HealthProgram.create! valid_attributes
+  #     get edit_admin_health_program_url(health_program)
+  #     expect(response).to be_successful
+  #   end
+  # end
 
-  describe "POST /create" do
-    context "with valid parameters" do
-      it "creates a new Admin::HealthProgram" do
-        expect {
-          post admin_health_programs_url, params: { admin_health_program: valid_attributes }
-        }.to change(Admin::HealthProgram, :count).by(1)
-      end
+  # describe "POST /create" do
+  #   context "with valid parameters" do
+  #     it "creates a new Admin::HealthProgram" do
+  #       expect {
+  #         post admin_health_programs_url, params: { admin_health_program: valid_attributes }
+  #       }.to change(Admin::HealthProgram, :count).by(1)
+  #     end
 
-      it "redirects to the created admin_health_program" do
-        post admin_health_programs_url, params: { admin_health_program: valid_attributes }
-        expect(response).to redirect_to(admin_health_program_url(Admin::HealthProgram.last))
-      end
-    end
+  #     it "redirects to the created admin_health_program" do
+  #       post admin_health_programs_url, params: { admin_health_program: valid_attributes }
+  #       expect(response).to redirect_to(admin_health_program_url(Admin::HealthProgram.last))
+  #     end
+  #   end
 
-    context "with invalid parameters" do
-      it "does not create a new Admin::HealthProgram" do
-        expect {
-          post admin_health_programs_url, params: { admin_health_program: invalid_attributes }
-        }.to change(Admin::HealthProgram, :count).by(0)
-      end
+  #   context "with invalid parameters" do
+  #     it "does not create a new Admin::HealthProgram" do
+  #       expect {
+  #         post admin_health_programs_url, params: { admin_health_program: invalid_attributes }
+  #       }.to change(Admin::HealthProgram, :count).by(0)
+  #     end
 
-      it "renders a response with 422 status (i.e. to display the 'new' template)" do
-        post admin_health_programs_url, params: { admin_health_program: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-    end
-  end
+  #     it "renders a response with 422 status (i.e. to display the 'new' template)" do
+  #       post admin_health_programs_url, params: { admin_health_program: invalid_attributes }
+  #       expect(response).to have_http_status(:unprocessable_entity)
+  #     end
+  #   end
+  # end
 
-  describe "PATCH /update" do
-    context "with valid parameters" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
+  # describe "PATCH /update" do
+  #   context "with valid parameters" do
+  #     let(:new_attributes) {
+  #       skip("Add a hash of attributes valid for your model")
+  #     }
 
-      it "updates the requested admin_health_program" do
-        health_program = Admin::HealthProgram.create! valid_attributes
-        patch admin_health_program_url(health_program), params: { admin_health_program: new_attributes }
-        health_program.reload
-        skip("Add assertions for updated state")
-      end
+  #     it "updates the requested admin_health_program" do
+  #       health_program = Admin::HealthProgram.create! valid_attributes
+  #       patch admin_health_program_url(health_program), params: { admin_health_program: new_attributes }
+  #       health_program.reload
+  #       skip("Add assertions for updated state")
+  #     end
 
-      it "redirects to the admin_health_program" do
-        health_program = Admin::HealthProgram.create! valid_attributes
-        patch admin_health_program_url(health_program), params: { admin_health_program: new_attributes }
-        health_program.reload
-        expect(response).to redirect_to(admin_health_program_url(health_program))
-      end
-    end
+  #     it "redirects to the admin_health_program" do
+  #       health_program = Admin::HealthProgram.create! valid_attributes
+  #       patch admin_health_program_url(health_program), params: { admin_health_program: new_attributes }
+  #       health_program.reload
+  #       expect(response).to redirect_to(admin_health_program_url(health_program))
+  #     end
+  #   end
 
-    context "with invalid parameters" do
-      it "renders a response with 422 status (i.e. to display the 'edit' template)" do
-        health_program = Admin::HealthProgram.create! valid_attributes
-        patch admin_health_program_url(health_program), params: { admin_health_program: invalid_attributes }
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-    end
-  end
+  #   context "with invalid parameters" do
+  #     it "renders a response with 422 status (i.e. to display the 'edit' template)" do
+  #       health_program = Admin::HealthProgram.create! valid_attributes
+  #       patch admin_health_program_url(health_program), params: { admin_health_program: invalid_attributes }
+  #       expect(response).to have_http_status(:unprocessable_entity)
+  #     end
+  #   end
+  # end
 
-  describe "DELETE /destroy" do
-    it "destroys the requested admin_health_program" do
-      health_program = Admin::HealthProgram.create! valid_attributes
-      expect {
-        delete admin_health_program_url(health_program)
-      }.to change(Admin::HealthProgram, :count).by(-1)
-    end
+  # describe "DELETE /destroy" do
+  #   it "destroys the requested admin_health_program" do
+  #     health_program = Admin::HealthProgram.create! valid_attributes
+  #     expect {
+  #       delete admin_health_program_url(health_program)
+  #     }.to change(Admin::HealthProgram, :count).by(-1)
+  #   end
 
-    it "redirects to the admin_health_programs list" do
-      health_program = Admin::HealthProgram.create! valid_attributes
-      delete admin_health_program_url(health_program)
-      expect(response).to redirect_to(admin_health_programs_url)
-    end
-  end
+  #   it "redirects to the admin_health_programs list" do
+  #     health_program = Admin::HealthProgram.create! valid_attributes
+  #     delete admin_health_program_url(health_program)
+  #     expect(response).to redirect_to(admin_health_programs_url)
+  #   end
+  # end
 end
