@@ -10,6 +10,8 @@ class Admin::AppointmentsController < AdminController
     if @appointment.completed?
       @new_appointment = Appointment.new
     end
+
+    @appointment.notifications.where(recipient: current_user).mark_as_read
   end
 
   def flag_as_rejected

@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :announcements, foreign_key: :posted_by_id
   has_many :appointments, foreign_key: :patient_id
   has_many :appointments_as_health_worker, foreign_key: :health_worker_id, class_name: "Appointment"
+  has_many :notifications, as: :recipient, class_name: "Noticed::Notification"
 
   acts_as_taggable_on :flags
 
@@ -33,6 +34,14 @@ class User < ApplicationRecord
   before_create :add_admin_flag_require_validation, if: -> { self.role == "admin" }
   before_create :add_requirements_flags
   before_update :remove_requirements_flags
+
+  def full_name
+    "#{self.first_name} #{self.middle_name} #{self.last_name} #{self.suffix}".strip
+  end
+
+  def notification_channel
+    "user_#{self.public_uid}_notification"
+  end
 
   private
 
