@@ -38,6 +38,14 @@ Rails.application.routes.draw do
       resources :dashboard, only: [ :index ]
       resources :announcements
       resources :health_programs
+      resources :appointments, only: [ :index, :show ] do
+        member do
+          patch :flag_as_rejected
+          patch :flag_as_approved
+          post :follow_up_check_up
+          patch :flag_as_completed
+        end
+      end
     end
   end
 

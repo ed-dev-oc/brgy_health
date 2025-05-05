@@ -34,7 +34,7 @@ class Barangay::AppointmentsController < ApplicationController
   private
 
   def appointment_params
-    params.require(:appointment).permit(:scheduled_at, :notes)
+    params.require(:appointment).permit(:scheduled_at, :reason)
   end
 
   def set_appointment
