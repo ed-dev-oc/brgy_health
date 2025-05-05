@@ -11,5 +11,4 @@ require 'rails_helper'
 #   end
 # end
 RSpec.describe Admin::HealthProgramsHelper, type: :helper do
- 
 end
