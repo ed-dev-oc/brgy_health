@@ -150,6 +150,10 @@ GEM
     image_processing (1.14.0)
       mini_magick (>= 4.9.5, < 6)
       ruby-vips (>= 2.0.17, < 3)
+    importmap-rails (2.1.0)
+      actionpack (>= 6.0.0)
+      activesupport (>= 6.0.0)
+      railties (>= 6.0.0)
     io-console (0.8.0)
     irb (1.15.2)
       pp (>= 0.6.0)
@@ -197,6 +201,16 @@ GEM
       logger
     mini_mime (1.1.5)
     minitest (5.25.5)
+    mission_control-jobs (1.0.2)
+      actioncable (>= 7.1)
+      actionpack (>= 7.1)
+      activejob (>= 7.1)
+      activerecord (>= 7.1)
+      importmap-rails (>= 1.2.1)
+      irb (~> 1.13)
+      railties (>= 7.1)
+      stimulus-rails
+      turbo-rails
     msgpack (1.8.0)
     net-imap (0.5.6)
       date
@@ -229,6 +243,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.7-x86_64-linux-musl)
       racc (~> 1.4)
+    noticed (2.6.1)
+      rails (>= 6.1.0)
     orm_adapter (0.5.0)
     ostruct (0.6.1)
     pagy (9.3.4)
@@ -471,6 +487,8 @@ DEPENDENCIES
   jsbundling-rails
   kamal
   letter_opener (~> 1.10)
+  mission_control-jobs (~> 1.0)
+  noticed (~> 2.6)
   pagy (~> 9.3)
   pg (~> 1.1)
   propshaft
