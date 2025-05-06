@@ -58,9 +58,7 @@ class Appointment < ApplicationRecord
   end
 
   def send_notification_status_changed
-    puts("Ed Gwapo")
     if saved_change_to_status?
-      puts("Ed Gwapo 1")
       users = self.cancelled? ? self.barangay.admin_and_staff : self.patient
 
       AppointmentStatusChangedNotifier.with(record: self).deliver(users)
