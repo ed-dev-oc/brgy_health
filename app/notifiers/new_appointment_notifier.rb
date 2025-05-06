@@ -14,15 +14,15 @@ class NewAppointmentNotifier < ApplicationNotifier
   #   config.url = -> { Rails.application.credentials.slack_webhook_url }
   # end
   #
-  # deliver_by :custom do |config|
-  #   config.class = "MyDeliveryMethod"
+  # deliver_by :notification_broadcast do |config|
+  #   config.class = "DeliveryMethods::NotificationBroadcast"
   # end
 
   # Add required params
   #
   # required_param :message
 
-  deliver_by :database
+  deliver_by :notification_broadcast, class: "DeliveryMethods::NotificationBroadcast"
 
   notification_methods do
     def message
