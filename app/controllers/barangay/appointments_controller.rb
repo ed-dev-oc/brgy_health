@@ -1,4 +1,4 @@
-class Barangay::AppointmentsController < ApplicationController
+class Barangay::AppointmentsController < BarangayController
   before_action :authenticate_user!
   before_action :set_announcement, only: %i[create]
   before_action :set_appointment, only: %i[flag_as_cancelled]
@@ -22,9 +22,7 @@ class Barangay::AppointmentsController < ApplicationController
   end
 
   def flag_as_cancelled
-    @appointment.flag_list = []
-    @appointment.flag_list.add("cancelled")
-    if @appointment.save
+    if @appointment.cancelled!
       redirect_to appointments_path, notice: "Appointment was successfully cancelled."
     else
       redirect_to appointments_path, alert: "Appointment failed to be cancelled."
