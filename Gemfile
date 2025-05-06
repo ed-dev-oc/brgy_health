@@ -93,3 +93,5 @@ gem "pagy", "~> 9.3"
 gem "ransack", "~> 4.3"
 
 gem "noticed", "~> 2.6"
+
+gem "mission_control-jobs", "~> 1.0"
