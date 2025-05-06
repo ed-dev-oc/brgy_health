@@ -21,7 +21,7 @@
         <td><%= appointment.announcement.name %></td>
         <td><%= appointment.scheduled_at.to_formatted_s(:long) %></td>
         <td>
-          <% if appointment.flag_list.exclude?("cancelled") %>
+          <% if appointment.pending? %>
             <%= link_to "Cancel", flag_as_cancelled_appointment_path(appointment.public_uid), data: { turbo_method: :PATCH, turbo_confirm: "Are you sure?" }, class: "btn btn-danger" %>
           <% end %>
         </td>
