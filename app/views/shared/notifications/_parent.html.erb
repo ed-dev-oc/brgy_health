@@ -6,7 +6,9 @@
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
-    <div class="list-group list-group-flush border-bottom" id="notifications">
+    <%= turbo_stream_from current_user.notification_channel %>
+
+    <div class="list-group list-group-flush border-bottom" id="notification_list">
       <% @notifications.unread.each do |notification| %>
         <%= render partial: "shared/notifications/notification", locals: { notification: notification } %>
       <% end %>
