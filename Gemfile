@@ -95,3 +95,5 @@ gem "ransack", "~> 4.3"
 gem "noticed", "~> 2.6"
 
 gem "mission_control-jobs", "~> 1.0"
+
+gem "web-push", "~> 3.0"

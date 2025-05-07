@@ -23,6 +23,7 @@ class NewAppointmentNotifier < ApplicationNotifier
   # required_param :message
 
   deliver_by :notification_broadcast, class: "DeliveryMethods::NotificationBroadcast"
+  deliver_by :web_push, class: "DeliveryMethods::WebPush"
 
   notification_methods do
     def message

@@ -24,6 +24,7 @@ class Appointment < ApplicationRecord
   after_update :completed_appointment
   after_create :send_admin_and_staff_notification
   after_update :send_notification_status_changed
+  after_update :send_follow_up_check_up_notification
 
   def self.ransackable_attributes(auth_object = nil)
     [ "announcement_id", "barangay_id", "created_at", "follow_up_id", "health_worker_id", "id", "notes", "patient_id", "public_uid", "reason", "scheduled_at", "updated_at", "status" ]
@@ -62,6 +63,12 @@ class Appointment < ApplicationRecord
       users = self.cancelled? ? self.barangay.admin_and_staff : self.patient
 
       AppointmentStatusChangedNotifier.with(record: self).deliver(users)
+    end
+  end
+
+  def send_follow_up_check_up_notification
+    if self.flag_list.include?("follow_up_check_up")
+      FollowUpCheckUpNotifier.with(record: self).deliver(self.patient)
     end
   end
 end

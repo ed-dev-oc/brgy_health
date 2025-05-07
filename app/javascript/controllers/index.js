@@ -10,5 +10,8 @@ application.register("flash", FlashController)
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
+import RegisterServiceWorkerController from "./register_service_worker_controller"
+application.register("register-service-worker", RegisterServiceWorkerController)
+
 import SelectPhilippinesAddressController from "./select_philippines_address_controller"
 application.register("select-philippines-address", SelectPhilippinesAddressController)
