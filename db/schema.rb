@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_05_185909) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_07_035423) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -133,6 +133,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_05_185909) do
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
   end
 
+  create_table "push_subscriptions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "endpoint"
+    t.string "p256dh"
+    t.string "auth"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
+  end
+
   create_table "subdivisions", force: :cascade do |t|
     t.bigint "barangay_id", null: false
     t.string "name"
@@ -211,6 +221,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_05_185909) do
   add_foreign_key "appointments", "barangays"
   add_foreign_key "appointments", "users", column: "health_worker_id"
   add_foreign_key "appointments", "users", column: "patient_id"
+  add_foreign_key "push_subscriptions", "users"
   add_foreign_key "subdivisions", "barangays"
   add_foreign_key "taggings", "tags"
   add_foreign_key "users", "barangays"
