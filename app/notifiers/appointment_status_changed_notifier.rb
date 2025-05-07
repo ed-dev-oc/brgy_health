@@ -23,6 +23,7 @@ class AppointmentStatusChangedNotifier < ApplicationNotifier
   # required_param :message
 
   deliver_by :notification_broadcast, class: "DeliveryMethods::NotificationBroadcast"
+  deliver_by :web_push, class: "DeliveryMethods::WebPush"
 
   notification_methods do
     def message
@@ -46,7 +47,7 @@ class AppointmentStatusChangedNotifier < ApplicationNotifier
       if recipient.admin? || recipient.staff?
         admin_appointment_path(record.public_uid)
       else
-        appointments_path(record.public_uid)
+        appointments_path
       end
     end
   end

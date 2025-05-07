@@ -9,8 +9,8 @@ Rails.application.routes.draw do
   mount MissionControl::Jobs::Engine, at: "/jobs"
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+  get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
 
@@ -57,6 +57,7 @@ Rails.application.routes.draw do
 
   root "pages#home"
   get "/:page", to: "pages#show"
+  resources :push_subscriptions, only: [ :create ]
 
   namespace :super_admin do
     resources :dashboard, only: [ :index ]
