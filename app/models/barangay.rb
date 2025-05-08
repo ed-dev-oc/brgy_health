@@ -4,7 +4,6 @@ class Barangay < ApplicationRecord
 
   has_many :subdivisions
   has_many :users
-  acts_as_taggable_on :flags
   has_many :health_programs
   acts_as_taggable_on :flags
   has_many :health_programs
