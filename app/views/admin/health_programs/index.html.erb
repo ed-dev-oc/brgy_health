@@ -8,7 +8,7 @@
   <% @admin_health_programs.each do |admin_health_program| %>
     <%= render admin_health_program %>
     <p>
-      <%= link_to "Show this health program", admin_health_program %>
+      <%= link_to "Show this health program", [:admin, admin_health_program] %>
     </p>
   <% end %>
 </div>

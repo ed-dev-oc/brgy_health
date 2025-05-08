@@ -1,3 +1,5 @@
+require Rails.root.join("lib", "constraints", "subdomain_constraint")
+
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -10,14 +12,31 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root "pages#home"
 
-  namespace :super_admin do
-    resources :dashboard, only: [ :index ]
+  constraints(Constraints::SubdomainConstraint.new) do
+    # root "barangay/pages#home"
+    get "/", to: "barangay/pages#home"
+    get "/:page", to: "barangay/pages#show"
+
+    namespace :barangay do
+    end
+
+    namespace :admin do
+      resources :dashboard, only: [ :index ]
+
+      resources :health_programs
+    end
   end
 
-  namespace :admin do
-    resources :health_programs
+  devise_for :users, controllers: {
+    sessions: "users/sessions",
+    registrations: "users/registrations"
+  }
+
+  root "pages#home"
+  get "/:page", to: "pages#show"
+
+  namespace :super_admin do
     resources :dashboard, only: [ :index ]
   end
 end

@@ -91,4 +91,24 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+
+  config.before(:suite) do
+    $default_barangay = Barangay.find_or_create_by!(name: "San Isidro", region: "IV-A (CALABARZON)", province: "Batangas", city: "Lipa")
+  end
+
+  config.before(:each) do |example|
+    if example.metadata[:type] == :request
+      # Set the `test_tenant` value for integration tests
+      ActsAsTenant.test_tenant = $default_barangay
+    else
+      # Otherwise just use current_tenant
+      ActsAsTenant.current_tenant = $default_barangay
+    end
+  end
+
+  config.after(:each) do |example|
+    # Clear any tenancy that might have been set
+    ActsAsTenant.current_tenant = nil
+    ActsAsTenant.test_tenant = nil
+  end
 end
