@@ -89,6 +89,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_165058) do
   create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
   end
 
+  create_table "health_programs", force: :cascade do |t|
+    t.bigint "barangay_id", null: false
+    t.string "name"
+    t.text "description"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barangay_id"], name: "index_health_programs_on_barangay_id"
+  end
+
   create_table "subdivisions", force: :cascade do |t|
     t.bigint "barangay_id", null: false
     t.string "name"
@@ -162,6 +172,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_165058) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "announcements", "barangays"
   add_foreign_key "announcements", "users", column: "posted_by_id"
+  add_foreign_key "health_programs", "barangays"
   add_foreign_key "subdivisions", "barangays"
   add_foreign_key "taggings", "tags"
   add_foreign_key "users", "barangays"
