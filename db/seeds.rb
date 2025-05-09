@@ -60,7 +60,31 @@ san_isidro_admin = User.create!(
 san_isidro_admin.flag_list.remove("require_validation")
 san_isidro_admin.save
 
-Announcement.create!(
+lao_patient = User.create!(
+  email: "lao_patient@test.com",
+  first_name: "Lao",
+  last_name: "Patient",
+  phone_number: "09093332154",
+  password: "test123",
+  password_confirmation: "test123",
+  role: :patient,
+  barangay_id: lao_barangay.id,
+  subdivision_id: lao_subdivision.id
+)
+
+san_isidro_patient = User.create!(
+  email: "san_isidro_patient@test.com",
+  first_name: "San Isidro",
+  last_name: "Patient",
+  phone_number: "09094442154",
+  password: "test123",
+  password_confirmation: "test123",
+  role: :patient,
+  barangay_id: san_isidro_barangay.id,
+  subdivision_id: san_isidro_subdivision.id
+)
+
+lao_announcement = Announcement.create!(
   barangay_id: lao_barangay.id,
   posted_by_id: lao_admin.id,
   name: "Free Vaccination Drive",
@@ -75,7 +99,7 @@ Announcement.create!(
   status: 1
 )
 
-Announcement.create!(
+san_isidro_announcement = Announcement.create!(
   barangay_id: san_isidro_barangay.id,
   posted_by_id: san_isidro_admin.id,
   name: "Free Vaccination Drive",
@@ -88,4 +112,48 @@ Announcement.create!(
   max_patients: 100,
   audience: "All Residents",
   status: 1
+)
+
+lao_patient_appointment = Appointment.create!(
+  barangay_id: lao_barangay.id,
+  announcement_id: lao_announcement.id,
+  health_worker_id: lao_admin.id,
+  patient_id: lao_patient.id,
+  scheduled_at: lao_announcement.start_date.change(hour: 8, minute: 0, second: 0),
+  reason: "Vaccination Drive",
+  notes: nil,
+  follow_up_id: nil
+)
+
+Appointment.create!(
+  barangay_id: lao_barangay.id,
+  announcement_id: lao_announcement.id,
+  health_worker_id: lao_admin.id,
+  patient_id: lao_patient.id,
+  scheduled_at: lao_announcement.start_date.change(hour: 8, minute: 0, second: 0),
+  reason: "Vaccination Drive Follow Up",
+  notes: nil,
+  follow_up_id: lao_patient_appointment.id
+)
+
+san_isidro_patient_appointment = Appointment.create!(
+  barangay_id: san_isidro_barangay.id,
+  announcement_id: san_isidro_announcement.id,
+  health_worker_id: san_isidro_admin.id,
+  patient_id: san_isidro_patient.id,
+  scheduled_at: san_isidro_announcement.start_date.change(hour: 8, minute: 0, second: 0),
+  reason: "Vaccination Drive",
+  notes: nil,
+  follow_up_id: nil
+)
+
+Appointment.create!(
+  barangay_id: san_isidro_barangay.id,
+  announcement_id: san_isidro_announcement.id,
+  health_worker_id: san_isidro_admin.id,
+  patient_id: san_isidro_patient.id,
+  scheduled_at: san_isidro_announcement.start_date.change(hour: 8, minute: 0, second: 0),
+  reason: "Vaccination Drive Follow Up",
+  notes: nil,
+  follow_up_id: san_isidro_patient_appointment.id
 )

@@ -1,0 +1,11 @@
+<%= turbo_stream.replace :flash do %>
+  <%= render FlashComponent.new(flash: flash) %>
+<% end %>
+
+<% if @new_appointment.errors.any? %>
+  <%= turbo_stream.replace :follow_up_appointment_form,
+    partial: "admin/appointments/follow_up_form",
+    locals: { appointment: @new_appointment, parent_appointment: @appointment } %>
+<% else %>
+  <%= turbo_stream.action(:redirect, admin_appointment_path(@new_appointment.public_uid)) %>
+<% end %>

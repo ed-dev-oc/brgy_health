@@ -3,6 +3,7 @@ class Announcement < ApplicationRecord
 
   acts_as_tenant :barangay
   belongs_to :posted_by, class_name: "User"
+  has_many :appointments
   enum :status, [ :draft, :active, :canceled, :completed, :archived ]
   has_rich_text :description
 

@@ -1,0 +1,15 @@
+<div class="modal fade" id="<%= dom_id(@new_appointment, "follow_up_modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(@new_appointment, "follow_up_modal") %>Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="<%= dom_id(@new_appointment, "follow_up_modal") %>Label">Appointment Complete</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= turbo_frame_tag :follow_up_appointment_form do %>
+          <%= render partial: "admin/appointments/follow_up_form", locals: { appointment: @new_appointment, parent_appointment: @appointment } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

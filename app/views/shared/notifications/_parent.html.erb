@@ -1,0 +1,17 @@
+<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#notificationOffcanvas" aria-controls="notificationOffcanvas">Notification</button>
+
+<div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="notificationOffcanvas" aria-labelledby="notificationOffcanvasLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="notificationOffcanvasLabel">Notifications</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <%= turbo_stream_from current_user.notification_channel %>
+
+    <div class="list-group list-group-flush border-bottom" id="notification_list">
+      <% @notifications.unread.each do |notification| %>
+        <%= render partial: "shared/notifications/notification", locals: { notification: notification } %>
+      <% end %>
+    </div>
+  </div>
+</div>
