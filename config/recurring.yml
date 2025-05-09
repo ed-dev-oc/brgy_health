@@ -8,3 +8,23 @@
 #     command: "SoftDeletedRecord.due.delete_all"
 #     priority: 2
 #     schedule: at 5am every day
+
+development:
+  periodic_reminder_appointment:
+    class: AppointmentsReminderJob
+    queue: background
+    schedule: at 7am every day
+  periodic_missed_appointment:
+    class: AppointmentsMissedJob
+    queue: background
+    schedule: at 6pm every day
+
+production:
+  periodic_reminder_appointment:
+    class: AppointmentsReminderJob
+    queue: background
+    schedule: at 7am every day
+  periodic_missed_appointment:
+    class: AppointmentsMissedJob
+    queue: background
+    schedule: at 6pm every day
