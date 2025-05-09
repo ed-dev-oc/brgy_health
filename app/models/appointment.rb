@@ -40,14 +40,6 @@ class Appointment < ApplicationRecord
 
   private
 
-  def missed_appointment
-    # NOTE: Use this method to background job
-    if self.scheduled_at < Time.now && self.approved?
-      self.flag_list.add("missed")
-      self.save
-    end
-  end
-
   def completed_appointment
     if saved_change_to_attribute?(:notes) && self.approved?
       self.completed!
