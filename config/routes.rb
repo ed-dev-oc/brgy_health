@@ -34,6 +34,10 @@ Rails.application.routes.draw do
   root "pages#home"
   get "/:page", to: "pages#show"
 
+  get 'profile/edit', to: 'profile#edit', as: :edit_profile
+  patch 'profile/update', to: 'profile#update', as: :update_profile
+
+
   namespace :super_admin do
     resources :dashboard, only: [ :index ]
   end
