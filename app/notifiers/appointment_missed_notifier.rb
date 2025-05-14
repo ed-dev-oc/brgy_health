@@ -31,7 +31,7 @@ class AppointmentMissedNotifier < ApplicationNotifier
     end
 
     def url
-      announcement_path(record.announcement.public_uid)
+      appointment_path(record.id)
     end
   end
 end

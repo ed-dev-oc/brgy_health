@@ -47,7 +47,7 @@ class AppointmentStatusChangedNotifier < ApplicationNotifier
       if recipient.admin? || recipient.staff?
         admin_appointment_path(record.public_uid)
       else
-        appointments_path
+        appointment_path(record.id)
       end
     end
   end

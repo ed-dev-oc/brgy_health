@@ -31,7 +31,7 @@ class FollowUpCheckUpNotifier < ApplicationNotifier
     end
 
     def url
-      appointments_path
+      appointment_path(record.id)
     end
   end
 end

@@ -21,6 +21,10 @@ class Barangay::AppointmentsController < BarangayController
     end
   end
 
+  def show
+    @appointment = Appointment.find(params[:id])
+  end
+
   def flag_as_cancelled
     if @appointment.cancelled!
       redirect_to appointments_path, notice: "Appointment was successfully cancelled."
