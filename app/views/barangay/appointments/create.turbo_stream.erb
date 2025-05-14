@@ -3,7 +3,7 @@
 <% end %>
 
 <% if @appointment.persisted? %>
-  <%= turbo_stream.action(:redirect, appointments_path) %>
+  <%= turbo_stream.action(:redirect, appointment_path(@appointment)) %>
 <% else %>
   <%= turbo_stream.replace dom_id(Appointment.new(announcement: @announcement)),
     partial: "barangay/appointments/appointment_form",
