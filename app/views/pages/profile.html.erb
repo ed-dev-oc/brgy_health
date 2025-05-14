@@ -1,19 +1,7 @@
 <h1>Edit Profile</h1>
 
-<%= form_with model: @user, url: update_profile_path, local: true, html: { multipart: true } do |form| %>
-  <div>
-    <%= form.label :profile %><br>
-    <%= form.file_field :profile %>
-  </div>
+  <%= render "super_admin/shared/profile_form" %>
+  <%= render "super_admin/shared/personal_information_form" %>
+  <%= render "super_admin/shared/credentials_form" %>
 
-  <% if @user.profile.attached? %>
-    <div>
-      <p>Current profile:</p>
-      <%= display_profile_image(@user) %>
-    </div>
-  <% end %>
-
-  <div>
-    <%= form.submit "Update Profile" %>
-  </div>
-<% end %>
+<%= link_to "Back", super_admin_dashboard_index_path, class: "btn btn-secondary" %>

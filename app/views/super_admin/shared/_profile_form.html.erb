@@ -1,0 +1,17 @@
+<%= form_with model: @user, url: update_profile_path, local: true, html: { multipart: true } do |form| %>
+  <div>
+    <%= form.label :profile %><br>
+    <%= form.file_field :profile %>
+  </div>
+
+  <% if @user.profile.attached? %>
+    <div>
+      <p>Current profile:</p>
+      <%= display_profile_image(@user) %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.submit "Update Profile" %>
+  </div>
+<% end %>
