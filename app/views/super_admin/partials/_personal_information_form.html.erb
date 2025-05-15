@@ -1,20 +1,23 @@
-<%= form_with model: @user, url: update_profile_path, local: true do |form| %>
-  <div>
-    <%= form.label :first_name %>
-    <%= form.text_field :first_name %>
-  </div>
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Update Personal Information</h5>
+    <%= form_with model: @user, url: super_admin_profile_path, local: true do |form| %>
+      <div class="mb-3">
+        <%= form.label :first_name, class: "form-label" %>
+        <%= form.text_field :first_name, class: "form-control" %>
+      </div>
 
-  <div>
-    <%= form.label :last_name %>
-    <%= form.text_field :last_name %>
-  </div>
+      <div class="mb-3">
+        <%= form.label :last_name, class: "form-label" %>
+        <%= form.text_field :last_name, class: "form-control" %>
+      </div>
 
-  <div>
-    <%= form.label :phone_number %>
-    <%= form.telephone_field :phone_number %>
-  </div>
+      <div class="mb-3">
+        <%= form.label :phone_number, class: "form-label" %>
+        <%= form.telephone_field :phone_number, class: "form-control" %>
+      </div>
 
-  <div>
-    <%= form.submit "Update Personal Info" %>
+      <%= form.submit "Update Personal Info", class: "btn btn-primary" %>
+    <% end %>
   </div>
-<% end %>
+</div>

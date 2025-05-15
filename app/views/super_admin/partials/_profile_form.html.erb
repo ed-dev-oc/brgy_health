@@ -1,17 +1,20 @@
-<%= form_with model: @user, url: update_profile_path, local: true, html: { multipart: true } do |form| %>
-  <div>
-    <%= form.label :profile %><br>
-    <%= form.file_field :profile %>
-  </div>
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Update Profile Picture</h5>
+    <%= form_with model: @user, url: super_admin_profile_path, local: true, html: { multipart: true } do |form| %>
+      <div class="mb-3">
+        <%= form.label :profile, class: "form-label" %>
+        <%= form.file_field :profile, class: "form-control" %>
+      </div>
 
-  <% if @user.profile.attached? %>
-    <div>
-      <p>Current profile:</p>
-      <%= display_profile_image(@user) %>
-    </div>
-  <% end %>
+      <% if @user.profile.attached? %>
+        <div class="mb-3">
+          <p>Current profile:</p>
+          <%= display_profile_image(@user) %>
+        </div>
+      <% end %>
 
-  <div>
-    <%= form.submit "Update Profile" %>
+      <%= form.submit "Update Profile", class: "btn btn-primary" %>
+    <% end %>
   </div>
-<% end %>
+</div>
