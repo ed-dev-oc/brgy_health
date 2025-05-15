@@ -1,7 +1,7 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">Update Personal Information</h5>
-    <%= form_with model: @user, url: super_admin_profile_path, local: true do |form| %>
+    <%= form_with model: @user, url: super_admin_profile_path(@user.id), local: true do |form| %>
       <div class="mb-3">
         <%= form.label :first_name, class: "form-label" %>
         <%= form.text_field :first_name, class: "form-control" %>
