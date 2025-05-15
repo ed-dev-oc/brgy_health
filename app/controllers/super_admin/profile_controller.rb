@@ -11,7 +11,7 @@ class SuperAdmin::ProfileController < ApplicationController
     if @user.update(user_params)
       redirect_to edit_super_admin_profile_path, notice: "Profile updated successfully."
     else
-      render 'pages/profile'
+      render "pages/profile"
     end
   end
 
