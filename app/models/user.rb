@@ -6,6 +6,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  has_one_attached :profile
+
   belongs_to :barangay, optional: true
   belongs_to :subdivision, optional: true
   acts_as_taggable_on :flags

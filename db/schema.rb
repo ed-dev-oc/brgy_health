@@ -10,9 +10,87 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_26_174744) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_07_035423) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "action_text_rich_texts", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body"
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "announcements", force: :cascade do |t|
+    t.string "public_uid"
+    t.bigint "barangay_id", null: false
+    t.bigint "posted_by_id", null: false
+    t.string "name"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.time "open_time"
+    t.time "close_time"
+    t.string "location"
+    t.integer "max_patients", default: 1
+    t.string "audience"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barangay_id"], name: "index_announcements_on_barangay_id"
+    t.index ["posted_by_id"], name: "index_announcements_on_posted_by_id"
+    t.index ["public_uid"], name: "index_announcements_on_public_uid", unique: true
+  end
+
+  create_table "appointments", force: :cascade do |t|
+    t.string "public_uid"
+    t.bigint "barangay_id", null: false
+    t.bigint "announcement_id", null: false
+    t.bigint "health_worker_id"
+    t.bigint "patient_id", null: false
+    t.datetime "scheduled_at"
+    t.text "reason"
+    t.text "notes"
+    t.bigint "follow_up_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "status", default: 0
+    t.index ["announcement_id"], name: "index_appointments_on_announcement_id"
+    t.index ["barangay_id"], name: "index_appointments_on_barangay_id"
+    t.index ["follow_up_id"], name: "index_appointments_on_follow_up_id"
+    t.index ["health_worker_id"], name: "index_appointments_on_health_worker_id"
+    t.index ["patient_id"], name: "index_appointments_on_patient_id"
+  end
 
   create_table "barangays", force: :cascade do |t|
     t.string "name"
@@ -29,6 +107,50 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_26_174744) do
   end
 
   create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
+  end
+
+  create_table "health_programs", force: :cascade do |t|
+    t.bigint "barangay_id", null: false
+    t.string "name"
+    t.text "description"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barangay_id"], name: "index_health_programs_on_barangay_id"
+  end
+
+  create_table "noticed_events", force: :cascade do |t|
+    t.string "type"
+    t.string "record_type"
+    t.bigint "record_id"
+    t.jsonb "params"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "notifications_count"
+    t.index ["record_type", "record_id"], name: "index_noticed_events_on_record"
+  end
+
+  create_table "noticed_notifications", force: :cascade do |t|
+    t.string "type"
+    t.bigint "event_id", null: false
+    t.string "recipient_type", null: false
+    t.bigint "recipient_id", null: false
+    t.datetime "read_at", precision: nil
+    t.datetime "seen_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_noticed_notifications_on_event_id"
+    t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
+  end
+
+  create_table "push_subscriptions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "endpoint"
+    t.string "p256dh"
+    t.string "auth"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
   end
 
   create_table "subdivisions", force: :cascade do |t|
@@ -100,6 +222,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_26_174744) do
     t.index ["subdivision_id"], name: "index_users_on_subdivision_id"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "announcements", "barangays"
+  add_foreign_key "announcements", "users", column: "posted_by_id"
+  add_foreign_key "appointments", "announcements"
+  add_foreign_key "appointments", "appointments", column: "follow_up_id"
+  add_foreign_key "appointments", "barangays"
+  add_foreign_key "appointments", "users", column: "health_worker_id"
+  add_foreign_key "appointments", "users", column: "patient_id"
+  add_foreign_key "health_programs", "barangays"
+  add_foreign_key "push_subscriptions", "users"
   add_foreign_key "subdivisions", "barangays"
   add_foreign_key "taggings", "tags"
   add_foreign_key "users", "barangays"

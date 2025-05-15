@@ -1,0 +1,23 @@
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Update Personal Information</h5>
+    <%= form_with model: @user, url: super_admin_profile_path(@user.id), local: true do |form| %>
+      <div class="mb-3">
+        <%= form.label :first_name, class: "form-label" %>
+        <%= form.text_field :first_name, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :last_name, class: "form-label" %>
+        <%= form.text_field :last_name, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :phone_number, class: "form-label" %>
+        <%= form.telephone_field :phone_number, class: "form-control" %>
+      </div>
+
+      <%= form.submit "Update Personal Info", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>

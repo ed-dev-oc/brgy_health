@@ -36,5 +36,6 @@ Rails.application.routes.draw do
 
   namespace :super_admin do
     resources :dashboard, only: [ :index ]
+    resources :profile, only: [ :edit, :update ]
   end
 end
