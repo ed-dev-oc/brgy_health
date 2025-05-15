@@ -40,7 +40,7 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 1.2"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -78,3 +78,11 @@ gem "ruby-lsp", "~> 0.23.14", group: :development
 gem "htmlbeautifier", "~> 1.4", group: :development
 
 gem "letter_opener", "~> 1.10", group: :development
+
+gem "devise", "~> 4.9"
+
+gem "friendly_id", "~> 5.5"
+
+gem "acts_as_tenant", "~> 1.0"
+
+gem "acts-as-taggable-on", "~> 12.0"

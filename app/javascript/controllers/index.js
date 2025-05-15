@@ -9,3 +9,6 @@ application.register("flash", FlashController)
 
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import SelectPhilippinesAddressController from "./select_philippines_address_controller"
+application.register("select-philippines-address", SelectPhilippinesAddressController)
