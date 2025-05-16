@@ -35,6 +35,7 @@ class User < ApplicationRecord
   before_create :add_admin_flag_require_validation, if: -> { self.role == "admin" }
   before_create :add_requirements_flags
   before_update :remove_requirements_flags
+  after_create :send_registration_verification_email, if: -> { self.role == "admin" }
 
   def full_name
     "#{self.first_name} #{self.middle_name} #{self.last_name} #{self.suffix}".strip
@@ -63,5 +64,9 @@ class User < ApplicationRecord
 
   def add_admin_flag_require_validation
     self.flag_list.add("require_validation")
+  end
+
+  def send_registration_verification_email
+    UserMailer.admin_require_verify_email(self).deliver_later
   end
 end

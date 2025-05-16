@@ -76,8 +76,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
     unless ActsAsTenant.current_tenant.present?
       sign_out(resource)
       flash[:notice] = "Your account has been created. Please wait for an email to be sent."
-
-      # NOTE: Add email message for notify admin of instructions and process of validation.
     end
 
     super(resource)
