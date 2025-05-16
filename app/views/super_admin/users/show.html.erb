@@ -1,0 +1,33 @@
+<h1>User Details</h1>
+
+<p><strong>Public ID:</strong> <%= @user.public_uid %></p>
+<p><strong>Subdomain Link:</strong> <%= link_to root_url(subdomain: @user.barangay&.subdomain), root_path(subdomain: @user.barangay&.subdomain) %></p>
+
+<p><strong>Name:</strong>
+  <%= @user.full_name %>
+</p>
+
+<p><strong>Email:</strong> <%= @user.email %></p>
+
+<p><strong>Phone Number:</strong> <%= @user.phone_number || "Not provided" %></p>
+
+<p><strong>Role:</strong> <%= @user.role.titleize %></p>
+
+<p><strong>Barangay ID:</strong> <%= @user.barangay&.full_address %></p>
+
+<p><strong>Subdivision ID:</strong> <%= @user.subdivision_id || "Not assigned" %></p>
+
+<p><strong>Flags:</strong> <%= @user.flag_list || "None" %></p>
+
+<p><strong>Created At:</strong> <%= @user.created_at.strftime("%B %d, %Y %I:%M %p") %></p>
+
+<p><strong>Last Updated:</strong> <%= @user.updated_at.strftime("%B %d, %Y %I:%M %p") %></p>
+
+<%= link_to 'Back', super_admin_users_path, class: 'btn btn-secondary' %>
+<%= link_to "Remove Validation", 
+  validated_super_admin_user_path(@user.public_uid), 
+  class: "btn btn-secondary btn-sm", 
+  data: { 
+    turbo_method: :PATCH, 
+    turbo_confirm: "Are you sure?", 
+    turbo_submits_with: "Submitting..."} if @user.flag_list.include?("require_validation") %>

@@ -62,5 +62,11 @@ Rails.application.routes.draw do
 
   namespace :super_admin do
     resources :dashboard, only: [ :index ]
+
+    resources :users, only: [ :index, :show ] do
+      member do
+        patch :validated
+      end
+    end
   end
 end
