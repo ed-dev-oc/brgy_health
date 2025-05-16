@@ -14,6 +14,7 @@ class SuperAdmin::UsersController < SuperAdminController
 
     if @user.save
       redirect_to super_admin_users_path, status: :see_other, notice: "User removed validation."
+      UserMailer.admin_validated_email(@user).deliver_later
     else
       redirect_to super_admin_users_path, status: :see_other, alert: "Error removing validation."
     end

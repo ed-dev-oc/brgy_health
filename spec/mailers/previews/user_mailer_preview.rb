@@ -3,4 +3,8 @@ class UserMailerPreview < ActionMailer::Preview
   def admin_require_verify_email
     UserMailer.admin_require_verify_email(User.admin.first)
   end
+
+  def admin_validated_email
+    UserMailer.admin_validated_email(User.admin.first)
+  end
 end
