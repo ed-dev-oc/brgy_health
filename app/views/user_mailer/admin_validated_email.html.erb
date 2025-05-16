@@ -1,0 +1,45 @@
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    color: #333333;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+  }
+  .email-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  .button {
+    display: inline-block;
+    background-color: #007bff;
+    color: #ffffff !important;
+    padding: 12px 20px;
+    margin-top: 20px;
+    border-radius: 4px;
+    text-decoration: none;
+  }
+  .footer {
+    margin-top: 30px;
+    font-size: 12px;
+    color: #999999;
+    text-align: center;
+  }
+</style>
+<div class="email-container">
+  <h2>Registration Approved</h2>
+  <p>Hi <strong><%= @user.full_name %></strong>,</p>
+  <p>We’re happy to inform you that your registration with <strong>brgyhealth.top</strong> has been approved by our admin team.</p>
+  <p>You can now log in and start using your account:</p>
+  <%= link_to "Log In", new_user_session_url(subdomain: @user.barangay&.subdomain), class: "button" %>
+  <p>If you have any questions, feel free to contact us at <a href="mailto:junjunpojr@gmail.com">junjunpojr@gmail.com</a>.</p>
+  <p>Welcome aboard!<br>
+    <strong>brgyhealth.top Team</strong></p>
+</div>
+<div class="footer">
+  &copy; <%= Time.current.year %> brgyhealth.top. All rights reserved.
+</div>

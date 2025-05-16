@@ -19,6 +19,10 @@ class Barangay < ApplicationRecord
     users.where(role: [ :admin, :staff ])
   end
 
+  def full_address
+    "#{name}, #{city}, #{province}, #{region}"
+  end
+
   private
 
   def slug_candidates
