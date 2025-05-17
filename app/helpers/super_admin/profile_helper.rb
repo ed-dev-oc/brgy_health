@@ -1,0 +1,2 @@
+module SuperAdmin::ProfileHelper
+end
