@@ -12,6 +12,8 @@ class User < ApplicationRecord
   has_many :appointments, foreign_key: :patient_id
   has_many :appointments_as_health_worker, foreign_key: :health_worker_id, class_name: "Appointment"
   has_many :notifications, as: :recipient, class_name: "Noticed::Notification"
+  has_many :noticed_events, as: :record, dependent: :destroy, class_name: "Noticed::Event"
+  has_many :about_me_notifications, through: :noticed_events, source: :notifications, class_name: "Noticed::Notification"
   has_many :push_subscriptions
 
   acts_as_taggable_on :flags
@@ -35,7 +37,8 @@ class User < ApplicationRecord
   before_create :add_admin_flag_require_validation, if: -> { self.role == "admin" }
   before_create :add_requirements_flags
   before_update :remove_requirements_flags
-  after_create :send_registration_verification_email, if: -> { self.role == "admin" }
+  after_create :send_registration_verification_email,
+    :send_notification_to_super_admin, if: -> { self.role == "admin" }
 
   def self.ransackable_attributes(auth_object = nil)
     [ "barangay_id", "created_at", "email", "encrypted_password", "first_name", "id", "last_name", "middle_name", "phone_number", "public_uid", "remember_created_at", "reset_password_sent_at", "reset_password_token", "role", "subdivision_id", "suffix", "updated_at" ]
@@ -72,5 +75,11 @@ class User < ApplicationRecord
 
   def send_registration_verification_email
     UserMailer.admin_require_verify_email(self).deliver_later
+  end
+
+  def send_notification_to_super_admin
+    super_admin = User.super_admin.first
+
+    NewAdminNotifier.with(record: self).deliver(super_admin)
   end
 end
