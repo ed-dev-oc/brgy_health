@@ -36,7 +36,7 @@ class NewAdminNotifier < ApplicationNotifier
     end
 
     def url
-      super_admin_users_path
+      super_admin_user_path(record.public_uid)
     end
   end
 end

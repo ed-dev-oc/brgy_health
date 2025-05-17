@@ -7,6 +7,7 @@ class SuperAdmin::UsersController < SuperAdminController
   end
 
   def show
+    @user.about_me_notifications.where(recipient: current_user).mark_as_read
   end
 
   def validated

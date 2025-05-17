@@ -12,6 +12,8 @@ class User < ApplicationRecord
   has_many :appointments, foreign_key: :patient_id
   has_many :appointments_as_health_worker, foreign_key: :health_worker_id, class_name: "Appointment"
   has_many :notifications, as: :recipient, class_name: "Noticed::Notification"
+  has_many :noticed_events, as: :record, dependent: :destroy, class_name: "Noticed::Event"
+  has_many :about_me_notifications, through: :noticed_events, source: :notifications, class_name: "Noticed::Notification"
   has_many :push_subscriptions
 
   acts_as_taggable_on :flags
