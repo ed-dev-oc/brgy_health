@@ -25,6 +25,7 @@
   <body>
     <%= render partial: "shared/web_push" %>
     <%= render(FlashComponent.new(flash: flash)) %>
+    <%= render partial: "shared/navbar" %>
 
     <div class="container">
       <%= yield %>

@@ -1,4 +1,12 @@
-<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#notificationOffcanvas" aria-controls="notificationOffcanvas">Notification</button>
+<a href="#" class="fs-5 position-relative nav-link p-0" data-bs-toggle="offcanvas" data-bs-target="#notificationOffcanvas" aria-controls="notificationOffcanvas">
+  <i class="bi <%= @notifications.unread.any? ? "text-danger bi-bell" : "bi-bell-fill" %>"></i>
+
+  <% if @notifications.unread.any? %>
+    <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+      <span class="visually-hidden">New alerts</span>
+    </span>
+  <% end %>
+</a>
 
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="notificationOffcanvas" aria-labelledby="notificationOffcanvasLabel">
   <div class="offcanvas-header">

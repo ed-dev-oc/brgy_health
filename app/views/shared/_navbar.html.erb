@@ -1,0 +1,23 @@
+<nav class="navbar bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+
+      <%= navbar_title %>
+    </a>
+    <div class="navbar-nav d-flex flex-row gap-2 align-items-center">
+      <%= link_to "Home", root_path(subdomain: ActsAsTenant.current_tenant&.subdomain), class: "nav-link #{ navbar_link_status(root_path) }" %>
+      <a class="nav-link" href="#">About Us</a>
+      <a class="nav-link" href="#">Contact Us</a>
+
+      <%= link_to "Sign In", new_user_session_path, class: "nav-link #{navbar_link_status(new_user_session_path)}" unless user_signed_in? %>
+      <% if user_signed_in? %>
+        <%= link_to "Administrator", administrator_path_helper, class: "nav-link #{navbar_link_status(administrator_path_helper)}" unless current_user.patient? %>
+
+        <span>
+          <%= render partial: "shared/notifications/parent" %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+</nav>
