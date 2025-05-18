@@ -1,10 +1,17 @@
 <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+    <% if controller.class.superclass == SuperAdminController || controller.class.superclass == AdminController %>
+      <button class="btn text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+        <i class="bi bi-list"></i>
+      </button>
+    <% else %>
+      <%= link_to root_path(subdomain: ActsAsTenant.current_tenant&.subdomain), class: "navbar-brand" do %>
+        <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
 
-      <%= navbar_title %>
-    </a>
+        <%= navbar_title %>
+      <% end %>
+    <% end %>
+
     <div class="navbar-nav d-flex flex-row gap-2 align-items-center">
       <%= link_to "Home", root_path(subdomain: ActsAsTenant.current_tenant&.subdomain), class: "nav-link #{ navbar_link_status(root_path) }" %>
       <a class="nav-link" href="#">About Us</a>

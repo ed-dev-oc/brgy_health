@@ -1,4 +1,4 @@
-class Admin::HealthProgramsController < ApplicationController
+class Admin::HealthProgramsController < AdminController
   before_action :set_admin_health_program, only: %i[ show edit update destroy ]
 
   # GET /admin/health_programs or /admin/health_programs.json

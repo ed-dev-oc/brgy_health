@@ -1,5 +1,6 @@
 class SuperAdminController < ApplicationController
   layout "super_admin"
+  before_action :authenticate_user!
   before_action :have_current_tenant?
 
   private
