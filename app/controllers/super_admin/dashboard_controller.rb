@@ -1,6 +1,6 @@
 class SuperAdmin::DashboardController < SuperAdminController
   before_action :authorize_super_admin!
-  
+
   def index
   end
 

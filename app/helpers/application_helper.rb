@@ -1,8 +1,7 @@
 module ApplicationHelper
-  
   def display_profile_image(user, alt: "Avatar")
     if user.profile.attached?
-      image_tag url_for(user.profile.variant(resize_to_limit: [200, 200]).processed), alt: alt, class: "rounded"
+      image_tag url_for(user.profile.variant(resize_to_limit: [ 200, 200 ]).processed), alt: alt, class: "rounded"
     else
       image_tag "default_avatar.jpg", alt: alt, class: "rounded", style: "width: 200px; height: 200px;"
     end

@@ -18,7 +18,7 @@ class ProfileController < ApplicationController
         barangay_id: @user.barangay_id,
         name: params[:new_subdivision_name].strip
       )
-    
+
       params[:user][:subdivision_id] = new_subdivision.id
     end
 
