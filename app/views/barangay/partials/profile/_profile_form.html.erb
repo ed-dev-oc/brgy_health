@@ -7,12 +7,10 @@
         <%= form.file_field :profile, class: "form-control" %>
       </div>
 
-      <% if @user.profile.attached? %>
         <div class="mb-3">
           <p>Current profile:</p>
           <%= display_profile_image(@user) %>
         </div>
-      <% end %>
 
       <%= form.submit "Update Profile", class: "btn btn-primary" %>
     <% end %>
