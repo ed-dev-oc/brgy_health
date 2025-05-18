@@ -5,15 +5,27 @@ class ProfileController < ApplicationController
 
   def edit
     @user = current_user
-    render "pages/profile"
+    @subdivisions = Subdivision.where(barangay_id: @user.barangay_id)
+    render select_user_profile_page
   end
 
   def update
     @user = current_user
+    @subdivisions = Subdivision.where(barangay_id: @user.barangay_id)
+
+    if params[:new_subdivision_name].present?
+      new_subdivision = Subdivision.find_or_create_by!(
+        barangay_id: @user.barangay_id,
+        name: params[:new_subdivision_name].strip
+      )
+    
+      params[:user][:subdivision_id] = new_subdivision.id
+    end
+
     if @user.update(user_params)
       redirect_to edit_profile_path, notice: "Profile updated successfully."
     else
-      render "pages/profile"
+      render :edit
     end
   end
 
@@ -21,8 +33,9 @@ class ProfileController < ApplicationController
 
   def user_params
     params.require(:user).permit(
-      :profile, :first_name, :last_name,
-      :phone_number, :email, :password, :password_confirmation
+      :profile, :first_name, :last_name, :middle_name, :suffix,
+      :phone_number, :email, :password, :password_confirmation,
+      :subdivision_id
     )
   end
 
@@ -33,6 +46,14 @@ class ProfileController < ApplicationController
       "layouts/super_admin"
     else
       "layouts/application"
+    end
+  end
+
+  def select_user_profile_page
+    if current_user&.super_admin?
+      "pages/profile"
+    else
+      "barangay/pages/profile"
     end
   end
 end
