@@ -7,6 +7,9 @@ import { application } from "./application"
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 
+import GoogleMapApiController from "./google_map_api_controller"
+application.register("google-map-api", GoogleMapApiController)
+
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
