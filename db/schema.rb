@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_07_035423) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_19_142442) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -143,6 +143,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_07_035423) do
     t.index ["recipient_type", "recipient_id"], name: "index_noticed_notifications_on_recipient"
   end
 
+  create_table "pages", force: :cascade do |t|
+    t.bigint "barangay_id"
+    t.string "name"
+    t.string "slug"
+    t.string "title"
+    t.string "subheadline"
+    t.integer "section"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barangay_id"], name: "index_pages_on_barangay_id"
+  end
+
   create_table "push_subscriptions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "endpoint"
@@ -232,6 +246,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_07_035423) do
   add_foreign_key "appointments", "users", column: "health_worker_id"
   add_foreign_key "appointments", "users", column: "patient_id"
   add_foreign_key "health_programs", "barangays"
+  add_foreign_key "pages", "barangays"
   add_foreign_key "push_subscriptions", "users"
   add_foreign_key "subdivisions", "barangays"
   add_foreign_key "taggings", "tags"
