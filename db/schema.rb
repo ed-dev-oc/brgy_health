@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_29_165058) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_19_120816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -67,7 +67,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_165058) do
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "health_program_id"
     t.index ["barangay_id"], name: "index_announcements_on_barangay_id"
+    t.index ["health_program_id"], name: "index_announcements_on_health_program_id"
     t.index ["posted_by_id"], name: "index_announcements_on_posted_by_id"
     t.index ["public_uid"], name: "index_announcements_on_public_uid", unique: true
   end
@@ -171,6 +173,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_29_165058) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "announcements", "barangays"
+  add_foreign_key "announcements", "health_programs"
   add_foreign_key "announcements", "users", column: "posted_by_id"
   add_foreign_key "health_programs", "barangays"
   add_foreign_key "subdivisions", "barangays"

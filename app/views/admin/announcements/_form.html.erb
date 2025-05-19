@@ -56,8 +56,52 @@
       <%= form.label :description, class: "form-label" %>
       <%= form.rich_text_area :description, class: "overflow-auto", required: true %>
     </div>
+
+        <div class="mb-3">
+      <%= form.label :health_program_id, "Select Health Program", class: "form-label" %>
+      <%= form.collection_select :health_program_id, HealthProgram.all, :id, :name, { include_blank: "Select existing program" }, class: "form-select" %>
+    </div>
+
+    <div class="mb-3">
+      <button type="button" class="btn btn-secondary" id="toggle-health-program-form">
+        + Create New Health Program
+      </button>
+    </div>
+
+    <div id="new-health-program-fields" style="display: none; margin-bottom: 1rem;">
+      <%= form.fields_for :health_program do |hp_fields| %>
+        <div class="mb-3">
+          <%= hp_fields.label :name, "New Program Name", class: "form-label" %>
+          <%= hp_fields.text_field :name, class: "form-control" %>
+        </div>
+        <div class="mb-3">
+          <%= hp_fields.label :description, "New Program Description", class: "form-label" %>
+          <%= hp_fields.text_area :description, class: "form-control" %>
+        </div>
+      <% end %>
+    </div>
+
     <div class="mb-3">
       <%= form.submit %>
     </div>
   </div>
 <% end %>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggleButton = document.getElementById("toggle-health-program-form");
+    const newFields = document.getElementById("new-health-program-fields");
+
+    toggleButton?.addEventListener("click", () => {
+      if (newFields.style.display === "none") {
+        newFields.style.display = "block";
+        toggleButton.textContent = "− Cancel New Health Program";
+        document.querySelector("select[name='announcement[health_program_id]']").value = "";
+      } else {
+        newFields.style.display = "none";
+        toggleButton.textContent = "+ Create New Health Program";
+      }
+    });
+  });
+</script>
