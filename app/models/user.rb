@@ -15,6 +15,7 @@ class User < ApplicationRecord
   has_many :noticed_events, as: :record, dependent: :destroy, class_name: "Noticed::Event"
   has_many :about_me_notifications, through: :noticed_events, source: :notifications, class_name: "Noticed::Notification"
   has_many :push_subscriptions
+  has_one :testimonial
 
   acts_as_taggable_on :flags
 
