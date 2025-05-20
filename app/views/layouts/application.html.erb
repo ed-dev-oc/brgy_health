@@ -27,8 +27,10 @@
     <%= render(FlashComponent.new(flash: flash)) %>
     <%= render partial: "shared/navbar" %>
 
-    <div class="container">
+    <div class="container-fluid">
       <%= yield %>
     </div>
+
+    <%= render partial: "shared/footer" %>
   </body>
 </html>

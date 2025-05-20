@@ -48,6 +48,7 @@ Rails.application.routes.draw do
           patch :flag_as_completed
         end
       end
+      resources :cms, only: [ :index, :update ]
     end
   end
 
@@ -57,7 +58,7 @@ Rails.application.routes.draw do
   }
 
   root "pages#home"
-  get "/:page", to: "pages#show"
+  get "/:page", to: "pages#show", as: :main_page
   resources :push_subscriptions, only: [ :create ]
 
   namespace :super_admin do
@@ -68,5 +69,7 @@ Rails.application.routes.draw do
         patch :validated
       end
     end
+
+    resources :cms, only: [ :index, :update ]
   end
 end
