@@ -13,7 +13,7 @@
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#<%= dom_id(page, "modal") %>">
           Edit
         </button>
-        <%= link_to "View Page", main_page_path(page.section), class: "btn btn-primary" %>
+        <%= link_to "View Page", main_view_page_helper(page.section), class: "btn btn-primary" %>
       </div>
     </div>
   <% end %>
