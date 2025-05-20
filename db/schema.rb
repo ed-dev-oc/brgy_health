@@ -145,8 +145,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_19_142442) do
 
   create_table "pages", force: :cascade do |t|
     t.bigint "barangay_id"
-    t.string "name"
-    t.string "slug"
     t.string "title"
     t.string "subheadline"
     t.integer "section"

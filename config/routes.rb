@@ -68,5 +68,7 @@ Rails.application.routes.draw do
         patch :validated
       end
     end
+
+    resources :cms, only: [ :index, :update ]
   end
 end
