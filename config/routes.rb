@@ -48,6 +48,7 @@ Rails.application.routes.draw do
           patch :flag_as_completed
         end
       end
+      resources :cms, only: [ :index, :update ]
     end
   end
 

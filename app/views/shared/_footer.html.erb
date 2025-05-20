@@ -9,15 +9,27 @@
         <div class="d-flex flex-column">
           <span>
             <i class="bi bi-geo-alt-fill"></i>
-            Bagong Buhay, Ormoc City, Leyte, 6541
+            <% if ActsAsTenant.current_tenant.present? %>
+              <%= ActsAsTenant.current_tenant.full_address %>
+            <% else %>
+              Bagong Buhay, Ormoc City, Leyte, 6541
+            <% end %>
           </span>
           <span>
             <i class="bi bi-telephone-fill"></i>
-            09061720165
+            <% if ActsAsTenant.current_tenant.present? %>
+              <%= ActsAsTenant.current_tenant.users.admin.first.phone_number %>
+            <% else %>
+              09061720165
+            <% end %>
           </span>
           <span>
             <i class="bi bi-envelope"></i>
-            junjunpojr@gmail.com
+            <% if ActsAsTenant.current_tenant.present? %>
+              <%= ActsAsTenant.current_tenant.users.admin.first.email %>
+            <% else %>
+              junjunpojr@gmail.com
+            <% end %>
           </span>
         </div>
         <div class="d-flex gap-2 align-items-center">
@@ -28,11 +40,17 @@
       <div class="d-flex flex-column col">
         <p class="fs-5 fw-bold">Sections</p>
         <div class="d-flex flex-column">
-          <%= link_to "Home", root_path, class: "text-light text-decoration-none" %>
-          <%= link_to "About Us", main_page_path(:about_us), class: "text-light text-decoration-none" %>
-          <%= link_to "Contact Us", main_page_path(:contact_us), class: "text-light text-decoration-none" %>
-          <%= link_to "Privacy Policy", main_page_path(:privacy_policy), class: "text-light text-decoration-none" %>
-          <%= link_to "Terms of Use", main_page_path(:terms_of_use), class: "text-light text-decoration-none" %>
+          <%= link_to "Home", root_path(subdomain: ActsAsTenant.current_tenant&.subdomain), class: "text-light text-decoration-none" %>
+          <% if ActsAsTenant.current_tenant.present? %>
+            <%= link_to "About Us", about_us_pages_path, class: "text-light text-decoration-none" %>
+            <%= link_to "Contact Us", contact_us_pages_path, class: "text-light text-decoration-none" %>
+            <%= link_to "Annoucements", announcements_path, class: "text-light text-decoration-none" %>
+          <% else %>
+            <%= link_to "About Us", main_page_path(:about_us), class: "text-light text-decoration-none" %>
+            <%= link_to "Contact Us", main_page_path(:contact_us), class: "text-light text-decoration-none" %>
+            <%= link_to "Privacy Policy", main_page_path(:privacy_policy), class: "text-light text-decoration-none" %>
+            <%= link_to "Terms of Use", main_page_path(:terms_of_use), class: "text-light text-decoration-none" %>
+          <% end %>
         </div>
       </div>
       <div class="d-flex flex-column col">

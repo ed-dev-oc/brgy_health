@@ -1,6 +1,4 @@
 class PagesController < ApplicationController
-  before_action :set_pages
-
   def home
     @hero_banner = Page.find_by(barangay_id: nil, section: "homepage_hero_banner")
   end
@@ -18,11 +16,5 @@ class PagesController < ApplicationController
     else
       render file: Rails.root.join("public/404.html"), status: :not_found, layout: false
     end
-  end
-
-  private
-
-  def set_pages
-    @pages = Page.where(barangay_id: nil)
   end
 end

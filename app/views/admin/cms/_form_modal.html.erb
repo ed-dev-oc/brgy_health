@@ -1,0 +1,51 @@
+<div class="modal fade" id="<%= dom_id(page, "modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(page, "modal") %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="<%= dom_id(page, "modal") %>Label">Edit <%= page.section.titleize %></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= form_with(model: page, url: admin_cm_path(page), html: { multipart: true }) do |form| %>
+          <div class="my-2">
+            <%= form.label :title, class: "form-label fw-bold" %>
+            <%= form.text_field :title, class: "form-control", required: true %>
+          </div>
+          <div class="my-2">
+            <%= form.label :subheadline, class: "form-label fw-bold" %>
+            <%= form.textarea :subheadline, rows: 3, class: "form-control", required: true %>
+          </div>
+
+          <% unless page.homepage_hero_banner? %>
+            <div class="my-2">
+              <%= form.label :content, class: "form-label fw-bold" %>
+              <%= form.rich_text_area :content, class: "form-control", required: true %>
+            </div>
+          <% end %>
+
+          <% if page.homepage_hero_banner? %>
+            <div class="my-2">
+              <%= form.label :image, class: "form-label fw-bold" %>
+              <%= form.file_field :image, class: "form-control" %>
+            </div>
+          <% end %>
+
+          <% if page.contact_us? %>
+            <div class="my-2">
+              <%= form.label :latitude, "Latitude and Longitude", class: "form-label fw-bold" %>
+              <div class="input-group">
+                <span class="input-group-text">Google Map Location</span>
+                <%= form.number_field :latitude, step: 0.01, class: "form-control", placeholder: "Latitude", required: true %>
+                <%= form.number_field :longitude, step: 0.01, class: "form-control", placeholder: "Longitude", required: true %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="mt-3">
+            <%= form.submit "Save Changes", class: "btn btn-primary", data: { turbo_submits_with: "Saving...", turbo_confirm: "Are you sure?" } %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

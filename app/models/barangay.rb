@@ -14,6 +14,7 @@ class Barangay < ApplicationRecord
   validates :name, uniqueness: { scope: [ :region, :province, :city ] }
 
   after_validation :set_subdomain_from_slug
+  after_create :generate_pages
 
   def admin_and_staff
     users.where(role: [ :admin, :staff ])
@@ -35,5 +36,9 @@ class Barangay < ApplicationRecord
 
   def set_subdomain_from_slug
     self.subdomain = slug
+  end
+
+  def generate_pages
+    BarangayGeneratePagesJob.perform_later(self.id)
   end
 end
