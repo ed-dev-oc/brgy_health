@@ -49,6 +49,7 @@ Rails.application.routes.draw do
         end
       end
       resources :cms, only: [ :index, :update ]
+      resources :testimonials, only: [ :create, :update ]
     end
   end
 
