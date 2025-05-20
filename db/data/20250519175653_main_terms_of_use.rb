@@ -3,7 +3,6 @@
 class MainTermsOfUse < ActiveRecord::Migration[8.0]
   def up
     page = Page.new(
-      name: "Terms of Use",
       title: "Terms of Use",
       subheadline: "Rules and guidelines for using our services and website",
       section: 4
@@ -85,7 +84,7 @@ class MainTermsOfUse < ActiveRecord::Migration[8.0]
   end
 
   def down
-    page = Page.find_by(barangay_id: nil, name: "Terms of Use")
+    page = Page.find_by(barangay_id: nil, title: "Terms of Use")
     page.destroy if page
   end
 end

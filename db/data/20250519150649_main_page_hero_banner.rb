@@ -8,7 +8,6 @@ class MainPageHeroBanner < ActiveRecord::Migration[8.0]
     image_path = Rails.root.join("app/assets/images/hero_banner.png")
 
     page = Page.new(
-      name: "Main Page Hero Banner",
       title: title,
       subheadline: subheadline,
       section: 0)
@@ -23,7 +22,7 @@ class MainPageHeroBanner < ActiveRecord::Migration[8.0]
   end
 
   def down
-    page = Page.find_by(name: "Main Page Hero Banner")
+    page = Page.find_by(barangay_id: nil, title: "Welcome to Barangay Health Center")
     page.destroy if page
   end
 end

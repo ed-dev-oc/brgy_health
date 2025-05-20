@@ -3,7 +3,6 @@
 class MainPrivacyPolicy < ActiveRecord::Migration[8.0]
   def up
     page = Page.new(
-      name: "Privacy Policy",
       title: "Privacy Policy",
       subheadline: "How we protect and handle your personal information",
       section: 3
@@ -80,7 +79,7 @@ class MainPrivacyPolicy < ActiveRecord::Migration[8.0]
   end
 
   def down
-    page = Page.find_by(barangay_id: nil, name: "Privacy Policy")
+    page = Page.find_by(barangay_id: nil, title: "Privacy Policy")
     page.destroy if page
   end
 end

@@ -3,7 +3,6 @@
 class MainContactUs < ActiveRecord::Migration[8.0]
   def up
     page = Page.new(
-      name: "Contact Us",
       title: "Contact Us",
       subheadline: "Have questions or need assistance? We're here to help!",
       latitude: 11.034104321018695,
@@ -51,7 +50,7 @@ class MainContactUs < ActiveRecord::Migration[8.0]
   end
 
   def down
-    page = Page.find_by(barangay_id: nil, name: "Contact Us")
+    page = Page.find_by(barangay_id: nil, title: "Contact Us")
     page.destroy if page
   end
 end

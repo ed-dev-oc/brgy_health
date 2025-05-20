@@ -3,7 +3,6 @@
 class MainAboutUs < ActiveRecord::Migration[8.0]
   def up
     page = Page.new(
-      name: "About Us",
       title: "About Our Barangay Health Center",
       subheadline: "Learn more about our mission and vision.",
       section: 1)
@@ -50,7 +49,7 @@ class MainAboutUs < ActiveRecord::Migration[8.0]
   end
 
   def down
-    page = Page.find_by(barangay_id: nil, name: "About Us")
+    page = Page.find_by(barangay_id: nil, title: "About Our Barangay Health Center")
     page.destroy if page
   end
 end
