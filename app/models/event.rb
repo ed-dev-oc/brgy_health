@@ -25,6 +25,8 @@ class Event < ApplicationRecord
   validates :name, :location, :start_date, :end_date, :description, presence: true
   validate :images_presence, on: :create
 
+  after_create :send_patient_notification
+
   ransacker :full_name do |parent|
     Arel::Nodes::NamedFunction.new("CONCAT_WS", [
       " ", parent.table[:first_name], parent.table[:middle_name], parent.table[:last_name]
@@ -43,5 +45,11 @@ class Event < ApplicationRecord
 
   def images_presence
     errors.add(:images, "must have at least one image") if images.empty?
+  end
+
+  def send_patient_notification
+    patients = self.barangay.users.patient
+
+    NewEventNotifier.with(record: self).deliver(patients)
   end
 end
