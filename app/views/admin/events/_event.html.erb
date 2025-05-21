@@ -55,7 +55,7 @@
                   <div class="carousel-inner">
                     <% event.images.each_with_index do |image, index| %>
                       <div class="carousel-item <%= index == 0 ? "active" : ""%>">
-                        <%= image_tag(image, class: "d-block w-100") %>
+                        <%= image_tag(image.variant(resize_to_fill: [600, 400]), class: "d-block w-100") %>
                       </div>
                     <% end %>
                   </div>
@@ -71,9 +71,9 @@
 
                 <!-- Thumbnail Gallery -->
                 <div class="row g-2" id="<%= dom_id(event, "thumbnailGallery") %>">
-                  <div class="col-4">
+                  <div class="col-4 d-flex gap-2">
                     <% event.images.each do |image, index| %>
-                      <%= image_tag(image, class: "img-thumbnail") %>
+                      <%= image_tag(image.variant(resize_to_fill: [600, 400]), class: "img-thumbnail") %>
                     <% end %>
                   </div>
                 </div>
