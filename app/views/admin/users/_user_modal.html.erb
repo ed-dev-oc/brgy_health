@@ -31,6 +31,35 @@
             <dd class="col-sm-8"><%= value %></dd>
           <% end %>
         </dl>
+
+        <hr>
+        <h5>Appointments</h5>
+
+        <% if user.appointments.any? %>
+          <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th>Scheduled At</th>
+                <th>Status</th>
+                <th>Reason</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% user.appointments.order(scheduled_at: :desc).each do |appointment| %>
+                <tr>
+                  <td><%= appointment.scheduled_at.strftime('%b %d, %Y %I:%M %p') %></td>
+                  <td><%= appointment.status.capitalize %></td>
+                  <td><%= appointment.reason.presence || "-" %></td>
+                  <td><%= appointment.notes.presence || "-" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p>No appointments found for this user.</p>
+        <% end %>
+        
       </div>
 
       <div class="modal-footer d-flex justify-content-between">

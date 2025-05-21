@@ -4,13 +4,11 @@
   <h1 class="mb-3">Staff Users</h1>
 
   <span class="d-flex align-items-center justify-content-between">
-    
     <%= render partial: "search_form" %>
 
     <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#newUserModal">
       New Staff User
     </button>
-
   </span>
 
   <div class="table-responsive">
@@ -27,7 +25,6 @@
       <tbody id="users">
         <% @staff_users.each do |user| %>
           <%= render partial: "user", locals: { user: user } %>
-          <%= render partial: "user_modal", locals: { user: user } %>
         <% end %>
       </tbody>
     </table>
@@ -35,5 +32,9 @@
 
   <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
 </div>
+
+<% @staff_users.each do |user| %>
+  <%= render partial: "user_modal", locals: { user: user } %>
+<% end %>
 
 <%= render "new_user_modal", user: User.new %>
