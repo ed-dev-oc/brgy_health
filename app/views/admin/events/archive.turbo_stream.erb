@@ -1,0 +1,7 @@
+<%= turbo_stream.replace :flash do %>
+  <%= render FlashComponent.new(flash: flash) %>
+<% end %>
+
+<% if @event.errors.empty? %>
+  <%= turbo_stream.action(:redirect, admin_events_path) %>
+<% end %>

@@ -23,4 +23,25 @@ class Event < ApplicationRecord
   attribute :end_date, :datetime, default: -> { Time.current.change(hour: 17, minute: 0, second: 0) }
 
   validates :name, :location, :start_date, :end_date, :description, presence: true
+  validate :images_presence, on: :create
+
+  ransacker :full_name do |parent|
+    Arel::Nodes::NamedFunction.new("CONCAT_WS", [
+      " ", parent.table[:first_name], parent.table[:middle_name], parent.table[:last_name]
+    ])
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    [ "audience", "barangay_id", "created_at", "end_date", "id", "location", "name", "posted_by_id", "public_uid", "start_date", "status", "updated_at" ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    [ "barangay", "images_attachments", "images_blobs", "posted_by", "rich_text_description" ]
+  end
+
+  private
+
+  def images_presence
+    errors.add(:images, "must have at least one image") if images.empty?
+  end
 end

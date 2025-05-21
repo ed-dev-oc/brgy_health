@@ -20,4 +20,21 @@ module ApplicationHelper
       "Barangay Health Center"
     end
   end
+
+  def badge_status_class(status)
+    case status.to_s
+    when "active", "visible"
+      "text-bg-primary"
+    when "approved", "completed"
+      "text-bg-success"
+    when "pending"
+      "text-bg-warning"
+    when "rejected", "canceled", "cancelled", "archived"
+      "text-bg-danger"
+    when "draft", "inactive", "hidden"
+      "text-bg-secondary"
+    else
+      "text-bg-secondary"
+    end
+  end
 end
