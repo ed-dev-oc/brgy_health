@@ -44,6 +44,8 @@ class User < ApplicationRecord
   after_create :send_registration_verification_email,
     :send_notification_to_super_admin, if: -> { self.role == "admin" }
 
+  after_update :notify_user_of_credential_change, if: :credentials_changed?
+
   def self.ransackable_attributes(auth_object = nil)
     [ "barangay_id", "created_at", "email", "encrypted_password", "first_name", "id", "last_name", "middle_name", "phone_number", "public_uid", "remember_created_at", "reset_password_sent_at", "reset_password_token", "role", "subdivision_id", "suffix", "updated_at" ]
   end
@@ -97,4 +99,22 @@ class User < ApplicationRecord
       throw(:abort)
     end
   end
+
+ def credentials_changed?
+  saved_change_to_email? || saved_change_to_encrypted_password?
+end
+
+def notify_user_of_credential_change
+  changed_fields = []
+  changed_fields << "email" if saved_change_to_email?
+  changed_fields << "password" if saved_change_to_encrypted_password?
+
+  puts "Credential changed callback triggered with changes: #{changed_fields.inspect}"
+
+  PatientCredentialChangedNotifier.with(
+    changed_attributes: changed_fields
+  ).deliver_later(self)
+end
+
+
 end
