@@ -13,6 +13,18 @@ class Admin::UsersController < AdminController
     @user = User.find(params[:id])
   end
 
+  def create
+    @user = User.new(user_params)
+    @user.role = "staff" # enforce server-side
+
+    if @user.save
+      redirect_to admin_users_path, notice: "Staff user created successfully."
+    else
+      flash.now[:alert] = "There was a problem creating the user."
+      render :index, status: :unprocessable_entity
+    end
+  end
+
   def update
     if @user.role == "super_admin"
       params[:user].delete(:role)
@@ -58,7 +70,7 @@ end
 
   def user_params
   params.require(:user).permit(
-    :email, :public_uid, :first_name, :middle_name, :last_name, :suffix,
+    :email, :public_uid, :first_name, :middle_name, :last_name, :suffix, :password, :password_confirmation,
     :phone_number, :role, :barangay_id, :subdivision_id, flag_list: []
   )
   end

@@ -57,7 +57,7 @@ Rails.application.routes.draw do
 
       resources :cms, only: [:index, :update]
 
-      resources :users, only: [:index, :edit, :update, :show] do
+      resources :users, only: [:index, :edit, :update, :create] do
         member do
           patch :toggle_status 
         end
