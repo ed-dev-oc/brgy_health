@@ -1,0 +1,29 @@
+<p>ID: <%= @appointment.public_uid %></p>
+<p>Announcement Name: <%= @appointment.announcement.name %></p>
+<p>Scheduled At: <%= @appointment.scheduled_at.to_formatted_s(:long) %></p>
+<p>Status: <%= @appointment.status %></p>
+<p>Reason: <%= @appointment.reason %></p>
+<p>Notes: <%= @appointment.notes %></p>
+<% @appointment.flag_list.each do |flag| %>
+  <p>Flag: <%= flag %></p>
+<% end %>
+
+<% if @appointment.approved? %>
+  <%= link_to "Completed", "#", class: "btn btn-primary", data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "modal")}" } %>
+
+  <%= render partial: "admin/appointments/completed_modal" %>
+<% end %>
+
+<% if @appointment.completed? && @appointment.flag_list.exclude?("follow_up_check_up") %>
+  <%= link_to "Follow Up Check Up", "#", class: "btn btn-primary", data: { bs_toggle: "modal", bs_target: "##{dom_id(@new_appointment, "follow_up_modal")}" } %>
+
+  <%= render partial: "admin/appointments/follow_up_modal" %>
+<% end %>
+
+<% if @appointment.flag_list.include?("follow_up_check_up") %>
+  <%= link_to "View Follow Up Check Up", admin_appointment_path(@appointment.follow_up.public_uid), class: "btn btn-primary" %>
+<% end %>
+
+<% if @appointment.has_parent_appointment? %>
+  <%= link_to "Previous Appointment", admin_appointment_path(@appointment.parent_appointment.public_uid), class: "btn btn-primary" %>
+<% end %>

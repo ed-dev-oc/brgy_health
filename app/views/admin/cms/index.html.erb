@@ -1,0 +1,20 @@
+<div class="d-flex gap-3 flex-wrap">
+  <% @pages.each do |page| %>
+    <div id="<%= dom_id(page) %>" class="card" style="width: 18rem;">
+      <%= image_tag(page.image_attachment ? page.image : "https://placehold.co/600x400?text=Image+Not+Applicable", class: "card-img-top", alt: "Page Image") %>
+
+      <div class="card-body h-100">
+        <h5 class="card-title"><%= page.section.titleize %></h5>
+        <p class="card-text"><strong>Title:</strong> <%= page.title %></p>
+        <p class="card-text"><strong>Subheadline:</strong> <%= page.subheadline %></p>
+      </div>
+      <div class="card-footer">
+        <%= render partial: "admin/cms/form_modal", locals: { page: page } %>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#<%= dom_id(page, "modal") %>">
+          Edit
+        </button>
+        <%= link_to "View Page", barangay_view_page_helper(page.section), class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>

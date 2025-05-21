@@ -1,0 +1,54 @@
+<%= search_form_for @q, url: super_admin_users_path do |f| %>
+  <div>
+    <%= f.label :first_name_cont %>
+    <%= f.search_field :first_name_cont %>
+  </div>
+  <div>
+    <%= f.label :last_name_cont %>
+    <%= f.search_field :last_name_cont %>
+  </div>
+
+  <%= f.submit %>
+<% end %>
+
+<div id="users">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Barangay</th>
+        <th scope="col">Flags</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td><%= user.public_uid %></td>
+          <td><%= user.full_name %></td>
+          <td><%= user.email %></td>
+          <td><%= user.barangay&.full_address %></td>
+          <td>
+            <% user.flag_list.each do |flag| %>
+              <span class="badge bg-primary"><%= flag.titleize %></span>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to "View", super_admin_user_path(user.public_uid), class: "btn btn-secondary btn-sm" %>
+            <%= link_to "Remove Validation", 
+              validated_super_admin_user_path(user.public_uid), 
+              class: "btn btn-secondary btn-sm", 
+              data: { 
+                turbo_method: :PATCH, 
+                turbo_confirm: "Are you sure?", 
+                turbo_submits_with: "Submitting..."} if user.flag_list.include?("require_validation") %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
+</div>

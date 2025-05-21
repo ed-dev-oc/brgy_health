@@ -1,0 +1,15 @@
+<div class="modal fade" id="<%= dom_id(@appointment, "form") %>" tabindex="-1" aria-labelledby="<%= dom_id(@appointment, "form") %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Set Appointment</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= turbo_frame_tag dom_id(@appointment) do %>
+          <%= render partial: "barangay/appointments/appointment_form", locals: { announcement: @announcement, appointment: @appointment } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

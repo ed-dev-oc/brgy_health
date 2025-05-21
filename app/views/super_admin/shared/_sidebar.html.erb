@@ -1,0 +1,64 @@
+<div style="min-height: calc(100vh - 56px);">
+  <div class="collapse show collapse-horizontal h-100" id="collapseWidthExample">
+    <div class="d-flex flex-column p-3 text-bg-dark h-100" style="width: 280px;">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+
+        <span class="fs-4"><%= current_user.role.titleize %> Panel</span>
+      </a>
+
+      <hr>
+
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+          <a href="#" class="nav-link text-white <%= navbar_link_status(super_admin_dashboard_index_path) %>" aria-current="page">
+            <i class="bi bi-speedometer2"></i>
+            Dashboard
+          </a>
+          <a href="#" class="nav-link text-white" aria-current="page">
+            <i class="bi bi-house-door"></i>
+            Barangay
+          </a>
+          <a href="#" class="nav-link text-white" aria-current="page">
+            <i class="bi bi-people"></i>
+            Users
+          </a>
+          <a href="#" class="nav-link text-white" aria-current="page">
+            <i class="bi bi-chat-quote"></i>
+            Testimonials
+          </a>
+          <%= link_to super_admin_cms_path, class: "nav-link text-white #{ navbar_link_status(super_admin_cms_path) }" do %>
+            <i class="bi bi-layout-text-window"></i>
+            CMS
+          <% end %>
+        </li>
+      </ul>
+
+      <hr>
+
+      <div class="dropdown">
+        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="32" height="32" class="rounded-circle me-2">
+          <strong><%= current_user.full_name %></strong>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-person"></i>
+              Profile
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <%= link_to destroy_user_session_path, data: { turbo_method: :DELETE, turbo_confirm: "Are your sure?" }, class: "dropdown-item" do %>
+              <i class="bi bi-box-arrow-right"></i>
+              Sign Out
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

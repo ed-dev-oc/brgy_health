@@ -1,0 +1,59 @@
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f6f6f6;
+    padding: 20px;
+  }
+  .container {
+    background-color: #ffffff;
+    border-radius: 6px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+  }
+  h2 {
+    color: #333333;
+  }
+  p {
+    color: #555555;
+  }
+  ul {
+    padding-left: 20px;
+  }
+  li {
+    margin-bottom: 8px;
+  }
+  .button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+  .footer {
+    margin-top: 30px;
+    font-size: 12px;
+    color: #999999;
+    text-align: center;
+  }
+</style>
+
+<div class="container">
+  <h2>New Admin Registration</h2>
+  <p>A new admin account has been submitted and requires your approval.</p>
+
+  <ul>
+    <li><strong>Name:</strong> <%= @admin.full_name %></li>
+    <li><strong>Email:</strong> <%= @admin.email %></li>
+    <li><strong>Barangay:</strong> <%= @admin.barangay&.full_address %></li>
+  </ul>
+
+  <a href="<%= super_admin_dashboard_index_url %>" class="button">Review in Dashboard</a>
+
+  <div class="footer">
+    You are receiving this email because you're a Super Admin of the system.
+  </div>
+</div>

@@ -7,8 +7,14 @@ import { application } from "./application"
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 
+import GoogleMapApiController from "./google_map_api_controller"
+application.register("google-map-api", GoogleMapApiController)
+
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import RegisterServiceWorkerController from "./register_service_worker_controller"
+application.register("register-service-worker", RegisterServiceWorkerController)
 
 import SelectPhilippinesAddressController from "./select_philippines_address_controller"
 application.register("select-philippines-address", SelectPhilippinesAddressController)

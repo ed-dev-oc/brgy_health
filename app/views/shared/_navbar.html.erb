@@ -1,0 +1,36 @@
+<nav class="navbar bg-body-tertiary">
+  <div class="container-fluid">
+    <% if controller.class.superclass == SuperAdminController || controller.class.superclass == AdminController %>
+      <button class="btn text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+        <i class="bi bi-list"></i>
+      </button>
+    <% else %>
+      <%= link_to root_path(subdomain: ActsAsTenant.current_tenant&.subdomain), class: "navbar-brand" do %>
+        <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+
+        <%= navbar_title %>
+      <% end %>
+    <% end %>
+
+    <div class="navbar-nav d-flex flex-row gap-2 align-items-center">
+      <%= link_to "Home", root_path(subdomain: ActsAsTenant.current_tenant&.subdomain), class: "nav-link #{ navbar_link_status(root_path) }" %>
+
+      <% if ActsAsTenant.current_tenant.present? %>
+        <%= link_to "About Us", about_us_pages_path, class: "nav-link #{ navbar_link_status(about_us_pages_path) }" %>
+        <%= link_to "Contact Us", contact_us_pages_path, class: "nav-link #{ navbar_link_status(contact_us_pages_path) }" %>
+      <% else %>
+        <%= link_to "About Us", main_page_path("about_us"), class: "nav-link #{ navbar_link_status(main_page_path("about_us")) }" %>
+        <%= link_to "Contact Us", main_page_path("contact_us"), class: "nav-link #{ navbar_link_status(main_page_path("contact_us")) }" %>
+      <% end %>
+
+      <%= link_to "Sign In", new_user_session_path, class: "nav-link #{navbar_link_status(new_user_session_path)}" unless user_signed_in? %>
+      <% if user_signed_in? %>
+        <%= link_to "Administrator", administrator_path_helper, class: "nav-link #{navbar_link_status(administrator_path_helper)}" unless current_user.patient? %>
+
+        <span>
+          <%= render partial: "shared/notifications/parent" %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+</nav>

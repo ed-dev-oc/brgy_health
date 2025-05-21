@@ -1,4 +1,5 @@
 class BarangayController < ApplicationController
+  layout "barangay"
   before_action :check_admin_flags
 
   private

@@ -59,12 +59,15 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  gem "letter_opener_web", "~> 3.0"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "shoulda-matchers", "~> 5.0"
 end
 
 gem "view_component", "~> 3.21"
@@ -90,3 +93,9 @@ gem "acts-as-taggable-on", "~> 12.0"
 gem "pagy", "~> 9.3"
 
 gem "ransack", "~> 4.3"
+
+gem "noticed", "~> 2.6"
+
+gem "mission_control-jobs", "~> 1.0"
+
+gem "web-push", "~> 3.0"
