@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   generate_public_uid generator: PublicUid::Generators::NumberRandom.new
 
+  before_update :prevent_super_admin_demotion
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -85,5 +86,12 @@ class User < ApplicationRecord
     super_admin = User.super_admin.first
 
     NewAdminNotifier.with(record: self).deliver(super_admin)
+  end
+
+  def prevent_super_admin_demotion
+    if role_changed? && role_was == "super_admin"
+      errors.add(:role, "cannot be changed for super admin")
+      throw(:abort)
+    end
   end
 end

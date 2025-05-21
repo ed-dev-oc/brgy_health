@@ -42,7 +42,12 @@
 
       <div class="col-md-6">
         <%= f.label :role, class: "form-label" %>
-        <%= f.select :role, User.roles.keys.map { |r| [r.titleize, r] }, {}, class: "form-select" %>
+        <% if @user.role == "super_admin" %>
+            <%= f.text_field :role, value: @user.role.titleize, class: "form-control", readonly: true %>
+            <small class="text-muted">Role cannot be changed for Super Admin</small>
+        <% else %>
+            <%= f.select :role, User.roles.keys.reject { |r| r == "super_admin" }.map { |r| [r.titleize, r] }, {}, class: "form-select" %>
+        <% end %>
       </div>
 
       <div class="col-md-6">

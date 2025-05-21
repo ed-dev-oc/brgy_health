@@ -14,6 +14,10 @@ class Admin::UsersController < AdminController
   end
 
   def update
+    if @user.role == "super_admin"
+      params[:user].delete(:role)
+    end
+
     flag_str = params[:user].delete(:flag_list)
     params[:user][:flag_list] = flag_str.to_s.split(',').map(&:strip) if flag_str
 
@@ -25,7 +29,6 @@ class Admin::UsersController < AdminController
   end
 
   def show
-    # display user details + medical records + appointments if needed
   end
 
  def toggle_status
@@ -59,5 +62,4 @@ end
     :phone_number, :role, :barangay_id, :subdivision_id, flag_list: []
   )
   end
-
 end
