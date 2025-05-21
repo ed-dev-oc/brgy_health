@@ -38,7 +38,7 @@ class ProfileController < ApplicationController
     if @user.update(user_params)
       redirect_to edit_profile_path, notice: "Profile updated successfully."
     else
-      render :edit
+      render select_user_profile_page
     end
   end
 
