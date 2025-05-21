@@ -58,14 +58,14 @@ class Admin::AnnouncementsController < AdminController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_announcement
-      @announcement = Announcement.find_by_public_uid(params.expect(:id))
 
-      if @announcement.nil?
-        redirect_to admin_announcements_path, status: :see_other, alert: "Announcement not found."
-      end
+  def set_announcement
+    @announcement = Announcement.find_by_public_uid(params.expect(:id))
+
+    if @announcement.nil?
+      redirect_to admin_announcements_path, status: :see_other, alert: "Announcement not found."
     end
+  end
 
     # Only allow a list of trusted parameters through.
     def announcement_params
