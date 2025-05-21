@@ -1,5 +1,5 @@
 class Admin::AnnouncementsController < AdminController
-  before_action :set_announcement, only: %i[show edit update destroy]
+  before_action :set_announcement, only: [ :show, :edit, :update, :destroy ]
 
   # GET /admin/announcements or /admin/announcements.json
   def index
@@ -55,31 +55,23 @@ class Admin::AnnouncementsController < AdminController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_announcement
-      @announcement = Announcement.find_by_public_uid(params.expect(:id))
 
-      if @announcement.nil?
-        redirect_to admin_announcements_path, status: :see_other, alert: "Announcement not found."
-      end
-    end
+  def set_announcement
+    @announcement = Announcement.find_by_public_uid(params.expect(:id))
 
-    # Only allow a list of trusted parameters through.
-    def announcement_params
-      params.fetch(:announcement, {}).permit(
-        :name,
-        :description,
-        :start_date,
-        :end_date,
-        :open_time,
-        :close_time,
-        :location,
-        :max_patients,
-        :audience,
-        :status
-      ).merge(
-        posted_by: current_user,
-        barangay: current_tenant
-      )
+    if @announcement.nil?
+      redirect_to admin_announcements_path, status: :see_other, alert: "Announcement not found."
     end
+  end
+
+  def announcement_params
+    params.require(:announcement).permit(
+      :name, :description, :start_date, :end_date,
+      :open_time, :close_time, :location,
+      :max_patients, :audience, :status
+    ).merge(
+      posted_by: current_user,
+      barangay: current_tenant
+    )
+  end
 end
