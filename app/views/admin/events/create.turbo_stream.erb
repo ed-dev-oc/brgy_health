@@ -1,0 +1,11 @@
+<%= turbo_stream.replace :flash do %>
+  <%= render FlashComponent.new(flash: flash) %>
+<% end %>
+
+<% if @event.persisted? %>
+  <%= turbo_stream.action(:redirect, admin_events_path) %>
+<% else %>
+  <%= turbo_stream.replace dom_id(@event, "form"),
+    partial: "admin/events/form",
+    locals: { event: @event } %>
+<% end %>

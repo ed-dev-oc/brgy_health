@@ -1,5 +1,5 @@
 class Admin::AnnouncementsController < AdminController
-  before_action :set_announcement, only: %i[ show edit update destroy ]
+  before_action :set_announcement, only: [ :show, :edit, :update, :destroy ]
 
   # GET /admin/announcements or /admin/announcements.json
   def index
@@ -58,14 +58,14 @@ class Admin::AnnouncementsController < AdminController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_announcement
-      @announcement = Announcement.find_by_public_uid(params.expect(:id))
 
-      if @announcement.nil?
-        redirect_to admin_announcements_path, status: :see_other, alert: "Announcement not found."
-      end
+  def set_announcement
+    @announcement = Announcement.find_by_public_uid(params.expect(:id))
+
+    if @announcement.nil?
+      redirect_to admin_announcements_path, status: :see_other, alert: "Announcement not found."
     end
+  end
 
     # Only allow a list of trusted parameters through.
     def announcement_params
