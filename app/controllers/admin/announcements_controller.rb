@@ -70,21 +70,22 @@ class Admin::AnnouncementsController < AdminController
     # Only allow a list of trusted parameters through.
     def announcement_params
       params.require(:announcement).permit(
-      :name,
-      :description,
-      :start_date,
-      :end_date,
-      :open_time,
-      :close_time,
-      :location,
-      :max_patients,
-      :audience,
-      :status,
-      :health_program_id,
-      health_program_attributes: [ :name, :description ]
-    ).merge(
-      posted_by: current_user,
-      barangay: current_tenant
-    )
+        :name,
+        :description,
+        :start_date,
+        :end_date,
+        :open_time,
+        :close_time,
+        :location,
+        :max_patients,
+        :audience,
+        :status,
+        :health_program_id,
+        health_program_attributes: [:name, :description, :status]
+      ).merge(
+        posted_by: current_user,
+        barangay: current_tenant
+      )
     end
+
 end
