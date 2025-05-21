@@ -7,6 +7,10 @@
       </div>
 
       <div class="modal-body">
+        <div class="mb-3">
+          <p>Current profile:</p>
+          <%= display_profile_image(current_user) %>
+        </div>
         <dl class="row">
           <% {
             "Email" => user.email,
