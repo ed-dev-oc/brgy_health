@@ -67,7 +67,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_20_150336) do
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "health_program_id"
     t.index ["barangay_id"], name: "index_announcements_on_barangay_id"
+    t.index ["health_program_id"], name: "index_announcements_on_health_program_id"
     t.index ["posted_by_id"], name: "index_announcements_on_posted_by_id"
     t.index ["public_uid"], name: "index_announcements_on_public_uid", unique: true
   end
@@ -249,6 +251,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_20_150336) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "announcements", "barangays"
+  add_foreign_key "announcements", "health_programs"
   add_foreign_key "announcements", "users", column: "posted_by_id"
   add_foreign_key "appointments", "announcements"
   add_foreign_key "appointments", "appointments", column: "follow_up_id"

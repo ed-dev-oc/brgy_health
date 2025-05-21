@@ -14,10 +14,13 @@ class Admin::AnnouncementsController < AdminController
   # GET /admin/announcements/new
   def new
     @announcement = Announcement.new
+    @announcement.build_health_program
   end
+
 
   # GET /admin/announcements/1/edit
   def edit
+    @announcement.build_health_program unless @announcement.health_program
   end
 
   # POST /admin/announcements or /admin/announcements.json
@@ -66,7 +69,7 @@ class Admin::AnnouncementsController < AdminController
 
     # Only allow a list of trusted parameters through.
     def announcement_params
-      params.fetch(:announcement, {}).permit(
+      params.require(:announcement).permit(
         :name,
         :description,
         :start_date,
@@ -76,10 +79,13 @@ class Admin::AnnouncementsController < AdminController
         :location,
         :max_patients,
         :audience,
-        :status
+        :status,
+        :health_program_id,
+        health_program_attributes: [:name, :description, :status]
       ).merge(
         posted_by: current_user,
         barangay: current_tenant
       )
     end
+
 end

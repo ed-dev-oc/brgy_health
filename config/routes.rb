@@ -39,6 +39,7 @@ Rails.application.routes.draw do
     namespace :admin do
       resources :dashboard, only: [ :index ]
       resources :announcements
+
       resources :health_programs
       resources :appointments, only: [ :index, :show ] do
         member do
