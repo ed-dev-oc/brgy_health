@@ -75,6 +75,8 @@ Rails.application.routes.draw do
   get "/:page", to: "pages#show", as: :main_page
   resources :push_subscriptions, only: [ :create ]
 
+  resources :profile, only: [ :edit, :update ]
+
   namespace :super_admin do
     resources :dashboard, only: [ :index ]
 

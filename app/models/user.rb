@@ -8,6 +8,9 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   acts_as_tenant :barangay, optional: true
+  has_one_attached :profile
+
+  belongs_to :barangay, optional: true
   belongs_to :subdivision, optional: true
   has_many :announcements, foreign_key: :posted_by_id
   has_many :appointments, foreign_key: :patient_id
