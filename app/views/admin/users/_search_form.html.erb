@@ -1,0 +1,13 @@
+<div id="users" class="mb-4">
+  <%= search_form_for @q, url: admin_users_path, method: :get, html: { class: "row g-2 align-items-center" } do |f| %>
+    <div class="col-auto">
+      <%= f.label :email_or_first_name_or_last_name_cont, "Search by Name or Email", class: "form-label" %>
+    </div>
+    <div class="col-auto">
+      <%= f.search_field :email_or_first_name_or_last_name_cont, class: "form-control" %>
+    </div>
+    <div class="col-auto">
+      <%= f.submit "Search", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

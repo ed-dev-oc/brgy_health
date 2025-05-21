@@ -44,6 +44,10 @@ class User < ApplicationRecord
     [ "barangay_id", "created_at", "email", "encrypted_password", "first_name", "id", "last_name", "middle_name", "phone_number", "public_uid", "remember_created_at", "reset_password_sent_at", "reset_password_token", "role", "subdivision_id", "suffix", "updated_at" ]
   end
 
+  def self.ransackable_associations(auth_object = nil)
+    %w[barangay subdivision]
+  end
+
   def full_name
     "#{self.first_name} #{self.middle_name} #{self.last_name} #{self.suffix}".strip
   end
