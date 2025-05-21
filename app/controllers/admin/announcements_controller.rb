@@ -81,11 +81,10 @@ class Admin::AnnouncementsController < AdminController
         :audience,
         :status,
         :health_program_id,
-        health_program_attributes: [:name, :description, :status]
+        health_program_attributes: [ :name, :description, :status ]
       ).merge(
         posted_by: current_user,
         barangay: current_tenant
       )
     end
-
 end
