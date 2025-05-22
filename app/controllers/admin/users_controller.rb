@@ -2,7 +2,7 @@
 class Admin::UsersController < AdminController
   include Pagy::Backend
 
-  before_action :set_user, only: [:edit, :update, :show, :toggle_status]
+  before_action :set_user, only: [ :edit, :update, :show, :toggle_status ]
 
   def index
     @q = User.ransack(params[:q])
@@ -31,10 +31,10 @@ class Admin::UsersController < AdminController
     end
 
     flag_str = params[:user].delete(:flag_list)
-    params[:user][:flag_list] = flag_str.to_s.split(',').map(&:strip) if flag_str
+    params[:user][:flag_list] = flag_str.to_s.split(",").map(&:strip) if flag_str
 
     if @user.update(user_params)
-      redirect_to admin_users_path, notice: 'User updated successfully.'
+      redirect_to admin_users_path, notice: "User updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -87,5 +87,4 @@ end
 
     params.require(:user).permit(allowed)
   end
-
 end

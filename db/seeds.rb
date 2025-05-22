@@ -167,7 +167,7 @@ User.create!(
   role: "staff",  # or "admin", "patient", etc.
   barangay_id: 1,  # Assumes you have a barangay with ID 1
   subdivision_id: 1,  # Assumes you have a subdivision with ID 1
-  flag_list: ["active"],  # if flag_list is using something like `acts_as_flaggable`
+  flag_list: [ "active" ],  # if flag_list is using something like `acts_as_flaggable`
   password: "password123",
   password_confirmation: "password123"
 )
@@ -182,7 +182,7 @@ User.create!(
   role: "staff",
   barangay_id: 1,
   subdivision_id: 1,
-  flag_list: ["active"],
+  flag_list: [ "active" ],
   password: "password123",
   password_confirmation: "password123"
 )
@@ -197,7 +197,7 @@ User.create!(
   role: "staff",
   barangay_id: 1,
   subdivision_id: 1,
-  flag_list: ["inactive"],
+  flag_list: [ "inactive" ],
   password: "password123",
   password_confirmation: "password123"
 )
@@ -212,7 +212,7 @@ User.create!(
   role: "staff",
   barangay_id: 1,
   subdivision_id: 1,
-  flag_list: ["active"],
+  flag_list: [ "active" ],
   password: "password123",
   password_confirmation: "password123"
 )
@@ -227,9 +227,7 @@ User.create!(
   role: "staff",
   barangay_id: 1,
   subdivision_id: 1,
-  flag_list: ["inactive"],
+  flag_list: [ "inactive" ],
   password: "password123",
   password_confirmation: "password123"
 )
-
-
