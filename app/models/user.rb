@@ -101,20 +101,25 @@ class User < ApplicationRecord
   end
 
  def credentials_changed?
-  saved_change_to_email? || saved_change_to_encrypted_password?
-end
+    changed_fields = %w[
+      email encrypted_password
+      first_name middle_name last_name suffix subdivision_id
+    ]
+    (changed_fields & saved_changes.keys).any? && (patient? || staff?)
+ end
 
-def notify_user_of_credential_change
-  changed_fields = []
-  changed_fields << "email" if saved_change_to_email?
-  changed_fields << "password" if saved_change_to_encrypted_password?
+  def notify_user_of_credential_change
+    changed_fields = []
+    changed_fields << "email" if saved_change_to_email?
+    changed_fields << "password" if saved_change_to_encrypted_password?
+    changed_fields << "first_name" if saved_change_to_first_name?
+    changed_fields << "middle_name" if saved_change_to_middle_name?
+    changed_fields << "last_name" if saved_change_to_last_name?
+    changed_fields << "suffix" if saved_change_to_suffix?
+    changed_fields << "subdivision" if saved_change_to_subdivision_id?
 
-  puts "Credential changed callback triggered with changes: #{changed_fields.inspect}"
-
-  PatientCredentialChangedNotifier.with(
-    changed_attributes: changed_fields
-  ).deliver_later(self)
-end
-
-
+    UserCredentialChangedNotifier.with(
+      changed_attributes: changed_fields
+    ).deliver_later(self)
+  end
 end
