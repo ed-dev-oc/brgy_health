@@ -50,16 +50,6 @@
         <% end %>
       </div>
 
-      <div class="col-md-6">
-        <%= f.label :barangay_id, class: "form-label" %>
-        <%= f.number_field :barangay_id, class: "form-control" %>
-      </div>
-
-      <div class="col-md-6">
-        <%= f.label :subdivision_id, class: "form-label" %>
-        <%= f.number_field :subdivision_id, class: "form-control" %>
-      </div>
-
       <div class="col-md-12">
         <%= f.label :flags, "Flags (comma-separated)", class: "form-label" %>
         <%= f.text_field :flag_list, value: @user.flag_list.join(', '), class: "form-control" %>
