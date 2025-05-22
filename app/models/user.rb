@@ -47,7 +47,7 @@ class User < ApplicationRecord
     :send_notification_to_super_admin, if: -> { self.role == "admin" }
 
   after_update :notify_user_of_credential_change, if: :credentials_changed?
-  
+
   ransacker :full_name do
     Arel::Nodes::NamedFunction.new(
       "COALESCE",
