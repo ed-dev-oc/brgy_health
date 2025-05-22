@@ -42,11 +42,11 @@ Rails.application.routes.draw do
     end
 
     namespace :admin do
-      resources :dashboard, only: [:index]
+      resources :dashboard, only: [ :index ]
       resources :announcements
       resources :health_programs
 
-      resources :appointments, only: [:index, :show] do
+      resources :appointments, only: [ :index, :show ] do
         member do
           patch :flag_as_rejected
           patch :flag_as_approved
@@ -55,11 +55,11 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :cms, only: [:index, :update]
+      resources :cms, only: [ :index, :update ]
 
-      resources :users, only: [:index, :edit, :update, :create] do
+      resources :users, only: [ :index, :edit, :update, :create ] do
         member do
-          patch :toggle_status 
+          patch :toggle_status
         end
       end
     end
