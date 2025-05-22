@@ -82,7 +82,7 @@ end
     ]
 
     if current_user.super_admin?
-      allowed += [:role, :barangay_id, :subdivision_id, :public_uid]
+      allowed += [ :role, :barangay_id, :subdivision_id, :public_uid ]
     end
 
     params.require(:user).permit(allowed)
