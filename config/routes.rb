@@ -23,11 +23,11 @@ Rails.application.routes.draw do
         get :about_us, on: :collection
       end
 
-      resources :announcements, only: [:index, :show] do
-        resources :appointments, only: [:create]
+      resources :announcements, only: [ :index, :show ] do
+        resources :appointments, only: [ :create ]
       end
 
-      resources :appointments, only: [:index] do
+      resources :appointments, only: [ :index ] do
         member do
           patch :flag_as_cancelled
         end
@@ -35,11 +35,11 @@ Rails.application.routes.draw do
     end
 
     namespace :admin do
-      resources :dashboard, only: [:index]
+      resources :dashboard, only: [ :index ]
       resources :announcements
       resources :health_programs
 
-      resources :appointments, only: [:index, :show] do
+      resources :appointments, only: [ :index, :show ] do
         member do
           patch :flag_as_rejected
           patch :flag_as_approved
@@ -48,23 +48,23 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :cms, only: [:index, :update]
+      resources :cms, only: [ :index, :update ]
 
-      resources :users, only: [:index, :edit, :update, :create] do
+      resources :users, only: [ :index, :edit, :update, :create ] do
         member do
           patch :toggle_status
         end
       end
 
-      resources :testimonials, only: [:create, :update]
+      resources :testimonials, only: [ :create, :update ]
 
-      resources :events, only: [:index, :create, :update] do
+      resources :events, only: [ :index, :create, :update ] do
         member do
           patch :archive
         end
       end
     end
-  end 
+  end
 
   devise_for :users, controllers: {
     sessions: "users/sessions",
@@ -73,18 +73,18 @@ Rails.application.routes.draw do
 
   root "pages#home"
   get "/:page", to: "pages#show", as: :main_page
-  resources :push_subscriptions, only: [:create]
-  resources :profile, only: [:edit, :update]
+  resources :push_subscriptions, only: [ :create ]
+  resources :profile, only: [ :edit, :update ]
 
   namespace :super_admin do
-    resources :dashboard, only: [:index]
+    resources :dashboard, only: [ :index ]
 
-    resources :users, only: [:index, :show] do
+    resources :users, only: [ :index, :show ] do
       member do
         patch :validated
       end
     end
 
-    resources :cms, only: [:index, :update]
+    resources :cms, only: [ :index, :update ]
   end
 end
