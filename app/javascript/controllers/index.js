@@ -4,6 +4,9 @@
 
 import { application } from "./application"
 
+import AdminTestimonialController from "./admin_testimonial_controller"
+application.register("admin-testimonial", AdminTestimonialController)
+
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 

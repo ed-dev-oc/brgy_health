@@ -60,6 +60,10 @@ Rails.application.routes.draw do
       resources :users, only: [ :index, :edit, :update, :create ] do
         member do
           patch :toggle_status
+      resources :testimonials, only: [ :create, :update ]
+      resources :events, only: [ :index, :create, :update ] do
+        member do
+          patch :archive
         end
       end
     end

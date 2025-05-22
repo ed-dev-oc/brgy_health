@@ -11,18 +11,18 @@
 
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
-          <a href="#" class="nav-link text-white <%= navbar_link_status(super_admin_dashboard_index_path) %>" aria-current="page">
+          <%= link_to super_admin_dashboard_index_path, class: "nav-link text-white #{ navbar_link_status(super_admin_dashboard_index_path) }" do %>
             <i class="bi bi-speedometer2"></i>
             Dashboard
-          </a>
+          <% end %>
           <a href="#" class="nav-link text-white" aria-current="page">
             <i class="bi bi-house-door"></i>
             Barangay
           </a>
-          <a href="#" class="nav-link text-white" aria-current="page">
+          <%= link_to super_admin_users_path, class: "nav-link text-white #{ navbar_link_status(super_admin_users_path) }" do %>
             <i class="bi bi-people"></i>
             Users
-          </a>
+          <% end %>
           <a href="#" class="nav-link text-white" aria-current="page">
             <i class="bi bi-chat-quote"></i>
             Testimonials

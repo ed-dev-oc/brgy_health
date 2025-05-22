@@ -7,6 +7,10 @@ class Announcement < ApplicationRecord
   accepts_nested_attributes_for :health_program, reject_if: :all_blank
 
   has_many :appointments
+  has_many :appointments
+  belongs_to :health_program, optional: true
+  accepts_nested_attributes_for :health_program, reject_if: :all_blank
+
   enum :status, [ :draft, :active, :canceled, :completed, :archived ]
   has_rich_text :description
 
