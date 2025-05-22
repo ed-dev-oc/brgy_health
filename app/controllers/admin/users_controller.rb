@@ -69,9 +69,23 @@ end
   end
 
   def user_params
-  params.require(:user).permit(
-    :email, :public_uid, :first_name, :middle_name, :last_name, :suffix, :password, :password_confirmation,
-    :phone_number, :role, :barangay_id, :subdivision_id, flag_list: []
-  )
+    allowed = [
+      :email,
+      :first_name,
+      :middle_name,
+      :last_name,
+      :suffix,
+      :password,
+      :password_confirmation,
+      :phone_number,
+      flag_list: []
+    ]
+
+    if current_user.super_admin?
+      allowed += [ :role, :barangay_id, :subdivision_id, :public_uid ]
+    end
+
+    params.require(:user).permit(allowed)
   end
+
 end
