@@ -39,10 +39,11 @@
             <i class="bi bi-grid-3x3-gap"></i>
             Subdivisions
           </a>
-          <a href="#" class="nav-link text-white" aria-current="page">
+          <%= link_to admin_users_index_path, class: "nav-link text-white #{ navbar_link_status(admin_users_index_path) }" do %>
             <i class="bi bi-people"></i>
             Users
-          </a>
+          <% end %>
+
         </li>
       </ul>
 

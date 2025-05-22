@@ -28,10 +28,14 @@ class Users::SessionsController < Devise::SessionsController
 
   protected
 
-  # If you have extra params to permit, append them to the sanitizer.
-  # def configure_sign_in_params
-  #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
-  # end
+  # Redirect users after successful sign in
+  def after_sign_in_path_for(resource)
+    if resource.role == "super_admin"
+      super_admin_dashboard_index_path
+    else
+      stored_location_for(resource) || root_path
+    end
+  end
 
   def find_user_by_email
     User.find_by(email: params[:user][:email])
