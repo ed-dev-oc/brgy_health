@@ -9,7 +9,11 @@
       <div class="modal-body">
         <div class="mb-3">
           <p>Current profile:</p>
-          <%= display_profile_image(current_user) %>
+            <%if user.profile.present? %>
+              <%= image_tag user.profile.variant(resize_to_limit: [200, 200]), class: "img-fluid rounded-circle", alt: "User Avatar" %>
+            <% else %>
+              <%= image_tag "default_avatar.jpg", alt: "User Avatar", class: "rounded", style: "width: 200px; height: 200px;" %>
+            <% end %>
         </div>
         <dl class="row">
           <% {
