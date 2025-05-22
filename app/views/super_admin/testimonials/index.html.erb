@@ -19,10 +19,20 @@
       <%= f.select :rating, options_for_select((1..5).map { |r| [r, r] }, params[:rating]), { include_blank: "All Ratings" }, class: "form-select" %>
     </div>
 
+    <div class="col-md-2">
+      <%= f.label :year_filter, "Date", class: "form-label" %>
+      <%= f.select :year_filter,
+             options_for_select([["All Time", "all"], ["This Year", "this_year"], ["Previous Year", "last_year"]],
+                                params[:year_filter] || "all"),
+             {},
+             class: "form-select" %>
+    </div>
+
     <div class="col-md-2 d-flex align-items-end">
       <%= f.submit "Filter", class: "btn btn-primary w-100" %>
     </div>
   <% end %>
+
 
   <table class="table table-bordered table-hover align-middle">
     <thead class="table-success text-secondary">
@@ -45,10 +55,23 @@
           <td class="text-center"><%= truncate(testimonial.data, length: 40) %></td>
           <td class="text-center"><%= testimonial.rating %></td>
           <td class="text-center">
-            <%= link_to "View", super_admin_testimonial_path(testimonial), class: "btn btn-success btn-sm fw-semibold" %>
+            <button type="button"
+                class="btn btn-info btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#testimonialModal_<%= testimonial.id %>">
+            View
+          </button>
+
+
           </td>
         </tr>
+        <%= render partial: "testimonial_modal", locals: { testimonial: testimonial, user: user } %>
+
       <% end %>
     </tbody>
   </table>
+  <turbo-frame id="modal"></turbo-frame>
 </div>
+
+
+
