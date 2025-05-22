@@ -4,26 +4,20 @@ class Admin::UsersController < AdminController
 
   before_action :set_user, only: [ :edit, :update, :show, :toggle_status ]
 
-def index
-  @q = User.ransack(params[:q])
-  users = @q.result
+  def index
+    @q = User.ransack(params[:q])
+    users = @q.result
 
-  # Filter by status (flags)
-  if params[:status].present?
-    users = users.tagged_with(params[:status], on: :flags)
+    if params[:status].present?
+      users = users.tagged_with(params[:status], on: :flags)
+    end
+
+    if params[:role].present?
+      users = users.where(role: params[:role])
+    end
+
+    @pagy, @staff_users = pagy(users.order(:last_name))
   end
-
-  # Filter by role
-  if params[:role].present?
-    users = users.where(role: params[:role])
-  end
-
-  @pagy, @staff_users = pagy(users.order(:last_name))
-end
-
-
-
-
 
   def edit
     @user = User.find(params[:id])
@@ -31,7 +25,7 @@ end
 
   def create
     @user = User.new(user_params)
-    @user.role = "staff" # enforce server-side
+    @user.role = "staff" 
 
     if @user.save
       redirect_to admin_users_path, notice: "Staff user created successfully."
