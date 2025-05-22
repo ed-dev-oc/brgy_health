@@ -25,7 +25,7 @@ class Admin::UsersController < AdminController
 
   def create
     @user = User.new(user_params)
-    @user.role = "staff" 
+    @user.role = "staff"
 
     if @user.save
       redirect_to admin_users_path, notice: "Staff user created successfully."
