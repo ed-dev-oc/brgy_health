@@ -1,4 +1,3 @@
-# app/controllers/admin/users_controller.rb
 class Admin::UsersController < AdminController
   include Pagy::Backend
 
