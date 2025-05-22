@@ -3,14 +3,26 @@
 <div class="container mt-4">
   <h1 class="mb-3">Staff Users</h1>
 
-  <span class="d-flex align-items-center justify-content-between">
-    <%= render partial: "search_form" %>
+  <!-- Search and Create New User -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-end gap-3 mb-3">
+    <!-- Search Filters Card -->
+    <div class="flex-fill">
+      <div class="card">
+        <div class="card-body">
+          <%= render partial: "search_form" %>
+        </div>
+      </div>
+    </div>
 
-    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#newUserModal">
-      New Staff User
-    </button>
-  </span>
+    <!-- New User Button -->
+    <div>
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newUserModal">
+        New Staff User
+      </button>
+    </div>
+  </div>
 
+  <!-- Users Table -->
   <div class="table-responsive">
     <table class="table table-bordered table-hover mt-3">
       <thead class="table-light">
@@ -30,9 +42,11 @@
     </table>
   </div>
 
+  <!-- Pagination -->
   <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
 </div>
 
+<!-- User Modals -->
 <% @staff_users.each do |user| %>
   <%= render partial: "user_modal", locals: { user: user } %>
 <% end %>

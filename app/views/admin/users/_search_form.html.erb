@@ -1,12 +1,32 @@
 <div id="users" class="mb-4">
-  <%= search_form_for @q, url: admin_users_path, method: :get, html: { class: "row g-2 align-items-center" } do |f| %>
-    <div class="col-auto">
+  <%= search_form_for @q, url: admin_users_path, method: :get, html: { class: "row g-3 align-items-end" } do |f| %>
+    <div class="col-md-4">
       <%= f.label :email_or_first_name_or_last_name_cont, "Search by Name or Email", class: "form-label" %>
+      <%= f.search_field :email_or_first_name_or_last_name_cont, class: "form-control", placeholder: "e.g. John or john@email.com" %>
     </div>
-    <div class="col-auto">
-      <%= f.search_field :email_or_first_name_or_last_name_cont, class: "form-control" %>
-    </div>
-    <div class="col-auto">
+
+    <div class="col-md-3">
+  <label for="role" class="form-label">Filter by Role</label>
+  <select name="role" id="role" class="form-select">
+    <option value="">All Roles</option>
+    <option value="admin" <%= "selected" if params[:role] == "admin" %>>Admin</option>
+    <option value="staff" <%= "selected" if params[:role] == "staff" %>>Staff</option>
+    <option value="patient" <%= "selected" if params[:role] == "patient" %>>Patient</option>
+  </select>
+</div>
+
+
+      <div class="col-md-3">
+        <label for="status" class="form-label">Filter by Status</label>
+        <select name="status" id="status" class="form-select">
+          <option value="">All Statuses</option>
+          <option value="active" <%= "selected" if params[:status] == "active" %>>Active</option>
+          <option value="inactive" <%= "selected" if params[:status] == "inactive" %>>Inactive</option>
+        </select>
+      </div>
+
+
+    <div class="col-md-2 d-grid">
       <%= f.submit "Search", class: "btn btn-primary" %>
     </div>
   <% end %>

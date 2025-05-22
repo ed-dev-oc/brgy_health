@@ -2,12 +2,28 @@
 class Admin::UsersController < AdminController
   include Pagy::Backend
 
-  before_action :set_user, only: [:edit, :update, :show, :toggle_status]
+  before_action :set_user, only: [ :edit, :update, :show, :toggle_status ]
 
-  def index
-    @q = User.ransack(params[:q])
-    @pagy, @staff_users = pagy(@q.result.order(:last_name))
+def index
+  @q = User.ransack(params[:q])
+  users = @q.result
+
+  # Filter by status (flags)
+  if params[:status].present?
+    users = users.tagged_with(params[:status], on: :flags)
   end
+
+  # Filter by role
+  if params[:role].present?
+    users = users.where(role: params[:role])
+  end
+
+  @pagy, @staff_users = pagy(users.order(:last_name))
+end
+
+
+
+
 
   def edit
     @user = User.find(params[:id])
@@ -31,10 +47,10 @@ class Admin::UsersController < AdminController
     end
 
     flag_str = params[:user].delete(:flag_list)
-    params[:user][:flag_list] = flag_str.to_s.split(',').map(&:strip) if flag_str
+    params[:user][:flag_list] = flag_str.to_s.split(",").map(&:strip) if flag_str
 
     if @user.update(user_params)
-      redirect_to admin_users_path, notice: 'User updated successfully.'
+      redirect_to admin_users_path, notice: "User updated successfully."
     else
       render :edit, status: :unprocessable_entity
     end
