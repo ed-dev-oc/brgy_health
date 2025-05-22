@@ -64,6 +64,7 @@ Rails.application.routes.draw do
 
   namespace :super_admin do
     resources :dashboard, only: [ :index ]
+    resources :testimonials, only: [ :index, :show ]
 
     resources :users, only: [ :index, :show ] do
       member do

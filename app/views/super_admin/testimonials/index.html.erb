@@ -1,0 +1,54 @@
+<div class="container-fluid">
+  <h2 class="text-center text-2xl fw-bold text-secondary mb-4">
+    Brgy. Health Center - Testimonials
+  </h2>
+
+  <%= form_with url: super_admin_testimonials_path, method: :get, local: true, class: "row g-3 mb-4" do |f| %>
+    <div class="col-md-4">
+      <%= f.label :full_name, "Full Name", class: "form-label" %>
+      <%= f.text_field :full_name, value: params[:full_name], class: "form-control", placeholder: "Search Full Name" %>
+    </div>
+
+    <div class="col-md-4">
+      <%= f.label :email, "Email", class: "form-label" %>
+      <%= f.text_field :email, value: params[:email], class: "form-control", placeholder: "Search Email" %>
+    </div>
+
+    <div class="col-md-2">
+      <%= f.label :rating, "Rating", class: "form-label" %>
+      <%= f.select :rating, options_for_select((1..5).map { |r| [r, r] }, params[:rating]), { include_blank: "All Ratings" }, class: "form-select" %>
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end">
+      <%= f.submit "Filter", class: "btn btn-primary w-100" %>
+    </div>
+  <% end %>
+
+  <table class="table table-bordered table-hover align-middle">
+    <thead class="table-success text-secondary">
+      <tr class="text-center">
+        <th>FULL NAME</th>
+        <th>EMAIL</th>
+        <th>TESTIMONIAL MESSAGE</th>
+        <th>RATING</th>
+        <th>ACTION</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @testimonials.each do |testimonial| %>
+        <% user = testimonial.user %>
+        <% next unless user %>
+        <tr>
+          <td class="text-center"><%= user.full_name %></td>
+          <td class="text-center"><%= user.email %></td>
+          <td class="text-center"><%= truncate(testimonial.data, length: 40) %></td>
+          <td class="text-center"><%= testimonial.rating %></td>
+          <td class="text-center">
+            <%= link_to "View", super_admin_testimonial_path(testimonial), class: "btn btn-success btn-sm fw-semibold" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

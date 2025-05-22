@@ -53,6 +53,10 @@ class User < ApplicationRecord
     "user_#{self.public_uid}_notification"
   end
 
+  def full_name
+    [first_name, last_name].compact.join(" ")
+  end
+
   private
 
   def add_requirements_flags
