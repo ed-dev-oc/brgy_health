@@ -45,4 +45,21 @@ module ApplicationHelper
   def edit_profile_button(user, label: "Edit profile")
     link_to label, edit_profile_path(user), class: "btn btn-primary col-md-1 ms-1"
   end
+
+  def badge_status_class(status)
+    case status.to_s
+    when "active", "visible"
+      "text-bg-primary"
+    when "approved", "completed"
+      "text-bg-success"
+    when "pending"
+      "text-bg-warning"
+    when "rejected", "canceled", "cancelled", "archived"
+      "text-bg-danger"
+    when "draft", "inactive", "hidden"
+      "text-bg-secondary"
+    else
+      "text-bg-secondary"
+    end
+  end
 end

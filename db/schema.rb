@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_19_142442) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_21_100718) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -111,6 +111,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_19_142442) do
   create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
   end
 
+  create_table "events", force: :cascade do |t|
+    t.string "public_uid"
+    t.bigint "barangay_id", null: false
+    t.bigint "posted_by_id", null: false
+    t.string "name"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer "audience", default: 0
+    t.string "location"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barangay_id"], name: "index_events_on_barangay_id"
+    t.index ["posted_by_id"], name: "index_events_on_posted_by_id"
+  end
+
   create_table "health_programs", force: :cascade do |t|
     t.bigint "barangay_id", null: false
     t.string "name"
@@ -209,6 +225,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_19_142442) do
     t.index ["name"], name: "index_tags_on_name", unique: true
   end
 
+  create_table "testimonials", force: :cascade do |t|
+    t.bigint "barangay_id", null: false
+    t.bigint "user_id", null: false
+    t.text "data"
+    t.integer "rating", default: 1
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barangay_id"], name: "index_testimonials_on_barangay_id"
+    t.index ["user_id"], name: "index_testimonials_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -246,11 +274,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_19_142442) do
   add_foreign_key "appointments", "barangays"
   add_foreign_key "appointments", "users", column: "health_worker_id"
   add_foreign_key "appointments", "users", column: "patient_id"
+  add_foreign_key "events", "barangays"
+  add_foreign_key "events", "users", column: "posted_by_id"
   add_foreign_key "health_programs", "barangays"
   add_foreign_key "pages", "barangays"
   add_foreign_key "push_subscriptions", "users"
   add_foreign_key "subdivisions", "barangays"
   add_foreign_key "taggings", "tags"
+  add_foreign_key "testimonials", "barangays"
+  add_foreign_key "testimonials", "users"
   add_foreign_key "users", "barangays"
   add_foreign_key "users", "subdivisions"
 end

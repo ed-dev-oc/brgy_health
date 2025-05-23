@@ -1,0 +1,7 @@
+<%= turbo_stream.replace :flash do %>
+  <%= render FlashComponent.new(flash: flash) %>
+<% end %>
+
+<%= turbo_stream.replace "adminTestimonial",
+  partial: "admin/testimonials/form",
+  locals: { testimonial: @testimonial } %>

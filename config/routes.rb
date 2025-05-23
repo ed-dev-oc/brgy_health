@@ -41,26 +41,33 @@ Rails.application.routes.draw do
       end
     end
 
-    namespace :admin do
-      resources :dashboard, only: [ :index ]
-      resources :announcements
-      resources :health_programs
+  namespace :admin do
+    resources :dashboard, only: [:index]
+    resources :announcements
+    resources :health_programs
 
-      resources :appointments, only: [ :index, :show ] do
-        member do
-          patch :flag_as_rejected
-          patch :flag_as_approved
-          post :follow_up_check_up
-          patch :flag_as_completed
-        end
+    resources :appointments, only: [:index, :show] do
+      member do
+        patch :flag_as_rejected
+        patch :flag_as_approved
+        post :follow_up_check_up
+        patch :flag_as_completed
       end
+    end
 
-      resources :cms, only: [ :index, :update ]
+    resources :cms, only: [:index, :update]
 
-      resources :users, only: [ :index, :edit, :update, :create ] do
-        member do
-          patch :toggle_status
-        end
+    resources :users, only: [:index, :edit, :update, :create] do
+      member do
+        patch :toggle_status
+      end
+    end
+
+    resources :testimonials, only: [:create, :update]
+
+    resources :events, only: [:index, :create, :update] do
+      member do
+        patch :archive
       end
     end
   end

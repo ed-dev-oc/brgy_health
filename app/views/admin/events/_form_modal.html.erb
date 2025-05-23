@@ -1,0 +1,15 @@
+<div class="modal fade" id="<%= dom_id(event, "form_modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(event, "form_modal") %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="<%= dom_id(event, "form_modal") %>Label"><%= event.new_record? ? "New Event" : event.name %></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= turbo_frame_tag dom_id(event, "form") do %>
+          <%= render partial: "admin/events/form", locals: { event: event } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

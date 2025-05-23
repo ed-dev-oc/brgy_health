@@ -1,0 +1,15 @@
+<div data-controller="admin-testimonial" class="modal fade" id="adminTestimonialModal" tabindex="-1" aria-labelledby="adminTestimonialModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="adminTestimonialModalLabel">Add Testimonial</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= turbo_frame_tag :adminTestimonial do %>
+          <%= render partial: "admin/testimonials/form", locals: { testimonial: @testimonial } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
