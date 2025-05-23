@@ -86,6 +86,5 @@ class Admin::AnnouncementsController < AdminController
       posted_by: current_user,
       barangay: current_tenant
     )
-
     end
 end
