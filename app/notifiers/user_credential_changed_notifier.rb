@@ -1,4 +1,3 @@
-# app/notifications/patient_credential_changed_notifier.rb
 class UserCredentialChangedNotifier < ApplicationNotifier
   deliver_by :notification_broadcast, class: "DeliveryMethods::NotificationBroadcast"
   deliver_by :web_push, class: "DeliveryMethods::WebPush"
