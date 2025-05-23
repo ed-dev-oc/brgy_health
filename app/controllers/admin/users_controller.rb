@@ -1,4 +1,3 @@
-# app/controllers/admin/users_controller.rb
 class Admin::UsersController < AdminController
   include Pagy::Backend
 
@@ -53,24 +52,23 @@ class Admin::UsersController < AdminController
   def show
   end
 
- def toggle_status
-  @user = User.find(params[:id])
+  def toggle_status
+    @user = User.find(params[:id])
 
-  if @user.flag_list.include?("active")
-    @user.flag_list.remove("active")
-    @user.flag_list.add("inactive")
-  else
-    @user.flag_list.remove("inactive")
-    @user.flag_list.add("active")
+    if @user.flag_list.include?("active")
+      @user.flag_list.remove("active")
+      @user.flag_list.add("inactive")
+    else
+      @user.flag_list.remove("inactive")
+      @user.flag_list.add("active")
+    end
+
+    if @user.save
+      redirect_to admin_users_path, notice: "User status updated."
+    else
+      redirect_to admin_users_path, alert: "Failed to update user status."
+    end
   end
-
-  if @user.save
-    redirect_to admin_users_path, notice: "User status updated."
-  else
-    redirect_to admin_users_path, alert: "Failed to update user status."
-  end
-end
-
 
   private
 
@@ -79,9 +77,16 @@ end
   end
 
   def user_params
-  params.require(:user).permit(
-    :email, :public_uid, :first_name, :middle_name, :last_name, :suffix, :password, :password_confirmation,
-    :phone_number, :role, flag_list: []
-  )
+    permitted = [
+      :email, :public_uid, :first_name, :middle_name, :last_name, :suffix,
+      :password, :password_confirmation, :phone_number
+    ]
+
+    if current_user&.super_admin? || current_user&.admin?
+      permitted << :role
+      permitted << { flag_list: [] }
+    end
+
+    params.require(:user).permit(permitted)
   end
 end
