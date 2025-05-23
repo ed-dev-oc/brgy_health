@@ -21,5 +21,4 @@ class NewTestimonialNotifier < ApplicationNotifier
   # Add required params
   #
   # required_param :message
- 
 end
