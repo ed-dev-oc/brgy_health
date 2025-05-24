@@ -78,5 +78,12 @@ Rails.application.routes.draw do
     end
 
     resources :cms, only: [ :index, :update ]
+
+    resources :barangays, only: [:index, :show] do
+      member do
+        patch :verify
+        patch :unverify
+      end
+    end
   end
 end

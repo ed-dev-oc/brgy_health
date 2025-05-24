@@ -1,0 +1,3 @@
+module SuperAdmin::BarangaysHelper
+
+end
