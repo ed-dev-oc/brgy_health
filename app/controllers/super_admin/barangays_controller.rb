@@ -1,5 +1,5 @@
 class SuperAdmin::BarangaysController < SuperAdminController
-  before_action :set_barangay, only: [:show, :verify, :unverify]
+  before_action :set_barangay, only: [ :show, :verify, :unverify ]
   include Pagy::Backend
 
   def index

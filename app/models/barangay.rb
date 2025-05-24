@@ -1,6 +1,6 @@
 class Barangay < ApplicationRecord
   extend FriendlyId
-  friendly_id :slug_candidates, use: [:slugged, :finders]
+  friendly_id :slug_candidates, use: [ :slugged, :finders ]
 
   has_many :subdivisions
   has_many :users
@@ -9,10 +9,10 @@ class Barangay < ApplicationRecord
 
   acts_as_taggable_on :flags
 
-  enum :subdivision_type, [:both, :purok, :zone]
+  enum :subdivision_type, [ :both, :purok, :zone ]
 
   validates :name, :region, :province, :city, presence: true
-  validates :name, uniqueness: { scope: [:region, :province, :city] }
+  validates :name, uniqueness: { scope: [ :region, :province, :city ] }
 
   after_validation :set_subdomain_from_slug
   after_create :generate_pages
@@ -21,7 +21,7 @@ class Barangay < ApplicationRecord
   scope :unverified, -> { where(verified: false) }
 
   def admin_and_staff
-    users.where(role: [:admin, :staff])
+    users.where(role: [ :admin, :staff ])
   end
 
   def full_address
