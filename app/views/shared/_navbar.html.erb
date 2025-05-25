@@ -30,6 +30,9 @@
         <span>
           <%= render partial: "shared/notifications/parent" %>
         </span>
+        <%= link_to edit_profile_path(current_user), class: "nav-link #{navbar_link_status(edit_profile_path(current_user))}" do %>
+          <i class="bi bi-person-circle fs-4"></i>
+        <% end %>
       <% end %>
     </div>
   </div>
