@@ -55,11 +55,11 @@
           <strong><%= current_user.full_name %></strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-          <li>
-            <a class="dropdown-item" href="#">
+           <li>
+            <%= link_to edit_profile_path(current_user), class: "dropdown-item d-flex align-items-center gap-2" do %>
               <i class="bi bi-person"></i>
-              Profile
-            </a>
+              <span>Profile</span>
+            <% end %>
           </li>
           <li>
             <hr class="dropdown-divider">
