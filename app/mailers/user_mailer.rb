@@ -15,4 +15,14 @@ class UserMailer < ApplicationMailer
 
     mail(to: @user.email, subject: "New Admin Registration Requires Your Approval")
   end
+
+  def credential_changed(notification)
+    @user = notification.recipient
+    @changed_attributes = notification.params[:changed_attributes]
+
+    mail(
+      to: @user.email,
+      subject: "Your account credentials have been updated"
+    )
+  end
 end

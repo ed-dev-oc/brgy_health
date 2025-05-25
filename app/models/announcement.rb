@@ -3,6 +3,9 @@ class Announcement < ApplicationRecord
 
   acts_as_tenant :barangay
   belongs_to :posted_by, class_name: "User"
+  belongs_to :health_program, optional: true
+  accepts_nested_attributes_for :health_program, reject_if: :all_blank
+
   has_many :appointments
   belongs_to :health_program, optional: true
   accepts_nested_attributes_for :health_program, reject_if: :all_blank

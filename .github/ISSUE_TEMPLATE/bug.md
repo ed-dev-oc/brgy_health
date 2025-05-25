@@ -2,8 +2,9 @@
 name: 🐞 Bug Report
 about: Report a reproducible issue or unexpected behavior in the system.
 title: "[Bug] <Short Description>"
-labels: ["bug"]
-assignees: []
+labels: bug
+assignees: ''
+
 ---
 
 ## 🔍 Description
