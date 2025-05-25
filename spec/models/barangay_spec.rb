@@ -3,12 +3,12 @@ require 'rails_helper'
 RSpec.describe Barangay, type: :model do
   # fixtures :barangays
 
-  # describe "full address" do
+  # describe "full addresss" do
   #   it "has a valid full address" do
   #     expect(barangays(:bagong_buhay)).to be_valid
   #   end
 
-  #   it "has an invalid duplicate full address" do
+  #   it "has a invalid duplicate full address" do
   #     barangay = barangays(:bagong_buhay)
   #     barangay.name = barangays(:lao).name
   #     barangay.slug = barangays(:lao).slug
@@ -22,7 +22,7 @@ RSpec.describe Barangay, type: :model do
   # end
 
   # describe "invalid presence validations" do
-  #   it "is invalid without a name" do
+  #   it "is invalid without an name" do
   #     barangay = barangays(:bagong_buhay)
   #     barangay.name = nil
 
@@ -30,7 +30,7 @@ RSpec.describe Barangay, type: :model do
   #     expect(barangay.errors[:name]).to include("can't be blank")
   #   end
 
-  #   it "is invalid without a region" do
+  #   it "is invalid without an region" do
   #     barangay = barangays(:bagong_buhay)
   #     barangay.region = nil
 
@@ -38,7 +38,7 @@ RSpec.describe Barangay, type: :model do
   #     expect(barangay.errors[:region]).to include("can't be blank")
   #   end
 
-  #   it "is invalid without a province" do
+  #   it "is invalid without an province" do
   #     barangay = barangays(:bagong_buhay)
   #     barangay.province = nil
 
@@ -46,7 +46,7 @@ RSpec.describe Barangay, type: :model do
   #     expect(barangay.errors[:province]).to include("can't be blank")
   #   end
 
-  #   it "is invalid without a city" do
+  #   it "is invalid without an city" do
   #     barangay = barangays(:bagong_buhay)
   #     barangay.city = nil
 
@@ -56,7 +56,7 @@ RSpec.describe Barangay, type: :model do
   # end
 
   # describe "slug / subdomain validations" do
-  #   it "is valid when name equals slug and subdomain" do
+  #   it "is valid name are equal to slug" do
   #     barangay = barangays(:bagong_buhay)
   #     barangay.slug = nil
   #     barangay.save
@@ -65,7 +65,7 @@ RSpec.describe Barangay, type: :model do
   #     expect(barangay.subdomain).to eq("bagong-buhay")
   #   end
 
-  #   it "generates slug and subdomain if both are nil" do
+  #   it "is valid name are equal to subdomain" do
   #     barangay = barangays(:bagong_buhay)
   #     barangay.slug = nil
   #     barangay.subdomain = nil
@@ -75,48 +75,19 @@ RSpec.describe Barangay, type: :model do
   #     expect(barangay.subdomain).to eq("bagong-buhay")
   #   end
 
-  #   it "adds city to slug when name conflict exists" do
-  #     # simulate existing barangay with same name
-  #     Barangay.create!(
-  #       name: "Lao",
-  #       city: "Ormoc",
-  #       province: "Leyte",
-  #       region: "Region 8"
-  #     )
-
-  #     barangay = Barangay.create!(
-  #       name: "Lao",
-  #       city: "Ormoc",
-  #       province: "Leyte",
-  #       region: "Region 8"
-  #     )
+  #   it "will add city to slug when slug is already taken" do
+  #     barangay = barangays(:bagong_buhay)
+  #     barangay.name = barangays(:lao).name
+  #     barangay.save
 
   #     expect(barangay.slug).to eq("lao-ormoc")
   #     expect(barangay.subdomain).to eq("lao-ormoc")
   #   end
 
-  #   it "adds province to slug when name + city conflict exists" do
-  #     # simulate two existing barangays with same name + city
-  #     Barangay.create!(
-  #       name: "San Isidro",
-  #       city: "Ormoc",
-  #       province: "Leyte",
-  #       region: "Region 8"
-  #     )
-
-  #     Barangay.create!(
-  #       name: "San Isidro",
-  #       city: "Ormoc",
-  #       province: "Leyte",
-  #       region: "Region 8"
-  #     )
-
-  #     barangay = Barangay.create!(
-  #       name: "San Isidro",
-  #       city: "Ormoc",
-  #       province: "Leyte",
-  #       region: "Region 8"
-  #     )
+  #   it "will add province to slug when slug name with city is already taken" do
+  #     barangay = barangays(:bagong_buhay)
+  #     barangay.name = barangays(:san_isidro).name
+  #     barangay.save
 
   #     expect(barangay.slug).to eq("san-isidro-ormoc-leyte")
   #     expect(barangay.subdomain).to eq("san-isidro-ormoc-leyte")
