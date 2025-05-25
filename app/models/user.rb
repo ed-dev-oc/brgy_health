@@ -116,17 +116,28 @@ class User < ApplicationRecord
  end
 
   def notify_user_of_credential_change
-    changed_fields = []
-    changed_fields << "email" if saved_change_to_email?
-    changed_fields << "password" if saved_change_to_encrypted_password?
-    changed_fields << "first_name" if saved_change_to_first_name?
-    changed_fields << "middle_name" if saved_change_to_middle_name?
-    changed_fields << "last_name" if saved_change_to_last_name?
-    changed_fields << "suffix" if saved_change_to_suffix?
-    changed_fields << "subdivision" if saved_change_to_subdivision_id?
+  changed_attributes = {}
 
-    UserCredentialChangedNotifier.with(
-      changed_attributes: changed_fields
-    ).deliver_later(self)
+  {
+    "email" => :email,
+    "password" => :encrypted_password,
+    "first_name" => :first_name,
+    "middle_name" => :middle_name,
+    "last_name" => :last_name,
+    "suffix" => :suffix,
+    "subdivision" => :subdivision_id
+  }.each do |label, attr|
+    if saved_change_to_attribute?(attr)
+      old_value, new_value = saved_changes[attr.to_s]
+      changed_attributes[label] = {
+        from: old_value,
+        to: new_value
+      }
+    end
   end
+
+  UserCredentialChangedNotifier.with(
+    changed_attributes: changed_attributes
+  ).deliver_later(self)
+end
 end
