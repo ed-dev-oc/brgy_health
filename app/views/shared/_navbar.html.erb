@@ -1,6 +1,6 @@
 <nav class="navbar bg-body-tertiary">
   <div class="container-fluid">
-    <% if controller.class.superclass == SuperAdminController || controller.class.superclass == AdminController || (controller.class == ProfileController && (current_user&.admin? || current_user&.super_admin?)) %>
+    <% if controller.class.superclass == SuperAdminController || controller.class.superclass == AdminController %>
       <button class="btn text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
         <i class="bi bi-list"></i>
       </button>
