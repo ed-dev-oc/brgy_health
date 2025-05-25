@@ -1,0 +1,55 @@
+<!-- app/views/admin/users/_new_user_modal.html.erb -->
+<div class="modal fade" id="newUserModal" tabindex="-1" aria-labelledby="newUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <%= form_with model: [:admin, user], url: admin_users_path, local: true do |f| %>
+        <div class="modal-header">
+          <h5 class="modal-title" id="newUserModalLabel">Add Staff User</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <%= f.label :first_name %>
+            <%= f.text_field :first_name, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :middle_name %>
+            <%= f.text_field :middle_name, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :last_name %>
+            <%= f.text_field :last_name, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :suffix %>
+            <%= f.text_field :suffix, class: "form-control" %>
+
+          <div class="mb-3">
+            <%= f.label :email %>
+            <%= f.email_field :email, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :password %>
+            <%= f.password_field :password, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :password_confirmation %>
+            <%= f.password_field :password_confirmation, class: "form-control" %>
+
+          <%= f.hidden_field :role, value: "staff" %>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <%= f.submit "Create User", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,12 +1,16 @@
 class User < ApplicationRecord
   generate_public_uid generator: PublicUid::Generators::NumberRandom.new
 
+  before_update :prevent_super_admin_demotion
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
   acts_as_tenant :barangay, optional: true
+  has_one_attached :profile
+
+  belongs_to :barangay, optional: true
   belongs_to :subdivision, optional: true
   has_many :announcements, foreign_key: :posted_by_id
   has_many :appointments, foreign_key: :patient_id
@@ -42,6 +46,8 @@ class User < ApplicationRecord
   after_create :send_registration_verification_email,
     :send_notification_to_super_admin, if: -> { self.role == "admin" }
 
+  after_update :notify_user_of_credential_change, if: :credentials_changed?
+
   ransacker :full_name do
     Arel::Nodes::NamedFunction.new(
       "COALESCE",
@@ -67,6 +73,10 @@ class User < ApplicationRecord
 
   def self.ransackable_associations(auth_object = nil)
     [ "about_me_notifications", "announcements", "appointments", "appointments_as_health_worker", "barangay", "base_tags", "events", "flag_taggings", "flags", "noticed_events", "notifications", "push_subscriptions", "subdivision", "taggings", "testimonial" ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[barangay subdivision]
   end
 
   def full_name
@@ -106,5 +116,35 @@ class User < ApplicationRecord
     super_admin = User.super_admin.first
 
     NewAdminNotifier.with(record: self).deliver(super_admin)
+  end
+
+  def prevent_super_admin_demotion
+    if role_changed? && role_was == "super_admin"
+      errors.add(:role, "cannot be changed for super admin")
+      throw(:abort)
+    end
+  end
+
+ def credentials_changed?
+    changed_fields = %w[
+      email encrypted_password
+      first_name middle_name last_name suffix subdivision_id
+    ]
+    (changed_fields & saved_changes.keys).any? && (patient? || staff?)
+ end
+
+  def notify_user_of_credential_change
+    changed_fields = []
+    changed_fields << "email" if saved_change_to_email?
+    changed_fields << "password" if saved_change_to_encrypted_password?
+    changed_fields << "first_name" if saved_change_to_first_name?
+    changed_fields << "middle_name" if saved_change_to_middle_name?
+    changed_fields << "last_name" if saved_change_to_last_name?
+    changed_fields << "suffix" if saved_change_to_suffix?
+    changed_fields << "subdivision" if saved_change_to_subdivision_id?
+
+    UserCredentialChangedNotifier.with(
+      changed_attributes: changed_fields
+    ).deliver_later(self)
   end
 end

@@ -1,0 +1,80 @@
+<div class="modal fade" id="userModal_<%= user.id %>" tabindex="-1" aria-labelledby="userModalLabel_<%= user.id %>" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="userModalLabel_<%= user.id %>">User Details (ID: <%= user.id %>)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="mb-3">
+          <p>Current profile:</p>
+            <%if user.profile.present? %>
+              <%= image_tag user.profile.variant(resize_to_limit: [200, 200]), class: "img-fluid rounded-circle", alt: "User Avatar" %>
+            <% else %>
+              <%= image_tag "default_avatar.jpg", alt: "User Avatar", class: "rounded", style: "width: 200px; height: 200px;" %>
+            <% end %>
+        </div>
+        <dl class="row">
+          <% {
+            "Email" => user.email,
+            "Public UID" => user.public_uid,
+            "First Name" => user.first_name,
+            "Middle Name" => user.middle_name,
+            "Last Name" => user.last_name,
+            "Suffix" => user.suffix,
+            "Phone Number" => user.phone_number,
+            "Role" => user.role,
+            "Barangay ID" => user.barangay_id,
+            "Subdivision ID" => user.subdivision_id,
+            "Flags" => user.flag_list.join(", "),
+            "Created At" => user.created_at.strftime('%B %d, %Y %l:%M %p'),
+            "Updated At" => user.updated_at.strftime('%B %d, %Y %l:%M %p')
+          }.each do |label, value| %>
+            <dt class="col-sm-4"><%= label %></dt>
+            <dd class="col-sm-8"><%= value %></dd>
+          <% end %>
+        </dl>
+
+        <hr>
+        <h5>Appointments</h5>
+
+        <% if user.appointments.any? %>
+          <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th>Scheduled At</th>
+                <th>Status</th>
+                <th>Reason</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% user.appointments.order(scheduled_at: :desc).each do |appointment| %>
+                <tr>
+                  <td><%= appointment.scheduled_at.strftime('%b %d, %Y %I:%M %p') %></td>
+                  <td><%= appointment.status.capitalize %></td>
+                  <td><%= appointment.reason.presence || "-" %></td>
+                  <td><%= appointment.notes.presence || "-" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <p>No appointments found for this user.</p>
+        <% end %>
+        
+      </div>
+
+      <div class="modal-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+        <div class="d-flex gap-2">
+          <%if current_user&.admin? && user.role == "staff" %>
+          <%= link_to 'Edit', edit_admin_user_path(user), class: "btn btn-warning btn col-auto" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
