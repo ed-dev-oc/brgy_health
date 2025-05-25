@@ -7,12 +7,33 @@ class UserCredentialChangedNotifier < ApplicationNotifier
 
   notification_methods do
     def message
-      changes = params[:changed_attributes].map(&:humanize).join(", ")
+      changes = params[:changed_attributes].map do |field, change|
+        if field == "password"
+          "Password was updated"
+        else
+          from = format_value(field, change[:from])
+          to = format_value(field, change[:to])
+          "#{field.humanize}: \"#{from}\" → \"#{to}\""
+        end
+      end.compact.join(", ")
+
       "Your profile information has been updated: #{changes}."
     end
 
     def url
       Rails.application.routes.url_helpers.edit_profile_path(recipient)
+    end
+
+    private
+
+    def format_value(field, value)
+      return "none" if value.nil?
+
+      if field == "subdivision"
+        Subdivision.find_by(id: value)&.name || "Unknown"
+      else
+        value.to_s.strip.presence || "none"
+      end
     end
   end
 end
