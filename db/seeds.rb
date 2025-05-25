@@ -7,7 +7,6 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
-
 lao_barangay = Barangay.create!(
   name: "Lao",
   region: "Region VIII (Eastern Visayas)",
@@ -172,4 +171,79 @@ Appointment.create!(
   reason: "Vaccination Drive Follow Up",
   notes: nil,
   follow_up_id: san_isidro_patient_appointment.id
+)
+
+User.create!(
+  email: "juan.delacruz@example.com",
+  first_name: "Juan",
+  middle_name: "Santos",
+  last_name: "Dela Cruz",
+  suffix: "Jr.",
+  phone_number: "09171234567",
+  role: "staff",  # or "admin", "patient", etc.
+  barangay_id: 1,  # Assumes you have a barangay with ID 1
+  subdivision_id: 1,  # Assumes you have a subdivision with ID 1
+  flag_list: [ "active" ],  # if flag_list is using something like `acts_as_flaggable`
+  password: "password123",
+  password_confirmation: "password123"
+)
+
+User.create!(
+  email: "maria.reyes@example.com",
+  first_name: "Maria",
+  middle_name: "Lopez",
+  last_name: "Reyes",
+  suffix: "",
+  phone_number: "09181234567",
+  role: "staff",
+  barangay_id: 1,
+  subdivision_id: 1,
+  flag_list: [ "active" ],
+  password: "password123",
+  password_confirmation: "password123"
+)
+
+User.create!(
+  email: "carlos.santos@example.com",
+  first_name: "Carlos",
+  middle_name: "Diaz",
+  last_name: "Santos",
+  suffix: "Sr.",
+  phone_number: "09221234567",
+  role: "staff",
+  barangay_id: 1,
+  subdivision_id: 1,
+  flag_list: [ "inactive" ],
+  password: "password123",
+  password_confirmation: "password123"
+)
+
+User.create!(
+  email: "ana.torres@example.com",
+  first_name: "Ana",
+  middle_name: "Garcia",
+  last_name: "Torres",
+  suffix: "",
+  phone_number: "09331234567",
+  role: "staff",
+  barangay_id: 1,
+  subdivision_id: 1,
+  flag_list: [ "active" ],
+  password: "password123",
+  password_confirmation: "password123"
+)
+
+User.create!(
+  email: "roberto.cruz@example.com",
+  first_name: "Roberto",
+  middle_name: "Marcos",
+  last_name: "Cruz",
+  suffix: "",
+  phone_number: "09441234567",
+  role: "staff",
+  barangay_id: 1,
+  subdivision_id: 1,
+  flag_list: [ "inactive" ],
+  password: "password123",
+  password_confirmation: "password123"
 )
