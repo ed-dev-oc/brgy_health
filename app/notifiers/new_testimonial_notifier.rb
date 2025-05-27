@@ -24,4 +24,3 @@ class NewTestimonialNotifier < ApplicationNotifier
     end
   end
 end
-
