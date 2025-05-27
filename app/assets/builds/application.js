@@ -9990,864 +9990,6 @@ var application = Application.start();
 application.debug = false;
 window.Stimulus = application;
 
-// app/javascript/controllers/flash_controller.js
-var flash_controller_default = class extends Controller {
-  connect() {
-    this.element.style.animation = "fade-in-and-out 4s";
-    setTimeout(() => {
-      this.element.remove();
-    }, 6e3);
-  }
-  close_message() {
-    this.element.remove();
-  }
-};
-
-// node_modules/@googlemaps/js-api-loader/dist/index.mjs
-function __awaiter(thisArg, _arguments, P2, generator) {
-  function adopt(value) {
-    return value instanceof P2 ? value : new P2(function(resolve) {
-      resolve(value);
-    });
-  }
-  return new (P2 || (P2 = Promise))(function(resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e2) {
-        reject(e2);
-      }
-    }
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e2) {
-        reject(e2);
-      }
-    }
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-}
-function getDefaultExportFromCjs(x2) {
-  return x2 && x2.__esModule && Object.prototype.hasOwnProperty.call(x2, "default") ? x2["default"] : x2;
-}
-var fastDeepEqual = function equal(a2, b2) {
-  if (a2 === b2) return true;
-  if (a2 && b2 && typeof a2 == "object" && typeof b2 == "object") {
-    if (a2.constructor !== b2.constructor) return false;
-    var length, i2, keys;
-    if (Array.isArray(a2)) {
-      length = a2.length;
-      if (length != b2.length) return false;
-      for (i2 = length; i2-- !== 0; )
-        if (!equal(a2[i2], b2[i2])) return false;
-      return true;
-    }
-    if (a2.constructor === RegExp) return a2.source === b2.source && a2.flags === b2.flags;
-    if (a2.valueOf !== Object.prototype.valueOf) return a2.valueOf() === b2.valueOf();
-    if (a2.toString !== Object.prototype.toString) return a2.toString() === b2.toString();
-    keys = Object.keys(a2);
-    length = keys.length;
-    if (length !== Object.keys(b2).length) return false;
-    for (i2 = length; i2-- !== 0; )
-      if (!Object.prototype.hasOwnProperty.call(b2, keys[i2])) return false;
-    for (i2 = length; i2-- !== 0; ) {
-      var key = keys[i2];
-      if (!equal(a2[key], b2[key])) return false;
-    }
-    return true;
-  }
-  return a2 !== a2 && b2 !== b2;
-};
-var isEqual = /* @__PURE__ */ getDefaultExportFromCjs(fastDeepEqual);
-var DEFAULT_ID = "__googleMapsScriptId";
-var LoaderStatus;
-(function(LoaderStatus2) {
-  LoaderStatus2[LoaderStatus2["INITIALIZED"] = 0] = "INITIALIZED";
-  LoaderStatus2[LoaderStatus2["LOADING"] = 1] = "LOADING";
-  LoaderStatus2[LoaderStatus2["SUCCESS"] = 2] = "SUCCESS";
-  LoaderStatus2[LoaderStatus2["FAILURE"] = 3] = "FAILURE";
-})(LoaderStatus || (LoaderStatus = {}));
-var Loader = class _Loader {
-  /**
-   * Creates an instance of Loader using [[LoaderOptions]]. No defaults are set
-   * using this library, instead the defaults are set by the Google Maps
-   * JavaScript API server.
-   *
-   * ```
-   * const loader = Loader({apiKey, version: 'weekly', libraries: ['places']});
-   * ```
-   */
-  constructor({ apiKey, authReferrerPolicy, channel, client, id: id2 = DEFAULT_ID, language, libraries = [], mapIds, nonce, region, retries = 3, url = "https://maps.googleapis.com/maps/api/js", version }) {
-    this.callbacks = [];
-    this.done = false;
-    this.loading = false;
-    this.errors = [];
-    this.apiKey = apiKey;
-    this.authReferrerPolicy = authReferrerPolicy;
-    this.channel = channel;
-    this.client = client;
-    this.id = id2 || DEFAULT_ID;
-    this.language = language;
-    this.libraries = libraries;
-    this.mapIds = mapIds;
-    this.nonce = nonce;
-    this.region = region;
-    this.retries = retries;
-    this.url = url;
-    this.version = version;
-    if (_Loader.instance) {
-      if (!isEqual(this.options, _Loader.instance.options)) {
-        throw new Error(`Loader must not be called again with different options. ${JSON.stringify(this.options)} !== ${JSON.stringify(_Loader.instance.options)}`);
-      }
-      return _Loader.instance;
-    }
-    _Loader.instance = this;
-  }
-  get options() {
-    return {
-      version: this.version,
-      apiKey: this.apiKey,
-      channel: this.channel,
-      client: this.client,
-      id: this.id,
-      libraries: this.libraries,
-      language: this.language,
-      region: this.region,
-      mapIds: this.mapIds,
-      nonce: this.nonce,
-      url: this.url,
-      authReferrerPolicy: this.authReferrerPolicy
-    };
-  }
-  get status() {
-    if (this.errors.length) {
-      return LoaderStatus.FAILURE;
-    }
-    if (this.done) {
-      return LoaderStatus.SUCCESS;
-    }
-    if (this.loading) {
-      return LoaderStatus.LOADING;
-    }
-    return LoaderStatus.INITIALIZED;
-  }
-  get failed() {
-    return this.done && !this.loading && this.errors.length >= this.retries + 1;
-  }
-  /**
-   * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
-   *
-   * @ignore
-   * @deprecated
-   */
-  createUrl() {
-    let url = this.url;
-    url += `?callback=__googleMapsCallback&loading=async`;
-    if (this.apiKey) {
-      url += `&key=${this.apiKey}`;
-    }
-    if (this.channel) {
-      url += `&channel=${this.channel}`;
-    }
-    if (this.client) {
-      url += `&client=${this.client}`;
-    }
-    if (this.libraries.length > 0) {
-      url += `&libraries=${this.libraries.join(",")}`;
-    }
-    if (this.language) {
-      url += `&language=${this.language}`;
-    }
-    if (this.region) {
-      url += `&region=${this.region}`;
-    }
-    if (this.version) {
-      url += `&v=${this.version}`;
-    }
-    if (this.mapIds) {
-      url += `&map_ids=${this.mapIds.join(",")}`;
-    }
-    if (this.authReferrerPolicy) {
-      url += `&auth_referrer_policy=${this.authReferrerPolicy}`;
-    }
-    return url;
-  }
-  deleteScript() {
-    const script = document.getElementById(this.id);
-    if (script) {
-      script.remove();
-    }
-  }
-  /**
-   * Load the Google Maps JavaScript API script and return a Promise.
-   * @deprecated, use importLibrary() instead.
-   */
-  load() {
-    return this.loadPromise();
-  }
-  /**
-   * Load the Google Maps JavaScript API script and return a Promise.
-   *
-   * @ignore
-   * @deprecated, use importLibrary() instead.
-   */
-  loadPromise() {
-    return new Promise((resolve, reject) => {
-      this.loadCallback((err) => {
-        if (!err) {
-          resolve(window.google);
-        } else {
-          reject(err.error);
-        }
-      });
-    });
-  }
-  importLibrary(name) {
-    this.execute();
-    return google.maps.importLibrary(name);
-  }
-  /**
-   * Load the Google Maps JavaScript API script with a callback.
-   * @deprecated, use importLibrary() instead.
-   */
-  loadCallback(fn3) {
-    this.callbacks.push(fn3);
-    this.execute();
-  }
-  /**
-   * Set the script on document.
-   */
-  setScript() {
-    var _a, _b;
-    if (document.getElementById(this.id)) {
-      this.callback();
-      return;
-    }
-    const params = {
-      key: this.apiKey,
-      channel: this.channel,
-      client: this.client,
-      libraries: this.libraries.length && this.libraries,
-      v: this.version,
-      mapIds: this.mapIds,
-      language: this.language,
-      region: this.region,
-      authReferrerPolicy: this.authReferrerPolicy
-    };
-    Object.keys(params).forEach(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (key) => !params[key] && delete params[key]
-    );
-    if (!((_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.maps) === null || _b === void 0 ? void 0 : _b.importLibrary)) {
-      ((g2) => {
-        let h2, a2, k2, p2 = "The Google Maps JavaScript API", c2 = "google", l2 = "importLibrary", q2 = "__ib__", m2 = document, b2 = window;
-        b2 = b2[c2] || (b2[c2] = {});
-        const d2 = b2.maps || (b2.maps = {}), r2 = /* @__PURE__ */ new Set(), e2 = new URLSearchParams(), u2 = () => (
-          // @ts-ignore
-          h2 || (h2 = new Promise((f2, n2) => __awaiter(this, void 0, void 0, function* () {
-            var _a2;
-            yield a2 = m2.createElement("script");
-            a2.id = this.id;
-            e2.set("libraries", [...r2] + "");
-            for (k2 in g2)
-              e2.set(k2.replace(/[A-Z]/g, (t3) => "_" + t3[0].toLowerCase()), g2[k2]);
-            e2.set("callback", c2 + ".maps." + q2);
-            a2.src = this.url + `?` + e2;
-            d2[q2] = f2;
-            a2.onerror = () => h2 = n2(Error(p2 + " could not load."));
-            a2.nonce = this.nonce || ((_a2 = m2.querySelector("script[nonce]")) === null || _a2 === void 0 ? void 0 : _a2.nonce) || "";
-            m2.head.append(a2);
-          })))
-        );
-        d2[l2] ? console.warn(p2 + " only loads once. Ignoring:", g2) : d2[l2] = (f2, ...n2) => r2.add(f2) && u2().then(() => d2[l2](f2, ...n2));
-      })(params);
-    }
-    const libraryPromises = this.libraries.map((library) => this.importLibrary(library));
-    if (!libraryPromises.length) {
-      libraryPromises.push(this.importLibrary("core"));
-    }
-    Promise.all(libraryPromises).then(() => this.callback(), (error2) => {
-      const event = new ErrorEvent("error", { error: error2 });
-      this.loadErrorCallback(event);
-    });
-  }
-  /**
-   * Reset the loader state.
-   */
-  reset() {
-    this.deleteScript();
-    this.done = false;
-    this.loading = false;
-    this.errors = [];
-    this.onerrorEvent = null;
-  }
-  resetIfRetryingFailed() {
-    if (this.failed) {
-      this.reset();
-    }
-  }
-  loadErrorCallback(e2) {
-    this.errors.push(e2);
-    if (this.errors.length <= this.retries) {
-      const delay = this.errors.length * Math.pow(2, this.errors.length);
-      console.error(`Failed to load Google Maps script, retrying in ${delay} ms.`);
-      setTimeout(() => {
-        this.deleteScript();
-        this.setScript();
-      }, delay);
-    } else {
-      this.onerrorEvent = e2;
-      this.callback();
-    }
-  }
-  callback() {
-    this.done = true;
-    this.loading = false;
-    this.callbacks.forEach((cb) => {
-      cb(this.onerrorEvent);
-    });
-    this.callbacks = [];
-  }
-  execute() {
-    this.resetIfRetryingFailed();
-    if (this.loading) {
-      return;
-    }
-    if (this.done) {
-      this.callback();
-    } else {
-      if (window.google && window.google.maps && window.google.maps.version) {
-        console.warn("Google Maps already loaded outside @googlemaps/js-api-loader. This may result in undesirable behavior as options and script parameters may not match.");
-        this.callback();
-        return;
-      }
-      this.loading = true;
-      this.setScript();
-    }
-  }
-};
-
-// app/javascript/controllers/google_map_api_controller.js
-var google_map_api_controller_default = class extends Controller {
-  static values = {
-    apiKey: String,
-    lat: Number,
-    lng: Number
-  };
-  static targets = ["map"];
-  connect() {
-    const loader = new Loader({
-      apiKey: this.apiKeyValue,
-      version: "weekly"
-    });
-    loader.load().then(() => {
-      var myLatLng = new google.maps.LatLng(
-        this.latValue,
-        this.lngValue
-      );
-      var mapProp = {
-        center: myLatLng,
-        zoom: 20
-      };
-      var map = new google.maps.Map(
-        this.element,
-        mapProp
-      );
-      var marker = new google.maps.Marker({
-        position: myLatLng
-      });
-      marker.setMap(map);
-    });
-  }
-};
-
-// app/javascript/controllers/hello_controller.js
-var hello_controller_default = class extends Controller {
-  connect() {
-    this.element.textContent = "Hello World!";
-  }
-};
-
-// node_modules/@rails/request.js/src/fetch_response.js
-var FetchResponse2 = class {
-  constructor(response) {
-    this.response = response;
-  }
-  get statusCode() {
-    return this.response.status;
-  }
-  get redirected() {
-    return this.response.redirected;
-  }
-  get ok() {
-    return this.response.ok;
-  }
-  get unauthenticated() {
-    return this.statusCode === 401;
-  }
-  get unprocessableEntity() {
-    return this.statusCode === 422;
-  }
-  get authenticationURL() {
-    return this.response.headers.get("WWW-Authenticate");
-  }
-  get contentType() {
-    const contentType = this.response.headers.get("Content-Type") || "";
-    return contentType.replace(/;.*$/, "");
-  }
-  get headers() {
-    return this.response.headers;
-  }
-  get html() {
-    if (this.contentType.match(/^(application|text)\/(html|xhtml\+xml)$/)) {
-      return this.text;
-    }
-    return Promise.reject(new Error(`Expected an HTML response but got "${this.contentType}" instead`));
-  }
-  get json() {
-    if (this.contentType.match(/^application\/.*json$/)) {
-      return this.responseJson || (this.responseJson = this.response.json());
-    }
-    return Promise.reject(new Error(`Expected a JSON response but got "${this.contentType}" instead`));
-  }
-  get text() {
-    return this.responseText || (this.responseText = this.response.text());
-  }
-  get isTurboStream() {
-    return this.contentType.match(/^text\/vnd\.turbo-stream\.html/);
-  }
-  get isScript() {
-    return this.contentType.match(/\b(?:java|ecma)script\b/);
-  }
-  async renderTurboStream() {
-    if (this.isTurboStream) {
-      if (window.Turbo) {
-        await window.Turbo.renderStreamMessage(await this.text);
-      } else {
-        console.warn("You must set `window.Turbo = Turbo` to automatically process Turbo Stream events with request.js");
-      }
-    } else {
-      return Promise.reject(new Error(`Expected a Turbo Stream response but got "${this.contentType}" instead`));
-    }
-  }
-  async activeScript() {
-    if (this.isScript) {
-      const script = document.createElement("script");
-      const metaTag = document.querySelector("meta[name=csp-nonce]");
-      if (metaTag) {
-        const nonce = metaTag.nonce === "" ? metaTag.content : metaTag.nonce;
-        if (nonce) {
-          script.setAttribute("nonce", nonce);
-        }
-      }
-      script.innerHTML = await this.text;
-      document.body.appendChild(script);
-    } else {
-      return Promise.reject(new Error(`Expected a Script response but got "${this.contentType}" instead`));
-    }
-  }
-};
-
-// node_modules/@rails/request.js/src/request_interceptor.js
-var RequestInterceptor = class {
-  static register(interceptor) {
-    this.interceptor = interceptor;
-  }
-  static get() {
-    return this.interceptor;
-  }
-  static reset() {
-    this.interceptor = void 0;
-  }
-};
-
-// node_modules/@rails/request.js/src/lib/utils.js
-function getCookie(name) {
-  const cookies = document.cookie ? document.cookie.split("; ") : [];
-  const prefix = `${encodeURIComponent(name)}=`;
-  const cookie = cookies.find((cookie2) => cookie2.startsWith(prefix));
-  if (cookie) {
-    const value = cookie.split("=").slice(1).join("=");
-    if (value) {
-      return decodeURIComponent(value);
-    }
-  }
-}
-function compact(object) {
-  const result = {};
-  for (const key in object) {
-    const value = object[key];
-    if (value !== void 0) {
-      result[key] = value;
-    }
-  }
-  return result;
-}
-function metaContent(name) {
-  const element = document.head.querySelector(`meta[name="${name}"]`);
-  return element && element.content;
-}
-function stringEntriesFromFormData(formData) {
-  return [...formData].reduce((entries, [name, value]) => {
-    return entries.concat(typeof value === "string" ? [[name, value]] : []);
-  }, []);
-}
-function mergeEntries(searchParams, entries) {
-  for (const [name, value] of entries) {
-    if (value instanceof window.File) continue;
-    if (searchParams.has(name) && !name.includes("[]")) {
-      searchParams.delete(name);
-      searchParams.set(name, value);
-    } else {
-      searchParams.append(name, value);
-    }
-  }
-}
-
-// node_modules/@rails/request.js/src/fetch_request.js
-var FetchRequest2 = class {
-  constructor(method, url, options = {}) {
-    this.method = method;
-    this.options = options;
-    this.originalUrl = url.toString();
-  }
-  async perform() {
-    try {
-      const requestInterceptor = RequestInterceptor.get();
-      if (requestInterceptor) {
-        await requestInterceptor(this);
-      }
-    } catch (error2) {
-      console.error(error2);
-    }
-    const fetch2 = this.responseKind === "turbo-stream" && window.Turbo ? window.Turbo.fetch : window.fetch;
-    const response = new FetchResponse2(await fetch2(this.url, this.fetchOptions));
-    if (response.unauthenticated && response.authenticationURL) {
-      return Promise.reject(window.location.href = response.authenticationURL);
-    }
-    if (response.isScript) {
-      await response.activeScript();
-    }
-    const responseStatusIsTurboStreamable = response.ok || response.unprocessableEntity;
-    if (responseStatusIsTurboStreamable && response.isTurboStream) {
-      await response.renderTurboStream();
-    }
-    return response;
-  }
-  addHeader(key, value) {
-    const headers = this.additionalHeaders;
-    headers[key] = value;
-    this.options.headers = headers;
-  }
-  sameHostname() {
-    if (!this.originalUrl.startsWith("http:") && !this.originalUrl.startsWith("https:")) {
-      return true;
-    }
-    try {
-      return new URL(this.originalUrl).hostname === window.location.hostname;
-    } catch (_2) {
-      return true;
-    }
-  }
-  get fetchOptions() {
-    return {
-      method: this.method.toUpperCase(),
-      headers: this.headers,
-      body: this.formattedBody,
-      signal: this.signal,
-      credentials: this.credentials,
-      redirect: this.redirect,
-      keepalive: this.keepalive
-    };
-  }
-  get headers() {
-    const baseHeaders = {
-      "X-Requested-With": "XMLHttpRequest",
-      "Content-Type": this.contentType,
-      Accept: this.accept
-    };
-    if (this.sameHostname()) {
-      baseHeaders["X-CSRF-Token"] = this.csrfToken;
-    }
-    return compact(
-      Object.assign(baseHeaders, this.additionalHeaders)
-    );
-  }
-  get csrfToken() {
-    return getCookie(metaContent("csrf-param")) || metaContent("csrf-token");
-  }
-  get contentType() {
-    if (this.options.contentType) {
-      return this.options.contentType;
-    } else if (this.body == null || this.body instanceof window.FormData) {
-      return void 0;
-    } else if (this.body instanceof window.File) {
-      return this.body.type;
-    }
-    return "application/json";
-  }
-  get accept() {
-    switch (this.responseKind) {
-      case "html":
-        return "text/html, application/xhtml+xml";
-      case "turbo-stream":
-        return "text/vnd.turbo-stream.html, text/html, application/xhtml+xml";
-      case "json":
-        return "application/json, application/vnd.api+json";
-      case "script":
-        return "text/javascript, application/javascript";
-      default:
-        return "*/*";
-    }
-  }
-  get body() {
-    return this.options.body;
-  }
-  get query() {
-    const originalQuery = (this.originalUrl.split("?")[1] || "").split("#")[0];
-    const params = new URLSearchParams(originalQuery);
-    let requestQuery = this.options.query;
-    if (requestQuery instanceof window.FormData) {
-      requestQuery = stringEntriesFromFormData(requestQuery);
-    } else if (requestQuery instanceof window.URLSearchParams) {
-      requestQuery = requestQuery.entries();
-    } else {
-      requestQuery = Object.entries(requestQuery || {});
-    }
-    mergeEntries(params, requestQuery);
-    const query = params.toString();
-    return query.length > 0 ? `?${query}` : "";
-  }
-  get url() {
-    return this.originalUrl.split("?")[0].split("#")[0] + this.query;
-  }
-  get responseKind() {
-    return this.options.responseKind || "html";
-  }
-  get signal() {
-    return this.options.signal;
-  }
-  get redirect() {
-    return this.options.redirect || "follow";
-  }
-  get credentials() {
-    return this.options.credentials || "same-origin";
-  }
-  get keepalive() {
-    return this.options.keepalive || false;
-  }
-  get additionalHeaders() {
-    return this.options.headers || {};
-  }
-  get formattedBody() {
-    const bodyIsAString = Object.prototype.toString.call(this.body) === "[object String]";
-    const contentTypeIsJson = this.headers["Content-Type"] === "application/json";
-    if (contentTypeIsJson && !bodyIsAString) {
-      return JSON.stringify(this.body);
-    }
-    return this.body;
-  }
-};
-
-// app/javascript/controllers/register_service_worker_controller.js
-var register_service_worker_controller_default = class extends Controller {
-  static values = {
-    publicKey: Array,
-    url: String,
-    pushSubscriptionsUrl: String
-  };
-  connect() {
-    window.vapidPublicKey = new Uint8Array(this.publicKeyValue);
-    if ("Notification" in window) {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          this.registerServiceWorker();
-        } else if (permission === "denied") {
-          console.warn("User rejected to allow notifications.");
-        } else {
-          console.warn("User still didn't give an answer about notifications.");
-        }
-      });
-    } else {
-      console.warn("Push notifications not supported.");
-    }
-  }
-  registerServiceWorker() {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register(this.urlValue).then((serviceWorkerRegistration) => {
-        serviceWorkerRegistration.pushManager.getSubscription().then((existingSubscription) => {
-          if (!existingSubscription) {
-            serviceWorkerRegistration.pushManager.subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: window.vapidPublicKey
-            }).then((subscription) => {
-              this.saveSubscription(subscription);
-            });
-          }
-        });
-      }).catch((error2) => {
-        console.error("Error during registration Service Worker:", error2);
-      });
-    }
-  }
-  async saveSubscription(subscription) {
-    const endpoint = subscription.endpoint;
-    const p256dh = btoa(
-      String.fromCharCode.apply(
-        null,
-        new Uint8Array(subscription.getKey("p256dh"))
-      )
-    );
-    const auth = btoa(
-      String.fromCharCode.apply(
-        null,
-        new Uint8Array(subscription.getKey("auth"))
-      )
-    );
-    const request = new FetchRequest2(
-      "post",
-      this.pushSubscriptionsUrlValue,
-      {
-        body: JSON.stringify({ push_subscription: { endpoint, p256dh, auth } }),
-        contentType: "application/json"
-      }
-    );
-    const response = await request.perform();
-    if (response.ok) {
-      const body = await response.text;
-    }
-  }
-};
-
-// app/javascript/controllers/select_philippines_address_controller.js
-var import_select_philippines_address = __toESM(require_select_philippines_address());
-var select_philippines_address_controller_default = class extends Controller {
-  static targets = ["regionInput", "provinceInput", "cityInput", "barangayInput"];
-  static values = {
-    regionCode: String,
-    provinceCode: String,
-    cityCode: String,
-    brgyCode: String,
-    regionName: String,
-    provinceName: String,
-    cityName: String,
-    brgyName: String
-  };
-  async regionInputTargetConnected() {
-    console.log("Visited");
-    await this.setRegionOptions();
-    await this.setProvinceOptions();
-    await this.setCityOptions();
-    await this.setBarangayOptions();
-  }
-  async regionInputChanged(event) {
-    this.regionNameValue = event.target.value;
-    await this.setRegionOptions();
-    await this.setProvinceOptions();
-    await this.setCityOptions();
-    await this.setBarangayOptions();
-  }
-  async provinceInputChanged(event) {
-    this.provinceNameValue = event.target.value;
-    await this.setProvinceOptions();
-    await this.setCityOptions();
-    await this.setBarangayOptions();
-  }
-  async cityInputChanged(event) {
-    this.cityNameValue = event.target.value;
-    await this.setCityOptions();
-    await this.setBarangayOptions();
-  }
-  async barangayInputChanged(event) {
-    this.brgyNameValue = event.target.value;
-    await this.setBarangayOptions();
-  }
-  async setRegionOptions() {
-    const { regions } = import_select_philippines_address.default;
-    this.regionInputTarget.innerHTML = `<option value="">Select Region</option>`;
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    await sleep(200);
-    await regions().then(
-      (region) => region.forEach((r2) => {
-        const option = document.createElement("option");
-        option.value = r2.region_name;
-        option.innerHTML = r2.region_name;
-        if (r2.region_name == this.regionNameValue) {
-          this.regionCodeValue = r2.region_code;
-          option.selected = true;
-        }
-        ;
-        this.regionInputTarget.appendChild(option);
-      })
-    );
-  }
-  async setProvinceOptions() {
-    const { provinces } = import_select_philippines_address.default;
-    this.provinceInputTarget.innerHTML = `<option value="">Select Province</option>`;
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    await sleep(200);
-    await provinces(`${this.regionCodeValue}`).then((province) => {
-      province.forEach((p2) => {
-        const option = document.createElement("option");
-        option.value = p2.province_name;
-        option.innerHTML = p2.province_name;
-        if (p2.province_name == this.provinceNameValue) {
-          this.provinceCodeValue = p2.province_code;
-          option.selected = true;
-        }
-        this.provinceInputTarget.appendChild(option);
-      });
-    });
-  }
-  async setCityOptions() {
-    const { cities } = import_select_philippines_address.default;
-    this.cityInputTarget.innerHTML = `<option value="">Select City</option>`;
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    await sleep(200);
-    await cities(`${this.provinceCodeValue}`).then((city) => {
-      city.forEach((c2) => {
-        const option = document.createElement("option");
-        option.value = c2.city_name;
-        option.innerHTML = c2.city_name;
-        if (c2.city_name == this.cityNameValue) {
-          this.cityCodeValue = c2.city_code;
-          option.selected = true;
-        }
-        this.cityInputTarget.appendChild(option);
-      });
-    });
-  }
-  async setBarangayOptions() {
-    const { barangays } = import_select_philippines_address.default;
-    this.barangayInputTarget.innerHTML = `<option value="">Select Barangay</option>`;
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    await sleep(200);
-    await barangays(`${this.cityCodeValue}`).then((brgy) => {
-      brgy.forEach((b2) => {
-        const option = document.createElement("option");
-        option.value = b2.brgy_name;
-        option.innerHTML = b2.brgy_name;
-        if (b2.brgy_name == this.brgyNameValue) {
-          this.brgyCodeValue = b2.brgy_code;
-          option.selected = true;
-        }
-        this.barangayInputTarget.appendChild(option);
-      });
-    });
-  }
-};
-
-// app/javascript/controllers/index.js
-application.register("flash", flash_controller_default);
-application.register("google-map-api", google_map_api_controller_default);
-application.register("hello", hello_controller_default);
-application.register("register-service-worker", register_service_worker_controller_default);
-application.register("select-philippines-address", select_philippines_address_controller_default);
-
 // node_modules/@popperjs/core/lib/index.js
 var lib_exports = {};
 __export(lib_exports, {
@@ -16004,6 +15146,875 @@ var Toast = class _Toast extends BaseComponent {
 };
 enableDismissTrigger(Toast);
 defineJQueryPlugin(Toast);
+
+// app/javascript/controllers/admin_testimonial_controller.js
+var admin_testimonial_controller_default = class extends Controller {
+  connect() {
+    setTimeout(() => {
+      const modal = new Modal(this.element);
+      modal.show();
+    }, 6e3);
+  }
+};
+
+// app/javascript/controllers/flash_controller.js
+var flash_controller_default = class extends Controller {
+  connect() {
+    this.element.style.animation = "fade-in-and-out 4s";
+    setTimeout(() => {
+      this.element.remove();
+    }, 6e3);
+  }
+  close_message() {
+    this.element.remove();
+  }
+};
+
+// node_modules/@googlemaps/js-api-loader/dist/index.mjs
+function __awaiter(thisArg, _arguments, P2, generator) {
+  function adopt(value) {
+    return value instanceof P2 ? value : new P2(function(resolve) {
+      resolve(value);
+    });
+  }
+  return new (P2 || (P2 = Promise))(function(resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e2) {
+        reject(e2);
+      }
+    }
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e2) {
+        reject(e2);
+      }
+    }
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+}
+function getDefaultExportFromCjs(x2) {
+  return x2 && x2.__esModule && Object.prototype.hasOwnProperty.call(x2, "default") ? x2["default"] : x2;
+}
+var fastDeepEqual = function equal(a2, b2) {
+  if (a2 === b2) return true;
+  if (a2 && b2 && typeof a2 == "object" && typeof b2 == "object") {
+    if (a2.constructor !== b2.constructor) return false;
+    var length, i2, keys;
+    if (Array.isArray(a2)) {
+      length = a2.length;
+      if (length != b2.length) return false;
+      for (i2 = length; i2-- !== 0; )
+        if (!equal(a2[i2], b2[i2])) return false;
+      return true;
+    }
+    if (a2.constructor === RegExp) return a2.source === b2.source && a2.flags === b2.flags;
+    if (a2.valueOf !== Object.prototype.valueOf) return a2.valueOf() === b2.valueOf();
+    if (a2.toString !== Object.prototype.toString) return a2.toString() === b2.toString();
+    keys = Object.keys(a2);
+    length = keys.length;
+    if (length !== Object.keys(b2).length) return false;
+    for (i2 = length; i2-- !== 0; )
+      if (!Object.prototype.hasOwnProperty.call(b2, keys[i2])) return false;
+    for (i2 = length; i2-- !== 0; ) {
+      var key = keys[i2];
+      if (!equal(a2[key], b2[key])) return false;
+    }
+    return true;
+  }
+  return a2 !== a2 && b2 !== b2;
+};
+var isEqual = /* @__PURE__ */ getDefaultExportFromCjs(fastDeepEqual);
+var DEFAULT_ID = "__googleMapsScriptId";
+var LoaderStatus;
+(function(LoaderStatus2) {
+  LoaderStatus2[LoaderStatus2["INITIALIZED"] = 0] = "INITIALIZED";
+  LoaderStatus2[LoaderStatus2["LOADING"] = 1] = "LOADING";
+  LoaderStatus2[LoaderStatus2["SUCCESS"] = 2] = "SUCCESS";
+  LoaderStatus2[LoaderStatus2["FAILURE"] = 3] = "FAILURE";
+})(LoaderStatus || (LoaderStatus = {}));
+var Loader = class _Loader {
+  /**
+   * Creates an instance of Loader using [[LoaderOptions]]. No defaults are set
+   * using this library, instead the defaults are set by the Google Maps
+   * JavaScript API server.
+   *
+   * ```
+   * const loader = Loader({apiKey, version: 'weekly', libraries: ['places']});
+   * ```
+   */
+  constructor({ apiKey, authReferrerPolicy, channel, client, id: id2 = DEFAULT_ID, language, libraries = [], mapIds, nonce, region, retries = 3, url = "https://maps.googleapis.com/maps/api/js", version }) {
+    this.callbacks = [];
+    this.done = false;
+    this.loading = false;
+    this.errors = [];
+    this.apiKey = apiKey;
+    this.authReferrerPolicy = authReferrerPolicy;
+    this.channel = channel;
+    this.client = client;
+    this.id = id2 || DEFAULT_ID;
+    this.language = language;
+    this.libraries = libraries;
+    this.mapIds = mapIds;
+    this.nonce = nonce;
+    this.region = region;
+    this.retries = retries;
+    this.url = url;
+    this.version = version;
+    if (_Loader.instance) {
+      if (!isEqual(this.options, _Loader.instance.options)) {
+        throw new Error(`Loader must not be called again with different options. ${JSON.stringify(this.options)} !== ${JSON.stringify(_Loader.instance.options)}`);
+      }
+      return _Loader.instance;
+    }
+    _Loader.instance = this;
+  }
+  get options() {
+    return {
+      version: this.version,
+      apiKey: this.apiKey,
+      channel: this.channel,
+      client: this.client,
+      id: this.id,
+      libraries: this.libraries,
+      language: this.language,
+      region: this.region,
+      mapIds: this.mapIds,
+      nonce: this.nonce,
+      url: this.url,
+      authReferrerPolicy: this.authReferrerPolicy
+    };
+  }
+  get status() {
+    if (this.errors.length) {
+      return LoaderStatus.FAILURE;
+    }
+    if (this.done) {
+      return LoaderStatus.SUCCESS;
+    }
+    if (this.loading) {
+      return LoaderStatus.LOADING;
+    }
+    return LoaderStatus.INITIALIZED;
+  }
+  get failed() {
+    return this.done && !this.loading && this.errors.length >= this.retries + 1;
+  }
+  /**
+   * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
+   *
+   * @ignore
+   * @deprecated
+   */
+  createUrl() {
+    let url = this.url;
+    url += `?callback=__googleMapsCallback&loading=async`;
+    if (this.apiKey) {
+      url += `&key=${this.apiKey}`;
+    }
+    if (this.channel) {
+      url += `&channel=${this.channel}`;
+    }
+    if (this.client) {
+      url += `&client=${this.client}`;
+    }
+    if (this.libraries.length > 0) {
+      url += `&libraries=${this.libraries.join(",")}`;
+    }
+    if (this.language) {
+      url += `&language=${this.language}`;
+    }
+    if (this.region) {
+      url += `&region=${this.region}`;
+    }
+    if (this.version) {
+      url += `&v=${this.version}`;
+    }
+    if (this.mapIds) {
+      url += `&map_ids=${this.mapIds.join(",")}`;
+    }
+    if (this.authReferrerPolicy) {
+      url += `&auth_referrer_policy=${this.authReferrerPolicy}`;
+    }
+    return url;
+  }
+  deleteScript() {
+    const script = document.getElementById(this.id);
+    if (script) {
+      script.remove();
+    }
+  }
+  /**
+   * Load the Google Maps JavaScript API script and return a Promise.
+   * @deprecated, use importLibrary() instead.
+   */
+  load() {
+    return this.loadPromise();
+  }
+  /**
+   * Load the Google Maps JavaScript API script and return a Promise.
+   *
+   * @ignore
+   * @deprecated, use importLibrary() instead.
+   */
+  loadPromise() {
+    return new Promise((resolve, reject) => {
+      this.loadCallback((err) => {
+        if (!err) {
+          resolve(window.google);
+        } else {
+          reject(err.error);
+        }
+      });
+    });
+  }
+  importLibrary(name) {
+    this.execute();
+    return google.maps.importLibrary(name);
+  }
+  /**
+   * Load the Google Maps JavaScript API script with a callback.
+   * @deprecated, use importLibrary() instead.
+   */
+  loadCallback(fn3) {
+    this.callbacks.push(fn3);
+    this.execute();
+  }
+  /**
+   * Set the script on document.
+   */
+  setScript() {
+    var _a, _b;
+    if (document.getElementById(this.id)) {
+      this.callback();
+      return;
+    }
+    const params = {
+      key: this.apiKey,
+      channel: this.channel,
+      client: this.client,
+      libraries: this.libraries.length && this.libraries,
+      v: this.version,
+      mapIds: this.mapIds,
+      language: this.language,
+      region: this.region,
+      authReferrerPolicy: this.authReferrerPolicy
+    };
+    Object.keys(params).forEach(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (key) => !params[key] && delete params[key]
+    );
+    if (!((_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.maps) === null || _b === void 0 ? void 0 : _b.importLibrary)) {
+      ((g2) => {
+        let h2, a2, k2, p2 = "The Google Maps JavaScript API", c2 = "google", l2 = "importLibrary", q2 = "__ib__", m2 = document, b2 = window;
+        b2 = b2[c2] || (b2[c2] = {});
+        const d2 = b2.maps || (b2.maps = {}), r2 = /* @__PURE__ */ new Set(), e2 = new URLSearchParams(), u2 = () => (
+          // @ts-ignore
+          h2 || (h2 = new Promise((f2, n2) => __awaiter(this, void 0, void 0, function* () {
+            var _a2;
+            yield a2 = m2.createElement("script");
+            a2.id = this.id;
+            e2.set("libraries", [...r2] + "");
+            for (k2 in g2)
+              e2.set(k2.replace(/[A-Z]/g, (t3) => "_" + t3[0].toLowerCase()), g2[k2]);
+            e2.set("callback", c2 + ".maps." + q2);
+            a2.src = this.url + `?` + e2;
+            d2[q2] = f2;
+            a2.onerror = () => h2 = n2(Error(p2 + " could not load."));
+            a2.nonce = this.nonce || ((_a2 = m2.querySelector("script[nonce]")) === null || _a2 === void 0 ? void 0 : _a2.nonce) || "";
+            m2.head.append(a2);
+          })))
+        );
+        d2[l2] ? console.warn(p2 + " only loads once. Ignoring:", g2) : d2[l2] = (f2, ...n2) => r2.add(f2) && u2().then(() => d2[l2](f2, ...n2));
+      })(params);
+    }
+    const libraryPromises = this.libraries.map((library) => this.importLibrary(library));
+    if (!libraryPromises.length) {
+      libraryPromises.push(this.importLibrary("core"));
+    }
+    Promise.all(libraryPromises).then(() => this.callback(), (error2) => {
+      const event = new ErrorEvent("error", { error: error2 });
+      this.loadErrorCallback(event);
+    });
+  }
+  /**
+   * Reset the loader state.
+   */
+  reset() {
+    this.deleteScript();
+    this.done = false;
+    this.loading = false;
+    this.errors = [];
+    this.onerrorEvent = null;
+  }
+  resetIfRetryingFailed() {
+    if (this.failed) {
+      this.reset();
+    }
+  }
+  loadErrorCallback(e2) {
+    this.errors.push(e2);
+    if (this.errors.length <= this.retries) {
+      const delay = this.errors.length * Math.pow(2, this.errors.length);
+      console.error(`Failed to load Google Maps script, retrying in ${delay} ms.`);
+      setTimeout(() => {
+        this.deleteScript();
+        this.setScript();
+      }, delay);
+    } else {
+      this.onerrorEvent = e2;
+      this.callback();
+    }
+  }
+  callback() {
+    this.done = true;
+    this.loading = false;
+    this.callbacks.forEach((cb) => {
+      cb(this.onerrorEvent);
+    });
+    this.callbacks = [];
+  }
+  execute() {
+    this.resetIfRetryingFailed();
+    if (this.loading) {
+      return;
+    }
+    if (this.done) {
+      this.callback();
+    } else {
+      if (window.google && window.google.maps && window.google.maps.version) {
+        console.warn("Google Maps already loaded outside @googlemaps/js-api-loader. This may result in undesirable behavior as options and script parameters may not match.");
+        this.callback();
+        return;
+      }
+      this.loading = true;
+      this.setScript();
+    }
+  }
+};
+
+// app/javascript/controllers/google_map_api_controller.js
+var google_map_api_controller_default = class extends Controller {
+  static values = {
+    apiKey: String,
+    lat: Number,
+    lng: Number
+  };
+  static targets = ["map"];
+  connect() {
+    const loader = new Loader({
+      apiKey: this.apiKeyValue,
+      version: "weekly"
+    });
+    loader.load().then(() => {
+      var myLatLng = new google.maps.LatLng(
+        this.latValue,
+        this.lngValue
+      );
+      var mapProp = {
+        center: myLatLng,
+        zoom: 20
+      };
+      var map = new google.maps.Map(
+        this.element,
+        mapProp
+      );
+      var marker = new google.maps.Marker({
+        position: myLatLng
+      });
+      marker.setMap(map);
+    });
+  }
+};
+
+// app/javascript/controllers/hello_controller.js
+var hello_controller_default = class extends Controller {
+  connect() {
+    this.element.textContent = "Hello World!";
+  }
+};
+
+// node_modules/@rails/request.js/src/fetch_response.js
+var FetchResponse2 = class {
+  constructor(response) {
+    this.response = response;
+  }
+  get statusCode() {
+    return this.response.status;
+  }
+  get redirected() {
+    return this.response.redirected;
+  }
+  get ok() {
+    return this.response.ok;
+  }
+  get unauthenticated() {
+    return this.statusCode === 401;
+  }
+  get unprocessableEntity() {
+    return this.statusCode === 422;
+  }
+  get authenticationURL() {
+    return this.response.headers.get("WWW-Authenticate");
+  }
+  get contentType() {
+    const contentType = this.response.headers.get("Content-Type") || "";
+    return contentType.replace(/;.*$/, "");
+  }
+  get headers() {
+    return this.response.headers;
+  }
+  get html() {
+    if (this.contentType.match(/^(application|text)\/(html|xhtml\+xml)$/)) {
+      return this.text;
+    }
+    return Promise.reject(new Error(`Expected an HTML response but got "${this.contentType}" instead`));
+  }
+  get json() {
+    if (this.contentType.match(/^application\/.*json$/)) {
+      return this.responseJson || (this.responseJson = this.response.json());
+    }
+    return Promise.reject(new Error(`Expected a JSON response but got "${this.contentType}" instead`));
+  }
+  get text() {
+    return this.responseText || (this.responseText = this.response.text());
+  }
+  get isTurboStream() {
+    return this.contentType.match(/^text\/vnd\.turbo-stream\.html/);
+  }
+  get isScript() {
+    return this.contentType.match(/\b(?:java|ecma)script\b/);
+  }
+  async renderTurboStream() {
+    if (this.isTurboStream) {
+      if (window.Turbo) {
+        await window.Turbo.renderStreamMessage(await this.text);
+      } else {
+        console.warn("You must set `window.Turbo = Turbo` to automatically process Turbo Stream events with request.js");
+      }
+    } else {
+      return Promise.reject(new Error(`Expected a Turbo Stream response but got "${this.contentType}" instead`));
+    }
+  }
+  async activeScript() {
+    if (this.isScript) {
+      const script = document.createElement("script");
+      const metaTag = document.querySelector("meta[name=csp-nonce]");
+      if (metaTag) {
+        const nonce = metaTag.nonce === "" ? metaTag.content : metaTag.nonce;
+        if (nonce) {
+          script.setAttribute("nonce", nonce);
+        }
+      }
+      script.innerHTML = await this.text;
+      document.body.appendChild(script);
+    } else {
+      return Promise.reject(new Error(`Expected a Script response but got "${this.contentType}" instead`));
+    }
+  }
+};
+
+// node_modules/@rails/request.js/src/request_interceptor.js
+var RequestInterceptor = class {
+  static register(interceptor) {
+    this.interceptor = interceptor;
+  }
+  static get() {
+    return this.interceptor;
+  }
+  static reset() {
+    this.interceptor = void 0;
+  }
+};
+
+// node_modules/@rails/request.js/src/lib/utils.js
+function getCookie(name) {
+  const cookies = document.cookie ? document.cookie.split("; ") : [];
+  const prefix = `${encodeURIComponent(name)}=`;
+  const cookie = cookies.find((cookie2) => cookie2.startsWith(prefix));
+  if (cookie) {
+    const value = cookie.split("=").slice(1).join("=");
+    if (value) {
+      return decodeURIComponent(value);
+    }
+  }
+}
+function compact(object) {
+  const result = {};
+  for (const key in object) {
+    const value = object[key];
+    if (value !== void 0) {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+function metaContent(name) {
+  const element = document.head.querySelector(`meta[name="${name}"]`);
+  return element && element.content;
+}
+function stringEntriesFromFormData(formData) {
+  return [...formData].reduce((entries, [name, value]) => {
+    return entries.concat(typeof value === "string" ? [[name, value]] : []);
+  }, []);
+}
+function mergeEntries(searchParams, entries) {
+  for (const [name, value] of entries) {
+    if (value instanceof window.File) continue;
+    if (searchParams.has(name) && !name.includes("[]")) {
+      searchParams.delete(name);
+      searchParams.set(name, value);
+    } else {
+      searchParams.append(name, value);
+    }
+  }
+}
+
+// node_modules/@rails/request.js/src/fetch_request.js
+var FetchRequest2 = class {
+  constructor(method, url, options = {}) {
+    this.method = method;
+    this.options = options;
+    this.originalUrl = url.toString();
+  }
+  async perform() {
+    try {
+      const requestInterceptor = RequestInterceptor.get();
+      if (requestInterceptor) {
+        await requestInterceptor(this);
+      }
+    } catch (error2) {
+      console.error(error2);
+    }
+    const fetch2 = this.responseKind === "turbo-stream" && window.Turbo ? window.Turbo.fetch : window.fetch;
+    const response = new FetchResponse2(await fetch2(this.url, this.fetchOptions));
+    if (response.unauthenticated && response.authenticationURL) {
+      return Promise.reject(window.location.href = response.authenticationURL);
+    }
+    if (response.isScript) {
+      await response.activeScript();
+    }
+    const responseStatusIsTurboStreamable = response.ok || response.unprocessableEntity;
+    if (responseStatusIsTurboStreamable && response.isTurboStream) {
+      await response.renderTurboStream();
+    }
+    return response;
+  }
+  addHeader(key, value) {
+    const headers = this.additionalHeaders;
+    headers[key] = value;
+    this.options.headers = headers;
+  }
+  sameHostname() {
+    if (!this.originalUrl.startsWith("http:") && !this.originalUrl.startsWith("https:")) {
+      return true;
+    }
+    try {
+      return new URL(this.originalUrl).hostname === window.location.hostname;
+    } catch (_2) {
+      return true;
+    }
+  }
+  get fetchOptions() {
+    return {
+      method: this.method.toUpperCase(),
+      headers: this.headers,
+      body: this.formattedBody,
+      signal: this.signal,
+      credentials: this.credentials,
+      redirect: this.redirect,
+      keepalive: this.keepalive
+    };
+  }
+  get headers() {
+    const baseHeaders = {
+      "X-Requested-With": "XMLHttpRequest",
+      "Content-Type": this.contentType,
+      Accept: this.accept
+    };
+    if (this.sameHostname()) {
+      baseHeaders["X-CSRF-Token"] = this.csrfToken;
+    }
+    return compact(
+      Object.assign(baseHeaders, this.additionalHeaders)
+    );
+  }
+  get csrfToken() {
+    return getCookie(metaContent("csrf-param")) || metaContent("csrf-token");
+  }
+  get contentType() {
+    if (this.options.contentType) {
+      return this.options.contentType;
+    } else if (this.body == null || this.body instanceof window.FormData) {
+      return void 0;
+    } else if (this.body instanceof window.File) {
+      return this.body.type;
+    }
+    return "application/json";
+  }
+  get accept() {
+    switch (this.responseKind) {
+      case "html":
+        return "text/html, application/xhtml+xml";
+      case "turbo-stream":
+        return "text/vnd.turbo-stream.html, text/html, application/xhtml+xml";
+      case "json":
+        return "application/json, application/vnd.api+json";
+      case "script":
+        return "text/javascript, application/javascript";
+      default:
+        return "*/*";
+    }
+  }
+  get body() {
+    return this.options.body;
+  }
+  get query() {
+    const originalQuery = (this.originalUrl.split("?")[1] || "").split("#")[0];
+    const params = new URLSearchParams(originalQuery);
+    let requestQuery = this.options.query;
+    if (requestQuery instanceof window.FormData) {
+      requestQuery = stringEntriesFromFormData(requestQuery);
+    } else if (requestQuery instanceof window.URLSearchParams) {
+      requestQuery = requestQuery.entries();
+    } else {
+      requestQuery = Object.entries(requestQuery || {});
+    }
+    mergeEntries(params, requestQuery);
+    const query = params.toString();
+    return query.length > 0 ? `?${query}` : "";
+  }
+  get url() {
+    return this.originalUrl.split("?")[0].split("#")[0] + this.query;
+  }
+  get responseKind() {
+    return this.options.responseKind || "html";
+  }
+  get signal() {
+    return this.options.signal;
+  }
+  get redirect() {
+    return this.options.redirect || "follow";
+  }
+  get credentials() {
+    return this.options.credentials || "same-origin";
+  }
+  get keepalive() {
+    return this.options.keepalive || false;
+  }
+  get additionalHeaders() {
+    return this.options.headers || {};
+  }
+  get formattedBody() {
+    const bodyIsAString = Object.prototype.toString.call(this.body) === "[object String]";
+    const contentTypeIsJson = this.headers["Content-Type"] === "application/json";
+    if (contentTypeIsJson && !bodyIsAString) {
+      return JSON.stringify(this.body);
+    }
+    return this.body;
+  }
+};
+
+// app/javascript/controllers/register_service_worker_controller.js
+var register_service_worker_controller_default = class extends Controller {
+  static values = {
+    publicKey: Array,
+    url: String,
+    pushSubscriptionsUrl: String
+  };
+  connect() {
+    window.vapidPublicKey = new Uint8Array(this.publicKeyValue);
+    if ("Notification" in window) {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          this.registerServiceWorker();
+        } else if (permission === "denied") {
+          console.warn("User rejected to allow notifications.");
+        } else {
+          console.warn("User still didn't give an answer about notifications.");
+        }
+      });
+    } else {
+      console.warn("Push notifications not supported.");
+    }
+  }
+  registerServiceWorker() {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register(this.urlValue).then((serviceWorkerRegistration) => {
+        serviceWorkerRegistration.pushManager.getSubscription().then((existingSubscription) => {
+          if (!existingSubscription) {
+            serviceWorkerRegistration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: window.vapidPublicKey
+            }).then((subscription) => {
+              this.saveSubscription(subscription);
+            });
+          }
+        });
+      }).catch((error2) => {
+        console.error("Error during registration Service Worker:", error2);
+      });
+    }
+  }
+  async saveSubscription(subscription) {
+    const endpoint = subscription.endpoint;
+    const p256dh = btoa(
+      String.fromCharCode.apply(
+        null,
+        new Uint8Array(subscription.getKey("p256dh"))
+      )
+    );
+    const auth = btoa(
+      String.fromCharCode.apply(
+        null,
+        new Uint8Array(subscription.getKey("auth"))
+      )
+    );
+    const request = new FetchRequest2(
+      "post",
+      this.pushSubscriptionsUrlValue,
+      {
+        body: JSON.stringify({ push_subscription: { endpoint, p256dh, auth } }),
+        contentType: "application/json"
+      }
+    );
+    const response = await request.perform();
+    if (response.ok) {
+      const body = await response.text;
+    }
+  }
+};
+
+// app/javascript/controllers/select_philippines_address_controller.js
+var import_select_philippines_address = __toESM(require_select_philippines_address());
+var select_philippines_address_controller_default = class extends Controller {
+  static targets = ["regionInput", "provinceInput", "cityInput", "barangayInput"];
+  static values = {
+    regionCode: String,
+    provinceCode: String,
+    cityCode: String,
+    brgyCode: String,
+    regionName: String,
+    provinceName: String,
+    cityName: String,
+    brgyName: String
+  };
+  async regionInputTargetConnected() {
+    console.log("Visited");
+    await this.setRegionOptions();
+    await this.setProvinceOptions();
+    await this.setCityOptions();
+    await this.setBarangayOptions();
+  }
+  async regionInputChanged(event) {
+    this.regionNameValue = event.target.value;
+    await this.setRegionOptions();
+    await this.setProvinceOptions();
+    await this.setCityOptions();
+    await this.setBarangayOptions();
+  }
+  async provinceInputChanged(event) {
+    this.provinceNameValue = event.target.value;
+    await this.setProvinceOptions();
+    await this.setCityOptions();
+    await this.setBarangayOptions();
+  }
+  async cityInputChanged(event) {
+    this.cityNameValue = event.target.value;
+    await this.setCityOptions();
+    await this.setBarangayOptions();
+  }
+  async barangayInputChanged(event) {
+    this.brgyNameValue = event.target.value;
+    await this.setBarangayOptions();
+  }
+  async setRegionOptions() {
+    const { regions } = import_select_philippines_address.default;
+    this.regionInputTarget.innerHTML = `<option value="">Select Region</option>`;
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    await sleep(200);
+    await regions().then(
+      (region) => region.forEach((r2) => {
+        const option = document.createElement("option");
+        option.value = r2.region_name;
+        option.innerHTML = r2.region_name;
+        if (r2.region_name == this.regionNameValue) {
+          this.regionCodeValue = r2.region_code;
+          option.selected = true;
+        }
+        ;
+        this.regionInputTarget.appendChild(option);
+      })
+    );
+  }
+  async setProvinceOptions() {
+    const { provinces } = import_select_philippines_address.default;
+    this.provinceInputTarget.innerHTML = `<option value="">Select Province</option>`;
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    await sleep(200);
+    await provinces(`${this.regionCodeValue}`).then((province) => {
+      province.forEach((p2) => {
+        const option = document.createElement("option");
+        option.value = p2.province_name;
+        option.innerHTML = p2.province_name;
+        if (p2.province_name == this.provinceNameValue) {
+          this.provinceCodeValue = p2.province_code;
+          option.selected = true;
+        }
+        this.provinceInputTarget.appendChild(option);
+      });
+    });
+  }
+  async setCityOptions() {
+    const { cities } = import_select_philippines_address.default;
+    this.cityInputTarget.innerHTML = `<option value="">Select City</option>`;
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    await sleep(200);
+    await cities(`${this.provinceCodeValue}`).then((city) => {
+      city.forEach((c2) => {
+        const option = document.createElement("option");
+        option.value = c2.city_name;
+        option.innerHTML = c2.city_name;
+        if (c2.city_name == this.cityNameValue) {
+          this.cityCodeValue = c2.city_code;
+          option.selected = true;
+        }
+        this.cityInputTarget.appendChild(option);
+      });
+    });
+  }
+  async setBarangayOptions() {
+    const { barangays } = import_select_philippines_address.default;
+    this.barangayInputTarget.innerHTML = `<option value="">Select Barangay</option>`;
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    await sleep(200);
+    await barangays(`${this.cityCodeValue}`).then((brgy) => {
+      brgy.forEach((b2) => {
+        const option = document.createElement("option");
+        option.value = b2.brgy_name;
+        option.innerHTML = b2.brgy_name;
+        if (b2.brgy_name == this.brgyNameValue) {
+          this.brgyCodeValue = b2.brgy_code;
+          option.selected = true;
+        }
+        this.barangayInputTarget.appendChild(option);
+      });
+    });
+  }
+};
+
+// app/javascript/controllers/index.js
+application.register("admin-testimonial", admin_testimonial_controller_default);
+application.register("flash", flash_controller_default);
+application.register("google-map-api", google_map_api_controller_default);
+application.register("hello", hello_controller_default);
+application.register("register-service-worker", register_service_worker_controller_default);
+application.register("select-philippines-address", select_philippines_address_controller_default);
 
 // node_modules/trix/dist/trix.esm.min.js
 var t = "2.1.14";
