@@ -1,45 +1,71 @@
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card shadow border-success w-100" style="max-width: 700px;">
+    <div class="card-body p-4">
+      <div class="text-center mb-4">
+        <%= image_tag "logo_no_background.png", alt: "BHC Logo", width: 70, height: 70, class: "mb-3" %>
+        <h4 class="fw-bold text-success">Create an Account!</h4>
+      </div>
 
-  <div class="field">
-    <%= f.label :first_name %><br />
-    <%= f.text_field :first_name, required: true, autocomplete: "first_name" %>
-  </div>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
 
-  <div class="field">
-    <%= f.label :middle_name %><br />
-    <%= f.text_field :middle_name, autocomplete: "middle_name" %>
-  </div>
+        <h6 class="text-success fw-bold mb-3">Personal Information</h6>
 
-  <div class="field">
-    <%= f.label :last_name %><br />
-    <%= f.text_field :last_name, required: true, autocomplete: "last_name" %>
-  </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <%= f.label :first_name, class: "form-label fw-semibold" %>
+            <%= f.text_field :first_name, required: true, autocomplete: "first_name", class: "form-control border-success" %>
+          </div>
+          <div class="col-md-6 mb-3">
+            <%= f.label :middle_name, class: "form-label fw-semibold" %>
+            <%= f.text_field :middle_name, autocomplete: "middle_name", class: "form-control border-success" %>
+          </div>
+        </div>
 
-  <div class="field">
-    <%= f.label :suffix %><br />
-    <%= f.text_field :suffix, autocomplete: "suffix" %>
-  </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <%= f.label :last_name, class: "form-label fw-semibold" %>
+            <%= f.text_field :last_name, required: true, autocomplete: "last_name", class: "form-control border-success" %>
+          </div>
+          <div class="col-md-6 mb-3">
+            <%= f.label :suffix, class: "form-label fw-semibold" %>
+            <%= f.text_field :suffix, autocomplete: "suffix", class: "form-control border-success" %>
+          </div>
+        </div>
 
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+        <hr class="my-4">
 
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-  </div>
+        <h6 class="text-success fw-bold mb-3">Account Credentials</h6>
 
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+        <div class="mb-3">
+          <%= f.label :email, class: "form-label fw-semibold" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control border-success" %>
+        </div>
 
-  <div class="actions">
-    <%= f.submit "Sign up" %>
+        <div class="mb-3">
+          <%= f.label :password, class: "form-label fw-semibold" %>
+          <% if @minimum_password_length %>
+            <small class="text-muted ms-1">(<%= @minimum_password_length %> characters minimum)</small>
+          <% end %>
+          <%= f.password_field :password, autocomplete: "new-password", class: "form-control border-success" %>
+        </div>
+
+        <div class="mb-4">
+          <%= f.label :password_confirmation, class: "form-label fw-semibold" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control border-success" %>
+        </div>
+
+        <div class="d-grid">
+          <%= f.submit "Sign up", class: "btn btn-success fw-bold" %>
+        </div>
+      <% end %>
+
+      <hr class="my-4">
+
+      <div class="text-center">
+        <%= link_to "Forgot Password?", new_password_path(resource_name), class: "text-success d-block mb-2" %>
+        <%= link_to "Already have an account? Login!", new_session_path(resource_name), class: "text-success" %>
+      </div>
+    </div>
   </div>
-<% end %>
+</div>

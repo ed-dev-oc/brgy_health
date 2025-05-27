@@ -1,74 +1,96 @@
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<div class="container py-5 d-flex justify-content-center align-items-center">
+  <div class="card shadow border-success p-4" style="max-width: 700px; width: 100%;">
+    
+    <div class="text-center mb-4">
+      <%= image_tag "logo_no_background.png", alt: "Logo", height: 60, class: "mb-2" %>
+      <h4 class="text-success fw-bold">User Registration</h4>
+    </div>
 
-  <div class="" 
-    data-controller="select-philippines-address"
-    data-select-philippines-address-region-name-value="<%= resource.barangay.region %>"
-    data-select-philippines-address-province-name-value="<%= resource.barangay.province %>"
-    data-select-philippines-address-city-name-value="<%= resource.barangay.city %>"
-    data-select-philippines-address-brgy-name-value="<%= resource.barangay.name %>">
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
 
-    <%= f.fields_for :barangay do |barangay_form| %>
-      <div>
-        <%= barangay_form.label :region, "Region" %>
-        <%= barangay_form.select :region, [], { include_blank:"Select Region" }, { data: { "select-philippines-address-target": "regionInput", action: "change->select-philippines-address#regionInputChanged" } }%>
+      <div class="mb-4"
+        data-controller="select-philippines-address"
+        data-select-philippines-address-region-name-value="<%= resource.barangay.region %>"
+        data-select-philippines-address-province-name-value="<%= resource.barangay.province %>"
+        data-select-philippines-address-city-name-value="<%= resource.barangay.city %>"
+        data-select-philippines-address-brgy-name-value="<%= resource.barangay.name %>">
+        
+        <h6 class="text-success fw-bold mb-3">Address</h6>
+
+        <%= f.fields_for :barangay do |barangay_form| %>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <%= barangay_form.label :region, "Region", class: "form-label" %>
+              <%= barangay_form.select :region, [], { include_blank:"Select Region" }, { class: "form-select", data: { "select-philippines-address-target": "regionInput", action: "change->select-philippines-address#regionInputChanged" } }%>
+            </div>
+            <div class="col-md-6">
+              <%= barangay_form.label :province, "Province", class: "form-label" %>
+              <%= barangay_form.select :province, [], { include_blank: "Select Province" }, { class: "form-select", data: { "select-philippines-address-target": "provinceInput", action: "change->select-philippines-address#provinceInputChanged" } }%>
+            </div>
+            <div class="col-md-6">
+              <%= barangay_form.label :city, "City", class: "form-label" %>
+              <%= barangay_form.select :city, [], { include_blank: "Select City" }, { class: "form-select", data: { "select-philippines-address-target": "cityInput", action: "change->select-philippines-address#cityInputChanged" } }%>
+            </div>
+            <div class="col-md-6">
+              <%= barangay_form.label :name, "Barangay", class: "form-label" %>
+              <%= barangay_form.select :name, [], { include_blank: "Select Barangay" }, { class: "form-select", data: { "select-philippines-address-target": "barangayInput", action: "change->select-philippines-address#barangayInputChanged" } }%>
+            </div>
+          </div>
+        <% end %>
       </div>
-      <div>
-        <%= barangay_form.label :province, "Province" %>
-        <%= barangay_form.select :province, [], { include_blank: "Select Province" }, { data: { "select-philippines-address-target": "provinceInput", action: "change->select-philippines-address#provinceInputChanged" } }%>
+
+      <h6 class="text-success fw-bold mb-3">Personal Information</h6>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <%= f.label :first_name, class: "form-label" %>
+          <%= f.text_field :first_name, required: true, autocomplete: "first_name", class: "form-control" %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :middle_name, class: "form-label" %>
+          <%= f.text_field :middle_name, autocomplete: "middle_name", class: "form-control" %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :last_name, class: "form-label" %>
+          <%= f.text_field :last_name, required: true, autocomplete: "last_name", class: "form-control" %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :suffix, class: "form-label" %>
+          <%= f.text_field :suffix, autocomplete: "suffix", class: "form-control" %>
+        </div>
       </div>
-      <div>
-        <%= barangay_form.label :city, "City" %>
-        <%= barangay_form.select :city, [], { include_blank: "Select City" }, { data: { "select-philippines-address-target": "cityInput", action: "change->select-philippines-address#cityInputChanged" } }%>
+
+      <hr class="my-4">
+      <h6 class="text-success fw-bold mb-3">Account Information</h6>
+
+      <div class="mb-3">
+        <%= f.label :email, class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, required: true, autocomplete: "email", class: "form-control" %>
       </div>
-      <div>
-        <%= barangay_form.label :name, "Barangay" %>
-        <%= barangay_form.select :name, [], { include_blank: "Select Barangay" }, { data: { "select-philippines-address-target": "barangayInput", action: "change->select-philippines-address#barangayInputChanged" } }%>
+
+      <div class="mb-3">
+        <%= f.label :password, class: "form-label" %>
+        <% if @minimum_password_length %>
+          <small class="text-muted ms-2">(<%= @minimum_password_length %> characters minimum)</small>
+        <% end %>
+        <%= f.password_field :password, autocomplete: "new-password", class: "form-control" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :password_confirmation, class: "form-label" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control" %>
+      </div>
+
+      <div class="d-grid">
+        <%= f.submit "Sign up", class: "btn btn-success fw-bold" %>
+      </div>
+
+      <hr class="my-4">
+
+      <div class="text-center">
+        <%= link_to "Forgot Password?", new_password_path(resource_name), class: "text-success d-block mb-2" %>
+        <%= link_to "Already have an account? Login!", new_session_path(resource_name), class: "text-success" %>
       </div>
     <% end %>
   </div>
-
-  <hr>
-
-  <div class="field">
-    <%= f.label :first_name %><br />
-    <%= f.text_field :first_name, required: true, autocomplete: "first_name" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :middle_name %><br />
-    <%= f.text_field :middle_name, autocomplete: "middle_name" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :last_name %><br />
-    <%= f.text_field :last_name, required: true, autocomplete: "last_name" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :suffix %><br />
-    <%= f.text_field :suffix, autocomplete: "suffix" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, required: true, autocomplete: "email" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password %>
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em>
-    <% end %><br />
-    <%= f.password_field :password, autocomplete: "new-password" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password_confirmation %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
+</div>
