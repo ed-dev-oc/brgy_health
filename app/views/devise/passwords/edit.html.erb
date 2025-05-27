@@ -1,25 +1,29 @@
-<h2>Change your password</h2>
-
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
-
-  <div class="field">
-    <%= f.label :password, "New password" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> characters minimum)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "new-password" %>
+<div class="min-vh-100 d-flex flex-column justify-content-center align-items-center bg-white">
+  <div class="mb-4">
+    <%= image_tag("logo_no_background.png", class: "img-fluid", style: "width: 100px; height: 100px;") %> <!-- Replace with actual logo path -->
   </div>
 
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirm new password" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-  </div>
+  <div class="card shadow-sm border-success" style="width: 100%; max-width: 400px;">
+    <div class="card-body text-center">
 
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
-<% end %>
+      <h5 class="card-title mb-1">Change your password</h5>
+      <p class="text-muted small mb-4">Strong passwords include letters, numbers, and symbols.</p>
 
-<%= render "devise/shared/links" %>
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+        <%= f.hidden_field :reset_password_token %>
+
+        <div class="mb-3 text-start">
+          <%= f.password_field :password, placeholder: "Enter new password", autofocus: true, autocomplete: "new-password", class: "form-control" %>
+        </div>
+
+        <div class="mb-4 text-start">
+          <%= f.password_field :password_confirmation, placeholder: "Confirm password", autocomplete: "new-password", class: "form-control" %>
+        </div>
+
+        <%= f.submit "CONFIRM", class: "btn btn-success w-100 fw-bold" %>
+      <% end %>
+
+    </div>
+  </div>
+</div>
