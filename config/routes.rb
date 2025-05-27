@@ -56,7 +56,8 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :cms, only: [ :index, :update ]
+      resources :cms, only: [ :index, :update ]
+      resources :testimonials, only: [ :create, :update ]
 
     resources :users, only: [ :index, :edit, :update, :create ] do
       member do
@@ -87,6 +88,7 @@ Rails.application.routes.draw do
 
   namespace :super_admin do
     resources :dashboard, only: [ :index ]
+    resources :testimonials, only: [ :index ]
 
     resources :users, only: [ :index, :show ] do
       member do

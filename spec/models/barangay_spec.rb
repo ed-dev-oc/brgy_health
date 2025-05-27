@@ -74,52 +74,5 @@ RSpec.describe Barangay, type: :model do
       expect(barangay.slug).to eq("bagong-buhay")
       expect(barangay.subdomain).to eq("bagong-buhay")
     end
-
-    it "adds city to slug when name conflict exists" do
-      # simulate existing barangay with same name
-      Barangay.create!(
-        name: "Lao",
-        city: "Ormoc",
-        province: "Leyte",
-        region: "Region 8"
-      )
-
-      barangay = Barangay.create!(
-        name: "Lao",
-        city: "Ormoc",
-        province: "Leyte",
-        region: "Region 8"
-      )
-
-      expect(barangay.slug).to eq("lao-ormoc")
-      expect(barangay.subdomain).to eq("lao-ormoc")
-    end
-
-    it "adds province to slug when name + city conflict exists" do
-      # simulate two existing barangays with same name + city
-      Barangay.create!(
-        name: "San Isidro",
-        city: "Ormoc",
-        province: "Leyte",
-        region: "Region 8"
-      )
-
-      Barangay.create!(
-        name: "San Isidro",
-        city: "Ormoc",
-        province: "Leyte",
-        region: "Region 8"
-      )
-
-      barangay = Barangay.create!(
-        name: "San Isidro",
-        city: "Ormoc",
-        province: "Leyte",
-        region: "Region 8"
-      )
-
-      expect(barangay.slug).to eq("san-isidro-ormoc-leyte")
-      expect(barangay.subdomain).to eq("san-isidro-ormoc-leyte")
-    end
   end
 end

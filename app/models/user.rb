@@ -20,6 +20,7 @@ class User < ApplicationRecord
   has_many :about_me_notifications, through: :noticed_events, source: :notifications, class_name: "Noticed::Notification"
   has_many :push_subscriptions
   has_one :testimonial
+
   has_many :events, foreign_key: "posted_by_id", dependent: :destroy
 
   acts_as_taggable_on :flags
@@ -85,6 +86,10 @@ class User < ApplicationRecord
 
   def notification_channel
     "user_#{self.public_uid}_notification"
+  end
+
+  def full_name
+    [ first_name, last_name ].compact.join(" ")
   end
 
   private

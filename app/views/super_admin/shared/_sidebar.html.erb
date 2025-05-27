@@ -15,24 +15,29 @@
             <i class="bi bi-speedometer2"></i>
             Dashboard
           <% end %>
+
           <%= link_to super_admin_barangays_path, class: "nav-link text-white #{ navbar_link_status(super_admin_barangays_path) }" do %>
             <i class="bi bi-people"></i>
             Barangay
           <% end %>
+
           <%= link_to super_admin_users_path, class: "nav-link text-white #{ navbar_link_status(super_admin_users_path) }" do %>
             <i class="bi bi-people"></i>
             Users
           <% end %>
-          <a href="#" class="nav-link text-white" aria-current="page">
+
+          <%= link_to super_admin_testimonials_path, class: "nav-link text-white #{ navbar_link_status(super_admin_testimonials_path) }" do %>
             <i class="bi bi-chat-quote"></i>
             Testimonials
-          </a>
+          <% end %>
+
           <%= link_to super_admin_cms_path, class: "nav-link text-white #{ navbar_link_status(super_admin_cms_path) }" do %>
             <i class="bi bi-layout-text-window"></i>
             CMS
           <% end %>
         </li>
       </ul>
+
 
       <hr>
 

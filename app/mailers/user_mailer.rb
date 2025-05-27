@@ -25,4 +25,10 @@ class UserMailer < ApplicationMailer
       subject: "Your account credentials have been updated"
     )
   end
+
+  def new_testimonial_email(notification)
+    @user = notification.recipient
+    @testimonial = notification.params[:testimonial]
+    mail(to: @user.email, subject: "New Testimonial Submitted")
+  end
 end

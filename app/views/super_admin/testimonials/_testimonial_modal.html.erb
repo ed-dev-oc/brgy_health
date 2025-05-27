@@ -1,0 +1,39 @@
+<div class="modal fade" id="testimonialModal_<%= testimonial.id %>" tabindex="-1" aria-labelledby="modalLabel_<%= testimonial.id %>" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalLabel_<%= testimonial.id %>">Testimonial Details</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-3">
+          <h6 class="fw-bold text-secondary">Rating</h6>
+          <p class="mb-0"><%= testimonial.rating %> / 5</p>
+        </div>
+
+        <div class="mb-3">
+          <h6 class="fw-bold text-secondary">Message</h6>
+          <div class="border rounded p-3 bg-light">
+            <%= simple_format(testimonial.data) %>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <h6 class="fw-bold text-secondary">Full Name</h6>
+            <p class="mb-0"><%= user.full_name %></p>
+          </div>
+          <div class="col-md-6">
+            <h6 class="fw-bold text-secondary">Email</h6>
+            <p class="mb-0"><%= user.email %></p>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <h6 class="fw-bold text-secondary">Submitted On</h6>
+          <p class="mb-0"><%= testimonial.created_at.strftime("%B %d, %Y") %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
