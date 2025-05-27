@@ -1,11 +1,7 @@
 <% if ActsAsTenant.current_tenant.present? %>
-  <h2><%= ActsAsTenant.current_tenant.name %> Sign up</h2>
 
   <%= render partial: "devise/registrations/barangay_form" %>
 <% else %>
-  <h2>Sign Up</h2>
 
   <%= render partial: "devise/registrations/main_form" %>
 <% end %>
-
-<%= render "devise/shared/links" %>
