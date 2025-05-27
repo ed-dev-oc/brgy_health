@@ -25,8 +25,6 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :barangay
 
-  scope :super_admins, -> { where(role: :super_admin) }
-
   enum :role, [ :super_admin, :admin, :staff, :patient ]
 
   validates :email, :public_uid, uniqueness: true

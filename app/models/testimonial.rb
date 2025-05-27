@@ -12,8 +12,13 @@ class Testimonial < ApplicationRecord
   private
 
   def send_new_testimonial_notification
-    super_admins = User.super_admins
-    TestimonialMailer.new_testimonial(self, super_admins.first).deliver_later if super_admins.any?
-    NewTestimonialNotifier.with(testimonial: self).deliver_later(super_admins)
+    ActsAsTenant.without_tenant do
+      super_admins = User.where(role: "super_admin")
+      if super_admins.any?
+        UserMailer.new_testimonial_email(self, super_admins.first).deliver_later
+        NewTestimonialNotifier.with(testimonial: self).deliver_later(super_admins)
+      end
+    end
   end
 end
+
