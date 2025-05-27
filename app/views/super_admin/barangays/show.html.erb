@@ -1,0 +1,58 @@
+<div class="container py-4">
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h1 class="mb-0"><%= @barangay.name %></h1>
+    </div>
+    <div class="card-body">
+      <p><strong>Full Address:</strong> <%= @barangay.full_address %></p>
+      <p><strong>Subdomain:</strong> <%= @barangay.subdomain %></p>
+      <p>
+        <strong>Verified:</strong>
+        <span class="badge <%= @barangay.verified? ? 'bg-success' : 'bg-danger' %>">
+          <%= @barangay.verified? ? "Yes" : "No" %>
+        </span>
+      </p>
+
+      <div class="d-flex gap-2 flex-wrap mt-3">
+        <% if @barangay.verified? %>
+          <%= button_to "Unverify", unverify_super_admin_barangay_path(@barangay),
+                method: :patch,
+                data: { confirm: "Are you sure?" },
+                class: "btn btn-warning" %>
+        <% else %>
+          <%= button_to "Verify", verify_super_admin_barangay_path(@barangay),
+                method: :patch,
+                data: { confirm: "Are you sure?" },
+                class: "btn btn-success" %>
+        <% end %>
+
+        <%= link_to "Visit Barangay Page",
+              "http://#{@barangay.subdomain}.lvh.me:3000",
+              class: "btn btn-secondary",
+              target: "_blank" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2 class="mb-0">Admins & Staff</h2>
+    </div>
+    <div class="card-body">
+      <% if @admins_and_staff.any? %>
+        <ul class="list-group">
+          <% @admins_and_staff.each do |user| %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong><%= user.email %></strong> (<%= user.role.capitalize %>)
+              </div>
+              <%= link_to "View Profile", super_admin_user_path(user.public_uid), class: "btn btn-sm btn-outline-info" %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-muted mb-0">No admins or staff found for this barangay.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -83,9 +83,24 @@ san_isidro_patient = User.create!(
   subdivision_id: san_isidro_subdivision.id
 )
 
+lao_health_program = HealthProgram.create!(
+  barangay_id: lao_barangay.id,
+  name: "Free Vaccination Drive",
+  description: "Description for Free Vaccination Drive",
+  status: 1
+)
+
+san_isidro_health_program = HealthProgram.create!(
+  barangay_id: san_isidro_barangay.id,
+  name: "Free Vaccination Drive",
+  description: "Description for Free Vaccination Drive",
+  status: 1
+)
+
 lao_announcement = Announcement.create!(
   barangay_id: lao_barangay.id,
   posted_by_id: lao_admin.id,
+  health_program_id: lao_health_program.id,
   name: "Free Vaccination Drive",
   description: "<h1>Bold Title</h1><p>This is a <strong>rich</strong> description.</p>",
   start_date: Time.current.tomorrow.change(hour: 8, minute: 0, second: 0),
@@ -101,6 +116,7 @@ lao_announcement = Announcement.create!(
 san_isidro_announcement = Announcement.create!(
   barangay_id: san_isidro_barangay.id,
   posted_by_id: san_isidro_admin.id,
+  health_program_id: san_isidro_health_program.id,
   name: "Free Vaccination Drive",
   description: "<h1>Bold Title</h1><p>This is a <strong>rich</strong> description.</p>",
   start_date: Time.current.tomorrow.change(hour: 8, minute: 0, second: 0),

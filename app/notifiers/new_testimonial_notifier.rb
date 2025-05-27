@@ -23,4 +23,4 @@ class NewTestimonialNotifier < ApplicationNotifier
       Rails.application.routes.url_helpers.super_admin_testimonials_path
     end
   end
-end
+

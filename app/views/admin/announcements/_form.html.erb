@@ -78,7 +78,8 @@
           <%= hp_fields.label :description, "New Program Description", class: "form-label" %>
           <%= hp_fields.text_area :description, class: "form-control" %>
         </div>
-        <div class="mb-3">
+
+         <div class="mb-3">
           <%= hp_fields.label :status, "New Program Status", class: "form-label" %>
           <%= hp_fields.select :status, options_for_select(HealthProgram.statuses.keys.map { |s| [s.titleize, s] }), { prompt: "Select status" }, class: "form-select" %>
         </div>

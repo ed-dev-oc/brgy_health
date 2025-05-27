@@ -104,11 +104,29 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_20_150336) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "subdomain"
+    t.boolean "verified"
+    t.integer "admin_id"
     t.index ["region", "province", "city", "name"], name: "index_barangays_on_region_and_province_and_city_and_name", unique: true
     t.index ["region", "province", "city", "slug"], name: "index_barangays_on_region_and_province_and_city_and_slug", unique: true
   end
 
   create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "public_uid"
+    t.bigint "barangay_id", null: false
+    t.bigint "posted_by_id", null: false
+    t.string "name"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.integer "audience", default: 0
+    t.string "location"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barangay_id"], name: "index_events_on_barangay_id"
+    t.index ["posted_by_id"], name: "index_events_on_posted_by_id"
   end
 
   create_table "health_programs", force: :cascade do |t|
@@ -258,6 +276,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_20_150336) do
   add_foreign_key "appointments", "barangays"
   add_foreign_key "appointments", "users", column: "health_worker_id"
   add_foreign_key "appointments", "users", column: "patient_id"
+  add_foreign_key "events", "barangays"
+  add_foreign_key "events", "users", column: "posted_by_id"
   add_foreign_key "health_programs", "barangays"
   add_foreign_key "pages", "barangays"
   add_foreign_key "push_subscriptions", "users"

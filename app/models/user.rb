@@ -21,6 +21,8 @@ class User < ApplicationRecord
   has_many :push_subscriptions
   has_one :testimonial
 
+  has_many :events, foreign_key: "posted_by_id", dependent: :destroy
+
   acts_as_taggable_on :flags
 
   accepts_nested_attributes_for :barangay
@@ -47,8 +49,31 @@ class User < ApplicationRecord
 
   after_update :notify_user_of_credential_change, if: :credentials_changed?
 
+  ransacker :full_name do
+    Arel::Nodes::NamedFunction.new(
+      "COALESCE",
+      [
+        Arel::Nodes::NamedFunction.new(
+          "CONCAT_WS",
+          [
+            Arel::Nodes.build_quoted(" "),
+            arel_table[:first_name],
+            arel_table[:middle_name],
+            arel_table[:last_name],
+            arel_table[:suffix]
+          ]
+        ),
+        Arel::Nodes.build_quoted("")
+      ]
+    )
+  end
+
   def self.ransackable_attributes(auth_object = nil)
-    [ "barangay_id", "created_at", "email", "encrypted_password", "first_name", "id", "last_name", "middle_name", "phone_number", "public_uid", "remember_created_at", "reset_password_sent_at", "reset_password_token", "role", "subdivision_id", "suffix", "updated_at" ]
+    [ "full_name", "barangay_id", "created_at", "email", "encrypted_password", "first_name", "id", "last_name", "middle_name", "phone_number", "public_uid", "remember_created_at", "reset_password_sent_at", "reset_password_token", "role", "subdivision_id", "suffix", "updated_at" ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    [ "about_me_notifications", "announcements", "appointments", "appointments_as_health_worker", "barangay", "base_tags", "events", "flag_taggings", "flags", "noticed_events", "notifications", "push_subscriptions", "subdivision", "taggings", "testimonial" ]
   end
 
   def self.ransackable_associations(auth_object = nil)
