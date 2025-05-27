@@ -31,5 +31,4 @@ class UserMailer < ApplicationMailer
     @testimonial = notification.params[:testimonial]
     mail(to: @user.email, subject: "New Testimonial Submitted")
   end
-
 end

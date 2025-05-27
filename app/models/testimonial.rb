@@ -4,8 +4,8 @@ class Testimonial < ApplicationRecord
 
   after_create :send_new_testimonial_notification
 
-  RATING = [1, 2, 3, 4, 5]
-  enum :status, [:hidden, :visible]
+  RATING = [ 1, 2, 3, 4, 5 ]
+  enum :status, [ :hidden, :visible ]
 
   validates :data, :rating, presence: true
 
@@ -21,4 +21,3 @@ class Testimonial < ApplicationRecord
     end
   end
 end
-

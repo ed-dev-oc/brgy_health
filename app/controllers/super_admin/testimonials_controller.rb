@@ -1,7 +1,7 @@
 module SuperAdmin
   class TestimonialsController < SuperAdminController
     before_action :authenticate_user!
-    before_action :set_testimonial, only: [:show]
+    before_action :set_testimonial, only: [ :show ]
 
     def index
       @testimonials = Testimonial.includes(:user).all
