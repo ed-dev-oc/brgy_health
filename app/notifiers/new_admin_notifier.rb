@@ -31,8 +31,16 @@ class NewAdminNotifier < ApplicationNotifier
   end
 
   notification_methods do
+    def title
+      "New Admin Registration"
+    end
+
     def message
       "New Admin Registration from barangay #{record.barangay.name}"
+    end
+
+    def icon_class
+      "bi bi-person-plus"
     end
 
     def url

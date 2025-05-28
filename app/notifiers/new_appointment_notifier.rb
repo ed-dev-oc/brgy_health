@@ -26,8 +26,16 @@ class NewAppointmentNotifier < ApplicationNotifier
   deliver_by :web_push, class: "DeliveryMethods::WebPush"
 
   notification_methods do
+    def title
+      "New Appointment"
+    end
+
     def message
       "New appointment: #{record.patient.full_name} on #{record.announcement.name} at #{record.scheduled_at.to_formatted_s(:long)}."
+    end
+
+    def icon_class
+      "bi bi-calendar-check"
     end
 
     def url

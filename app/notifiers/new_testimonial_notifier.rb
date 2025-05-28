@@ -6,7 +6,11 @@ class NewTestimonialNotifier < ApplicationNotifier
   deliver_by :email, mailer: "UserMailer", method: :new_testimonial_email
 
   notification_methods do
-   def message
+    def title
+      "New Testimonial"
+    end
+
+    def message
       testimonial = params[:testimonial]
       testimonial = testimonial.first if testimonial.is_a?(Array)
 
@@ -17,6 +21,10 @@ class NewTestimonialNotifier < ApplicationNotifier
 
     def subject
       "New Testimonial Submitted"
+    end
+
+    def icon_class
+      "bi bi-quote"
     end
 
     def url

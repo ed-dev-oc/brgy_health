@@ -35,6 +35,15 @@ $utilities: map-merge(
         ),
       )
     ),
+    "border-color": map-merge(
+      map-get($utilities, "border-color"),
+      (
+        values: map-merge(
+          map-get(map-get($utilities, "border-color"), "values"),
+          $all-colors
+        ),
+      )
+    ),
   )
 );
 

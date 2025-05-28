@@ -1,0 +1,18 @@
+<%= link_to notification.url, data: { turbo: false }, class: "list-group-item list-group-item-action", id: dom_id(notification) do %>
+  <div class="alert alert-light d-flex align-items-start shadow-sm rounded-3 <%= notification.unread? ? "border-start border-2 border-green-600" : "" %>" role="alert" style="max-width: 450px;">
+    <div class="me-3 position-relative">
+      <i class="<%= notification.icon_class %>"></i>
+
+      <% if notification.unread? %>
+        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-green-600 border border-light rounded-circle">
+          <span class="visually-hidden">Unread</span>
+        </span>
+      <% end %>
+    </div>
+    <div class="flex-grow-1">
+      <h5 class="alert-heading mb-1 <%= notification.unread? ? "fw-bold" : "" %>"><%= notification.title %></h5>
+      <p class="mb-1 text-secondary"><%= notification.message %></p>
+      <small class="text-muted fst-italic"><%= time_ago_in_words(notification.created_at) %> ago</small>
+    </div>
+  </div>
+<% end %>

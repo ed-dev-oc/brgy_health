@@ -26,8 +26,16 @@ class NewEventNotifier < ApplicationNotifier
   deliver_by :web_push, class: "DeliveryMethods::WebPush"
 
   notification_methods do
+    def title
+      "New Event"
+    end
+
     def message
       "Something new just dropped! See our upcoming event."
+    end
+
+    def icon_class
+      "bi bi-calendar-event"
     end
 
     def url

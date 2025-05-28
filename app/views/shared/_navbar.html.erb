@@ -28,7 +28,7 @@
         <%= link_to "Administrator", administrator_path_helper, class: "nav-link #{navbar_link_status(administrator_path_helper)}" unless current_user.patient? %>
 
         <span>
-          <%= render partial: "shared/notifications/parent" %>
+          <%= render partial: "shared/notification_parent" %>
         </span>
       <% end %>
     </div>

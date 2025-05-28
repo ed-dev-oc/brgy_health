@@ -26,8 +26,16 @@ class AppointmentMissedNotifier < ApplicationNotifier
   deliver_by :web_push, class: "DeliveryMethods::WebPush"
 
   notification_methods do
+    def title
+      "Missed Appointment"
+    end
+
     def message
       "Hi #{ recipient.full_name }, this is a reminder of your missed appointment on #{ record.announcement.name } #{ record.scheduled_at.strftime("%B %d, %Y at %I:%M %p") }."
+    end
+
+    def icon_class
+      "bi bi-calendar-check"
     end
 
     def url
