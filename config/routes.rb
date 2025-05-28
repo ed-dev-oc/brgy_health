@@ -82,9 +82,16 @@ Rails.application.routes.draw do
 
 
   root "pages#home"
-  get "/:page", to: "pages#show", as: :main_page
   resources :push_subscriptions, only: [ :create ]
   resources :profile, only: [ :edit, :update ]
+  resources :notifications, only: [ :index ] do
+    collection do
+      patch :mark_all_as_read
+      get :read
+      get :unread
+      get :status
+    end
+  end
 
   namespace :super_admin do
     resources :dashboard, only: [ :index ]
@@ -105,4 +112,6 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  get "/:page", to: "pages#show", as: :main_page
 end

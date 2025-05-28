@@ -6,7 +6,6 @@ class ApplicationController < ActionController::Base
 
   set_current_tenant_through_filter
   before_action :set_current_tenant
-  before_action :set_notifications
 
   private
 
@@ -20,9 +19,5 @@ class ApplicationController < ActionController::Base
     else
       render file: Rails.root.join("public/404.html"), status: :not_found, layout: false
     end
-  end
-
-  def set_notifications
-    @notifications = current_user.notifications.newest_first if user_signed_in?
   end
 end

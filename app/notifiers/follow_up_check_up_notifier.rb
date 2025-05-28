@@ -26,8 +26,16 @@ class FollowUpCheckUpNotifier < ApplicationNotifier
   deliver_by :web_push, class: "DeliveryMethods::WebPush"
 
   notification_methods do
+    def title
+      "Follow Up Check Up"
+    end
+
     def message
       "Hi #{ recipient.full_name }, this is a reminder of your follow-up check-up on #{ record.scheduled_at.strftime("%B %d, %Y at %I:%M %p") }. Please arrive on time."
+    end
+
+    def icon_class
+      "bi bi-heart-pulse"
     end
 
     def url

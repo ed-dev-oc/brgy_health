@@ -6,6 +6,10 @@ class UserCredentialChangedNotifier < ApplicationNotifier
   required_param :changed_attributes
 
   notification_methods do
+    def title
+      "Account Credentials Updated"
+    end
+
     def message
       changes = params[:changed_attributes].map do |field, change|
         if field == "password"
@@ -22,6 +26,10 @@ class UserCredentialChangedNotifier < ApplicationNotifier
 
     def url
       Rails.application.routes.url_helpers.edit_profile_path(recipient)
+    end
+
+    def icon_class
+      "bi bi-shield-lock"
     end
 
     private

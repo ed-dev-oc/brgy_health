@@ -26,6 +26,10 @@ class AppointmentStatusChangedNotifier < ApplicationNotifier
   deliver_by :web_push, class: "DeliveryMethods::WebPush"
 
   notification_methods do
+    def title
+      "Appointment Status Changed"
+    end
+
     def message
       case record.status
       when "approved"
@@ -41,6 +45,10 @@ class AppointmentStatusChangedNotifier < ApplicationNotifier
           "Your appointment status changed to #{record.announcement.name}, please check."
         end
       end
+    end
+
+    def icon_class
+      "bi bi-calendar-check"
     end
 
     def url
