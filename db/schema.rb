@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_24_053444) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_27_172534) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -104,8 +104,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_24_053444) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "subdomain"
-    t.boolean "verified"
-    t.integer "admin_id"
     t.index ["region", "province", "city", "name"], name: "index_barangays_on_region_and_province_and_city_and_name", unique: true
     t.index ["region", "province", "city", "slug"], name: "index_barangays_on_region_and_province_and_city_and_slug", unique: true
   end

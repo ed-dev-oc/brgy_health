@@ -17,8 +17,8 @@ class Barangay < ApplicationRecord
   after_validation :set_subdomain_from_slug
   after_create :generate_pages
 
-  scope :verified, -> { where(verified: true) }
-  scope :unverified, -> { where(verified: false) }
+  scope :verified, -> { tagged_with("verified") }
+  scope :unverified, -> { where.not(id: tagged_with("verified")) }
 
   def admin_and_staff
     users.where(role: [ :admin, :staff ])
@@ -28,25 +28,45 @@ class Barangay < ApplicationRecord
     "#{name}, #{city}, #{province}, #{region}"
   end
 
+  def has_validated_admin?
+    users.where(role: :admin).where.not(id: User.tagged_with("require_validation").pluck(:id)).exists?
+  end
+
+  def verified?
+    has_validated_admin?
+  end
+
   def verified_status
     verified? ? "Verified" : "Unverified"
   end
 
+  def has_unvalidated_admin?
+    unvalidated_admin.present?
+  end
+
+  def unvalidated_admin
+    users.where(role: :admin).tagged_with("require_validation").first
+  end
+
   def self.ransackable_attributes(auth_object = nil)
     %w[
-      admin_id
-      city
-      created_at
       id
-      id_value
       name
+      city
       province
       region
-      slug
-      subdivision_type
-      subdomain
+      created_at
       updated_at
-      verified
+      verified_status
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[
+      users
+      testimonials
+      health_programs
+      subdivisions
     ]
   end
 
