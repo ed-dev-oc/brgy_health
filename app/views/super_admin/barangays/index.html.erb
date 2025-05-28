@@ -1,12 +1,31 @@
 <h1 class="mb-4">Barangays</h1>
 
 <%= search_form_for @q, url: super_admin_barangays_path, method: :get, class: "mb-4" do |f| %>
-  <div class="input-group w-75">
-    <%= f.search_field :name_cont, placeholder: "Search Barangay Name", class: "form-control" %>
+  <div class="input-group w-100 flex-wrap gap-2">
 
-    <%= select_tag :status, options_for_select([["All Statuses", ""], ["Verified", "verified"], ["Unverified", "unverified"]], params[:status]), class: "form-select ms-2" %>
+    <%= f.search_field :name_cont, placeholder: "Search Barangay Name", class: "form-control flex-grow-1" %>
 
-    <button class="btn btn-primary ms-2 col-2" type="submit">Filter</button>
+    <%= select_tag :status, 
+          options_for_select([["All Statuses", ""], ["Verified", "verified"], ["Unverified", "unverified"]], params[:status]), 
+          class: "form-select ms-2", 
+          prompt: false %>
+
+    <%= select_tag "q[city_eq]", 
+          options_for_select(@cities, params.dig(:q, :city_eq)), 
+          include_blank: "All Cities", 
+          class: "form-select ms-2" %>
+
+    <%= select_tag "q[province_eq]", 
+          options_for_select(@provinces, params.dig(:q, :province_eq)), 
+          include_blank: "All Provinces", 
+          class: "form-select ms-2" %>
+
+    <%= select_tag "q[region_eq]", 
+          options_for_select(@regions, params.dig(:q, :region_eq)), 
+          include_blank: "All Regions", 
+          class: "form-select ms-2" %>
+
+    <button class="btn btn-primary ms-2 col-auto" type="submit">Filter</button>
   </div>
 <% end %>
 
