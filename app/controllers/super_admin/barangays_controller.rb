@@ -1,9 +1,18 @@
 class SuperAdmin::BarangaysController < SuperAdminController
   before_action :set_barangay, only: [ :show ]
 
-  def index
+def index
     @q = Barangay.ransack(params[:q])
-    @pagy, @barangays = pagy(@q.result(distinct: true))
+
+    if params[:status] == "verified"
+      base_scope = Barangay.verified
+    elsif params[:status] == "unverified"
+      base_scope = Barangay.unverified
+    else
+      base_scope = Barangay.all
+    end
+
+    @pagy, @barangays = pagy(@q.result.merge(base_scope).distinct)
   end
 
   def show

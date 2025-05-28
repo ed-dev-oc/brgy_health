@@ -16,10 +16,6 @@ class Barangay < ApplicationRecord
 
   after_validation :set_subdomain_from_slug
   after_create :generate_pages
-
-  scope :verified, -> { tagged_with("verified") }
-  scope :unverified, -> { where.not(id: tagged_with("verified")) }
-
   def admin_and_staff
     users.where(role: [ :admin, :staff ])
   end
@@ -29,8 +25,21 @@ class Barangay < ApplicationRecord
   end
 
   def has_validated_admin?
-    users.where(role: :admin).where.not(id: User.tagged_with("require_validation").pluck(:id)).exists?
+    users.where(role: :admin)
+         .where.not(id: User.tagged_with("require_validation").select(:id))
+         .exists?
   end
+
+  scope :verified, -> {
+    joins(:users)
+    .where(users: { role: :admin })
+    .where.not(users: { id: User.tagged_with("require_validation").select(:id) })
+    .distinct
+  }
+
+  scope :unverified, -> {
+    where.not(id: verified.select(:id))
+  }
 
   def verified?
     has_validated_admin?
@@ -85,6 +94,6 @@ class Barangay < ApplicationRecord
   end
 
   def generate_pages
-    BarangayGeneratePagesJob.perform_later(self.id)
+    BarangayGeneratePagesJob.perform_later(id)
   end
 end

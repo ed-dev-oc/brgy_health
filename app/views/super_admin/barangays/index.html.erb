@@ -1,9 +1,12 @@
 <h1 class="mb-4">Barangays</h1>
 
 <%= search_form_for @q, url: super_admin_barangays_path, method: :get, class: "mb-4" do |f| %>
-  <div class="input-group w-50">
+  <div class="input-group w-75">
     <%= f.search_field :name_cont, placeholder: "Search Barangay Name", class: "form-control" %>
-    <button class="btn btn-primary" type="submit">Search</button>
+
+    <%= select_tag :status, options_for_select([["All Statuses", ""], ["Verified", "verified"], ["Unverified", "unverified"]], params[:status]), class: "form-select ms-2" %>
+
+    <button class="btn btn-primary ms-2 col-2" type="submit">Filter</button>
   </div>
 <% end %>
 
