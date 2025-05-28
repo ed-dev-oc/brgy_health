@@ -5,12 +5,10 @@ class SuperAdmin::BarangaysController < SuperAdminController
   def index
     @q = Barangay.ransack(params[:q])
 
-    # Fetch unique cities, provinces, and regions for dropdowns
     @cities = Barangay.distinct.pluck(:city).sort
     @provinces = Barangay.distinct.pluck(:province).sort
     @regions = Barangay.distinct.pluck(:region).sort
 
-    # Apply status filter with scopes
     if params[:status] == "verified"
       base_scope = Barangay.verified
     elsif params[:status] == "unverified"
@@ -19,7 +17,6 @@ class SuperAdmin::BarangaysController < SuperAdminController
       base_scope = Barangay.all
     end
 
-    # Merge base_scope with ransack search result and paginate
     @pagy, @barangays = pagy(@q.result.merge(base_scope).distinct)
   end
 
