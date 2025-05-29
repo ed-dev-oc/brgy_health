@@ -1,9 +1,17 @@
 class Admin::HealthProgramsController < AdminController
+  include Pagy::Backend
   before_action :set_admin_health_program, only: %i[ show edit update destroy ]
 
   # GET /admin/health_programs or /admin/health_programs.json
   def index
-    @admin_health_programs = HealthProgram.all
+    @query = params[:q]&.strip
+    scope = if @query.present?
+      HealthProgram.where("name ILIKE :q OR description ILIKE :q", q: "%#{@query}%")
+    else
+      HealthProgram.all
+    end
+
+    @pagy, @admin_health_programs = pagy(scope)
   end
 
   # GET /admin/health_programs/1 or /admin/health_programs/1.json

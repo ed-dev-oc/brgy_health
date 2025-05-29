@@ -1,16 +1,52 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, "Health Programs" %>
 
-<% content_for :title, "Health programs" %>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">Health Programs</h1>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newHealthProgramModal">
+      New Health Program
+    </button>
+  </div>
 
-<h1>Health programs</h1>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <%= form_with url: admin_health_programs_path, method: :get, local: true do %>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-search"></i></span>
+          <%= text_field_tag :q, @query, class: "form-control", type: "search", placeholder: "Search programs..." %>
+          <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
 
-<div id="admin_health_programs">
-  <% @admin_health_programs.each do |admin_health_program| %>
-    <%= render admin_health_program %>
-    <p>
-      <%= link_to "Show this health program", [:admin, admin_health_program] %>
-    </p>
+  <% if @admin_health_programs.any? %>
+    <div class="row g-3">
+      <% @admin_health_programs.each do |admin_health_program| %>
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">
+                <%= admin_health_program.name.presence || "Untitled Program" %>
+              </h5>
+              <p class="card-text">
+                <%= truncate(admin_health_program.description, length: 100) %>
+              </p>
+              <%= link_to "View Details", [:admin, admin_health_program], class: "btn btn-outline-primary btn-sm" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-3">
+      <%== pagy_bootstrap_nav(@pagy) if @pagy && @admin_health_programs.any? %>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      No health programs found.
+    </div>
   <% end %>
 </div>
 
-<%= link_to "New health program", new_admin_health_program_path %>
+<%= render "new_modal", admin_health_program: HealthProgram.new %>

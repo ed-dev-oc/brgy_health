@@ -1,11 +1,25 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, @admin_health_program.name.presence || "Health Program Details" %>
 
-<%= render @admin_health_program %>
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title"><%= @admin_health_program.name.presence || "Untitled Program" %></h2>
+      <p class="card-text"><strong>Description:</strong> <%= @admin_health_program.description.presence || "No description provided." %></p>
+      <p class="card-text"><strong>Status:</strong> <%= @admin_health_program.status.titleize %></p>
+    </div>
+  </div>
 
-<div>
-  <%= link_to "Edit this health program", edit_admin_health_program_path(@admin_health_program) %> |
-  <%= link_to "Back to health programs", admin_health_programs_path %>
-
-  <%= button_to "Destroy this health program", [:admin, @admin_health_program], method: :delete, data: { confirm: "Are you sure?" } %>
-
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <div>
+      <%= link_to "Back to Health Programs", admin_health_programs_path, class: "btn btn-outline-secondary" %>
+    </div>
+    <div class="btn-group">
+      <%= link_to "Edit", "#", class: "btn btn-primary me-1", data: { bs_toggle: "modal", bs_target: "#editHealthProgramModal" } %>
+      <%= button_to "Delete", [:admin, @admin_health_program], method: :delete,
+            data: { confirm: "Are you sure you want to delete this program?" },
+            class: "btn btn-danger" %>
+    </div>
+  </div>
 </div>
+
+<%= render "edit_modal", admin_health_program: @admin_health_program %>
