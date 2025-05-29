@@ -17,9 +17,14 @@
         <%= form.text_field :last_name, class: "form-control" %>
       </div>
 
-            <div class="mb-3">
+      <div class="mb-3">
         <%= form.label :suffix, class: "form-label" %>
         <%= form.text_field :suffix, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= form.label :phone_number, class: "form-label" %>
+        <%= form.text_field :phone_number, class: "form-control" %>
       </div>
 
       <%= form.submit "Update Personal Info", class: "btn btn-primary" %>
