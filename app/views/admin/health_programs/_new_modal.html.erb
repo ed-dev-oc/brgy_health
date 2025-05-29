@@ -1,0 +1,37 @@
+<div class="modal fade" id="newHealthProgramModal" tabindex="-1" aria-labelledby="newHealthProgramModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <%= form_with model: [:admin, admin_health_program], local: true do |form| %>
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="newHealthProgramModalLabel">New Health Program</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3 d-none">
+            <%= form.label :barangay_id, class: "form-label" %>
+            <%= form.text_field :barangay_id, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :name, class: "form-label" %>
+            <%= form.text_field :name, class: "form-control", required: true %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :description, class: "form-label" %>
+            <%= form.text_area :description, class: "form-control", rows: 3 %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :status, class: "form-label" %>
+            <%= form.select :status, [["Active", "active"], ["Inactive", "inactive"]], {}, class: "form-select" %>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <%= form.submit "Create", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
