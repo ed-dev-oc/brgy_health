@@ -1,58 +1,53 @@
 <div class="container py-4">
-  <div class="card mb-4">
-    <div class="card-header bg-primary text-white">
-      <h1 class="mb-0"><%= @barangay.name %></h1>
-    </div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="display-4">Barangay <%= @barangay.name %></h1>
+    <%= link_to "Visit Subdomain Page",
+                "http://#{@barangay.subdomain}.lvh.me:3000",
+                class: "btn btn-primary",
+                target: "_blank",
+                rel: "noopener" %>
+  </div>
+
+  <div class="card mb-4 shadow-sm">
     <div class="card-body">
-      <p><strong>Full Address:</strong> <%= @barangay.full_address %></p>
-      <p><strong>Subdomain:</strong> <%= @barangay.subdomain %></p>
-      <p>
-        <strong>Verified:</strong>
-        <span class="badge <%= @barangay.verified? ? 'bg-success' : 'bg-danger' %>">
-          <%= @barangay.verified? ? "Yes" : "No" %>
-        </span>
-      </p>
-
-      <div class="d-flex gap-2 flex-wrap mt-3">
+      <h5 class="card-title">Location Details</h5>
+      <p class="card-text mb-1">
+        <strong>Status:</strong>
         <% if @barangay.verified? %>
-          <%= button_to "Unverify", unverify_super_admin_barangay_path(@barangay),
-                method: :patch,
-                data: { confirm: "Are you sure?" },
-                class: "btn btn-warning" %>
+          <span class="badge bg-success"><%= @barangay.verified_status %></span>
         <% else %>
-          <%= button_to "Verify", verify_super_admin_barangay_path(@barangay),
-                method: :patch,
-                data: { confirm: "Are you sure?" },
-                class: "btn btn-success" %>
+          <span class="badge bg-warning text-dark"><%= @barangay.verified_status %></span>
         <% end %>
-
-        <%= link_to "Visit Barangay Page",
-              "http://#{@barangay.subdomain}.lvh.me:3000",
-              class: "btn btn-secondary",
-              target: "_blank" %>
-      </div>
+      </p>
+      <p class="card-text mb-1"><strong>Region:</strong> <%= @barangay.region %></p>
+      <p class="card-text mb-1"><strong>Province:</strong> <%= @barangay.province %></p>
+      <p class="card-text"><strong>City:</strong> <%= @barangay.city %></p>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-header">
-      <h2 class="mb-0">Admins & Staff</h2>
-    </div>
-    <div class="card-body">
-      <% if @admins_and_staff.any? %>
-        <ul class="list-group">
-          <% @admins_and_staff.each do |user| %>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              <div>
-                <strong><%= user.email %></strong> (<%= user.role.capitalize %>)
-              </div>
-              <%= link_to "View Profile", super_admin_user_path(user.public_uid), class: "btn btn-sm btn-outline-info" %>
-            </li>
+  <h3 class="mb-3">Admins & Staff</h3>
+  <ul class="list-group mb-4 shadow-sm">
+    <% @admins_and_staff.each do |user| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong><%= user.email %></strong> (<%= user.role.capitalize %>)
+          <% if user.flag_list.include?("require_validation") %>
+            <span class="badge bg-warning text-dark ms-2">Needs Validation</span>
           <% end %>
-        </ul>
-      <% else %>
-        <p class="text-muted mb-0">No admins or staff found for this barangay.</p>
-      <% end %>
-    </div>
+        </div>
+        <%= link_to "View Profile", super_admin_user_path(user.public_uid), class: "btn btn-sm btn-outline-info" %>
+      </li>
+    <% end %>
+  </ul>
+
+  <div class="mb-4 d-flex justify-content-start">
+    <% if @barangay.has_unvalidated_admin? %>
+      <%= button_to "Verify Admin", validated_super_admin_user_path(@barangay.unvalidated_admin.public_uid),
+            method: :patch,
+            data: { confirm: "Are you sure you want to validate this admin?" },
+            class: "btn btn-success btn-sm" %>
+    <% else %>
+      <button class="btn btn-secondary btn-sm" disabled>No admin to validate</button>
+    <% end %>
   </div>
 </div>

@@ -1,67 +1,9 @@
 <h1 class="mb-4">Barangays</h1>
 
-<div class="card mb-4">
-  <div class="card-body">
-    <%= search_form_for @q, url: super_admin_barangays_path, method: :get, html: { class: "row g-3 align-items-end" } do |f| %>
-      <div class="col-md-4">
-        <%= f.label :name_cont, "Search by Name", class: "form-label" %>
-        <%= f.search_field :name_cont, class: "form-control" %>
-      </div>
+<%= render 'search_form', q: @q, cities: @cities, provinces: @provinces, regions: @regions %>
 
-      <div class="col-md-3">
-        <%= f.label :verified_eq, "Verified", class: "form-label" %>
-        <%= f.select :verified_eq, [['All', nil], ['Verified', true], ['Unverified', false]], {}, class: "form-select" %>
-      </div>
+<%= render 'table', barangays: @barangays %>
 
-      <div class="col-md-2">
-        <%= f.submit "Search", class: "btn btn-primary w-100" %>
-      </div>
-    <% end %>
-  </div>
-</div>
-
-<table class="table table-bordered table-hover">
-  <thead class="table-light">
-    <tr>
-      <th>Name</th>
-      <th>City</th>
-      <th>Province</th>
-      <th>Region</th>
-      <th>Verified</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @barangays.each do |barangay| %>
-      <tr>
-        <td><%= barangay.name %></td>
-        <td><%= barangay.city %></td>
-        <td><%= barangay.province %></td>
-        <td><%= barangay.region %></td>
-        <td>
-          <span class="badge <%= barangay.verified? ? 'bg-success' : 'bg-secondary' %>">
-            <%= barangay.verified_status %>
-          </span>
-        </td>
-        <td class="d-flex gap-1">
-          <%= link_to "Show", super_admin_barangay_path(barangay), class: "btn btn-sm btn-info" %>
-          <% if barangay.verified? %>
-            <%= button_to "Unverify", unverify_super_admin_barangay_path(barangay),
-                  method: :patch,
-                  data: { confirm: "Are you sure?" },
-                  class: "btn btn-sm btn-warning" %>
-          <% else %>
-            <%= button_to "Verify", verify_super_admin_barangay_path(barangay),
-                  method: :patch,
-                  data: { confirm: "Are you sure?" },
-                  class: "btn btn-sm btn-success" %>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<div class="mt-3">
-  <%== pagy_nav(@pagy) if defined?(pagy_nav) %>
+<div>
+  <%== pagy_nav(@pagy, link_extra: 'class="page-link"') %>
 </div>

@@ -1,0 +1,41 @@
+<div class="dropdown">
+  <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filtersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    Filters
+  </button>
+  <div class="dropdown-menu p-4 shadow dropdown-menu-end" style="min-width: 300px;">
+    <div class="mb-3">
+      <label for="statusFilter" class="form-label">Status</label>
+      <%= select_tag :status,
+            options_for_select([["All Statuses", ""], ["Verified", "verified"], ["Unverified", "unverified"]], params[:status]),
+            class: "form-select", id: "statusFilter" %>
+    </div>
+
+    <div class="mb-3">
+      <label for="cityFilter" class="form-label">City</label>
+      <%= select_tag "q[city_eq]",
+            options_for_select(cities, params.dig(:q, :city_eq)),
+            include_blank: "All Cities",
+            class: "form-select", id: "cityFilter" %>
+    </div>
+
+    <div class="mb-3">
+      <label for="provinceFilter" class="form-label">Province</label>
+      <%= select_tag "q[province_eq]",
+            options_for_select(provinces, params.dig(:q, :province_eq)),
+            include_blank: "All Provinces",
+            class: "form-select", id: "provinceFilter" %>
+    </div>
+
+    <div class="mb-3">
+      <label for="regionFilter" class="form-label">Region</label>
+      <%= select_tag "q[region_eq]",
+            options_for_select(regions, params.dig(:q, :region_eq)),
+            include_blank: "All Regions",
+            class: "form-select", id: "regionFilter" %>
+    </div>
+
+    <div class="d-grid">
+      <button type="submit" class="btn btn-primary">Apply Filters</button>
+    </div>
+  </div>
+</div>

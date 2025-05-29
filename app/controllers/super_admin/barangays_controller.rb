@@ -1,29 +1,33 @@
 class SuperAdmin::BarangaysController < SuperAdminController
-  before_action :set_barangay, only: [ :show, :verify, :unverify ]
   include Pagy::Backend
+  before_action :set_barangay, only: [ :show ]
 
   def index
     @q = Barangay.ransack(params[:q])
-    @pagy, @barangays = pagy(@q.result.order(created_at: :desc))
+
+    @cities = Barangay.distinct.pluck(:city).sort
+    @provinces = Barangay.distinct.pluck(:province).sort
+    @regions = Barangay.distinct.pluck(:region).sort
+
+    if params[:status] == "verified"
+      base_scope = Barangay.verified
+    elsif params[:status] == "unverified"
+      base_scope = Barangay.unverified
+    else
+      base_scope = Barangay.all
+    end
+
+    @pagy, @barangays = pagy(@q.result.merge(base_scope).distinct)
   end
 
   def show
     @admins_and_staff = @barangay.admin_and_staff
   end
 
-  def verify
-    @barangay.update(verified: true)
-    redirect_to super_admin_barangay_path(@barangay), notice: "Barangay has been verified."
-  end
-
-  def unverify
-    @barangay.update(verified: false)
-    redirect_to super_admin_barangay_path(@barangay), notice: "Barangay has been unverified."
-  end
-
   private
 
   def set_barangay
-    @barangay = Barangay.find(params[:id])
+    @barangay = Barangay.friendly.find(params[:id])
+    redirect_to super_admin_barangays_path, alert: "Barangay not found." if @barangay.nil?
   end
 end

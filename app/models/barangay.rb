@@ -16,10 +16,6 @@ class Barangay < ApplicationRecord
 
   after_validation :set_subdomain_from_slug
   after_create :generate_pages
-
-  scope :verified, -> { where(verified: true) }
-  scope :unverified, -> { where(verified: false) }
-
   def admin_and_staff
     users.where(role: [ :admin, :staff ])
   end
@@ -28,25 +24,58 @@ class Barangay < ApplicationRecord
     "#{name}, #{city}, #{province}, #{region}"
   end
 
+  def has_validated_admin?
+    users.where(role: :admin)
+         .where.not(id: User.tagged_with("require_validation").select(:id))
+         .exists?
+  end
+
+  scope :verified, -> {
+    joins(:users)
+    .where(users: { role: :admin })
+    .where.not(users: { id: User.tagged_with("require_validation").select(:id) })
+    .distinct
+  }
+
+  scope :unverified, -> {
+    where.not(id: verified.select(:id))
+  }
+
+  def verified?
+    has_validated_admin?
+  end
+
   def verified_status
     verified? ? "Verified" : "Unverified"
   end
 
+  def has_unvalidated_admin?
+    unvalidated_admin.present?
+  end
+
+  def unvalidated_admin
+    users.where(role: :admin).tagged_with("require_validation").first
+  end
+
   def self.ransackable_attributes(auth_object = nil)
     %w[
-      admin_id
-      city
-      created_at
       id
-      id_value
       name
+      city
       province
       region
-      slug
-      subdivision_type
-      subdomain
+      created_at
       updated_at
-      verified
+      verified_status
+    ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    %w[
+      users
+      testimonials
+      health_programs
+      subdivisions
     ]
   end
 
@@ -65,6 +94,6 @@ class Barangay < ApplicationRecord
   end
 
   def generate_pages
-    BarangayGeneratePagesJob.perform_later(self.id)
+    BarangayGeneratePagesJob.perform_later(id)
   end
 end
