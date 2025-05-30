@@ -3,36 +3,7 @@
     Brgy. Health Center - Testimonials
   </h2>
 
-  <%= form_with url: super_admin_testimonials_path, method: :get, local: true, class: "row g-3 mb-4" do |f| %>
-    <div class="col-md-4">
-      <%= f.label :full_name, "Full Name", class: "form-label" %>
-      <%= f.text_field :full_name, value: params[:full_name], class: "form-control", placeholder: "Search Full Name" %>
-    </div>
-
-    <div class="col-md-4">
-      <%= f.label :email, "Email", class: "form-label" %>
-      <%= f.text_field :email, value: params[:email], class: "form-control", placeholder: "Search Email" %>
-    </div>
-
-    <div class="col-md-2">
-      <%= f.label :rating, "Rating", class: "form-label" %>
-      <%= f.select :rating, options_for_select((1..5).map { |r| [r, r] }, params[:rating]), { include_blank: "All Ratings" }, class: "form-select" %>
-    </div>
-
-    <div class="col-md-2">
-      <%= f.label :year_filter, "Date", class: "form-label" %>
-      <%= f.select :year_filter,
-             options_for_select([["All Time", "all"], ["This Year", "this_year"], ["Previous Year", "last_year"]],
-                                params[:year_filter] || "all"),
-             {},
-             class: "form-select" %>
-    </div>
-
-    <div class="col-md-2 d-flex align-items-end">
-      <%= f.submit "Filter", class: "btn btn-primary w-100" %>
-    </div>
-  <% end %>
-
+  <%= render "super_admin/testimonials/search_form" %>
 
   <table class="table table-bordered table-hover align-middle">
     <thead class="table-success text-secondary">

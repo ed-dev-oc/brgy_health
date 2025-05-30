@@ -1,0 +1,40 @@
+<%= form_with url: super_admin_testimonials_path, method: :get, local: true, html: { class: "d-flex align-items-start gap-2 flex-wrap mb-4" } do |f| %>
+  <div class="input-group" style="min-width: 280px;">
+    <span class="input-group-text bg-white border-end-0">
+      <i class="bi bi-search"></i>
+    </span>
+    <%= f.text_field :full_name, value: params[:full_name], class: "form-control border-start-0", placeholder: "Search Full Name" %>
+  </div>
+
+  <div class="input-group" style="min-width: 280px;">
+    <span class="input-group-text bg-white border-end-0">
+      <i class="bi bi-envelope"></i>
+    </span>
+    <%= f.text_field :email, value: params[:email], class: "form-control border-start-0", placeholder: "Search Email" %>
+  </div>
+
+  <div class="dropdown">
+    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filtersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-filter"></i> Filters
+    </button>
+    <div class="dropdown-menu p-3 shadow" aria-labelledby="filtersDropdown" style="min-width: 250px;">
+      <div class="mb-3">
+        <%= f.label :rating, "Rating", class: "form-label" %>
+        <%= f.select :rating, options_for_select((1..5).map { |r| [r, r] }, params[:rating]), { include_blank: "All Ratings" }, class: "form-select" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :year_filter, "Date", class: "form-label" %>
+        <%= f.select :year_filter,
+                     options_for_select([["All Time", "all"], ["This Year", "this_year"], ["Previous Year", "last_year"]],
+                                        params[:year_filter] || "all"),
+                     {},
+                     class: "form-select" %>
+      </div>
+
+      <%= f.submit "Apply Filters", class: "btn btn-primary w-100" %>
+    </div>
+  </div>
+
+  <%= f.submit "Search", class: "btn btn-primary" %>
+<% end %>
