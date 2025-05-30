@@ -1,33 +1,79 @@
-<h1>User Details</h1>
+<div class="container mt-4">
+  <h2 class="mb-4 text-center text-secondary fw-bold">User Details</h2>
 
-<p><strong>Public ID:</strong> <%= @user.public_uid %></p>
-<p><strong>Subdomain Link:</strong> <%= link_to root_url(subdomain: @user.barangay&.subdomain), root_path(subdomain: @user.barangay&.subdomain) %></p>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="row g-3">
 
-<p><strong>Name:</strong>
-  <%= @user.full_name %>
-</p>
+        <div class="col-md-6">
+          <p><strong>Public ID:</strong> <%= @user.public_uid %></p>
+        </div>
 
-<p><strong>Email:</strong> <%= @user.email %></p>
+        <div class="col-md-6">
+          <p><strong>Subdomain Link:</strong>
+            <%= link_to root_url(subdomain: @user.barangay&.subdomain), root_path(subdomain: @user.barangay&.subdomain), class: "link-primary" %>
+          </p>
+        </div>
 
-<p><strong>Phone Number:</strong> <%= @user.phone_number || "Not provided" %></p>
+        <div class="col-md-6">
+          <p><strong>Name:</strong> <%= @user.full_name %></p>
+        </div>
 
-<p><strong>Role:</strong> <%= @user.role.titleize %></p>
+        <div class="col-md-6">
+          <p><strong>Email:</strong> <%= @user.email %></p>
+        </div>
 
-<p><strong>Barangay ID:</strong> <%= @user.barangay&.full_address %></p>
+        <div class="col-md-6">
+          <p><strong>Phone Number:</strong> <%= @user.phone_number || "Not provided" %></p>
+        </div>
 
-<p><strong>Subdivision ID:</strong> <%= @user.subdivision_id || "Not assigned" %></p>
+        <div class="col-md-6">
+          <p><strong>Role:</strong> <%= @user.role.titleize %></p>
+        </div>
 
-<p><strong>Flags:</strong> <%= @user.flag_list || "None" %></p>
+        <div class="col-md-6">
+          <p><strong>Barangay:</strong> <%= @user.barangay&.full_address || "Not assigned" %></p>
+        </div>
 
-<p><strong>Created At:</strong> <%= @user.created_at.strftime("%B %d, %Y %I:%M %p") %></p>
+        <div class="col-md-6">
+          <p><strong>Subdivision ID:</strong> <%= @user.subdivision_id || "Not assigned" %></p>
+        </div>
 
-<p><strong>Last Updated:</strong> <%= @user.updated_at.strftime("%B %d, %Y %I:%M %p") %></p>
+        <div class="col-md-12">
+          <p><strong>Flags:</strong>
+            <% if @user.flag_list.present? %>
+              <% @user.flag_list.each do |flag| %>
+                <span class="badge bg-primary me-1"><%= flag.titleize %></span>
+              <% end %>
+            <% else %>
+              None
+            <% end %>
+          </p>
+        </div>
 
-<%= link_to 'Back', super_admin_users_path, class: 'btn btn-secondary btn-sm' %>
-<%= link_to "Remove Validation", 
-  validated_super_admin_user_path(@user.public_uid), 
-  class: "btn btn-secondary btn-sm", 
-  data: { 
-    turbo_method: :PATCH, 
-    turbo_confirm: "Are you sure?", 
-    turbo_submits_with: "Submitting..."} if @user.flag_list.include?("require_validation") %>
+        <div class="col-md-6">
+          <p><strong>Created At:</strong> <%= @user.created_at.strftime("%B %d, %Y %I:%M %p") %></p>
+        </div>
+
+        <div class="col-md-6">
+          <p><strong>Last Updated:</strong> <%= @user.updated_at.strftime("%B %d, %Y %I:%M %p") %></p>
+        </div>
+
+      </div>
+
+      <div class="mt-4 d-flex gap-2">
+        <%= link_to 'Back', super_admin_users_path, class: 'btn btn-secondary' %>
+        <% if @user.flag_list.include?("require_validation") %>
+          <%= link_to "Remove Validation",
+              validated_super_admin_user_path(@user.public_uid),
+              class: "btn btn-danger",
+              data: {
+                turbo_method: :PATCH,
+                turbo_confirm: "Are you sure?",
+                turbo_submits_with: "Submitting..."
+              } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
