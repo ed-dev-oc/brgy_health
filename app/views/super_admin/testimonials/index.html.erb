@@ -5,42 +5,49 @@
 
   <%= render "super_admin/testimonials/search_form" %>
 
-  <table class="table table-bordered table-hover align-middle">
-    <thead class="table-success text-secondary">
-      <tr class="text-center">
-        <th>FULL NAME</th>
-        <th>EMAIL</th>
-        <th>TESTIMONIAL MESSAGE</th>
-        <th>RATING</th>
-        <th>ACTION</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @testimonials.each do |testimonial| %>
-        <% user = testimonial.user %>
-        <% next unless user %>
-        <tr>
-          <td class="text-center"><%= user.full_name %></td>
-          <td class="text-center"><%= user.email %></td>
-          <td class="text-center"><%= truncate(testimonial.data, length: 40) %></td>
-          <td class="text-center"><%= testimonial.rating %></td>
-          <td class="text-center">
-            <button type="button"
-                class="btn btn-info btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#testimonialModal_<%= testimonial.id %>">
-            View
-          </button>
-
-
-          </td>
+<div class="card shadow-sm">
+  <div class="card-body table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+      <thead class="table-success text-secondary">
+        <tr class="text-center">
+          <th>FULL NAME</th>
+          <th>EMAIL</th>
+          <th>TESTIMONIAL MESSAGE</th>
+          <th>RATING</th>
+          <th>ACTION</th>
         </tr>
-        <%= render partial: "testimonial_modal", locals: { testimonial: testimonial, user: user } %>
+      </thead>
 
-      <% end %>
-    </tbody>
-  </table>
+      <tbody>
+        <% @testimonials.each do |testimonial| %>
+          <% user = testimonial.user %>
+          <% next unless user %>
+          <tr>
+            <td class="text-center"><%= user.full_name %></td>
+            <td class="text-center"><%= user.email %></td>
+            <td class="text-center"><%= truncate(testimonial.data, length: 40) %></td>
+            <td class="text-center"><%= testimonial.rating %></td>
+            <td class="text-center">
+              <button type="button"
+                  class="btn btn-info btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#testimonialModal_<%= testimonial.id %>">
+              View
+            </button>
+
+
+            </td>
+          </tr>
+          <%= render partial: "testimonial_modal", locals: { testimonial: testimonial, user: user } %>
+
+        <% end %>
+      </tbody>
+    </table>
+      <div>
+        <%== pagy_bootstrap_nav(@pagy) if @pagy && @testimonials.any? %>
+      </div>
+    </div>
+    </div>
   <turbo-frame id="modal"></turbo-frame>
 </div>
 

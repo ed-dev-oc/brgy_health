@@ -1,6 +1,6 @@
 <div class="card mb-4 shadow-sm">
   <div class="card-body">
-  <%= search_form_for q, url: super_admin_barangays_path, method: :get, class: "d-flex justify-content-between align-items-start" do |f| %>
+  <%= search_form_for q, url: super_admin_barangays_path, method: :get, class: "d-flex gap-2 justify-content-between align-items-start" do |f| %>
     <div class="input-group w-25" style="min-width: 280px;">
       <span class="input-group-text"><i class="bi bi-search"></i></span>
       <%= f.search_field :name_cont, placeholder: "Search Barangay Name", class: "form-control" %>

@@ -1,5 +1,6 @@
 module SuperAdmin
   class TestimonialsController < SuperAdminController
+    include Pagy::Backend
     before_action :authenticate_user!
     before_action :set_testimonial, only: [ :show ]
 
@@ -27,6 +28,8 @@ module SuperAdmin
         last_year = Time.current.year - 1
         @testimonials = @testimonials.where(created_at: Date.new(last_year).beginning_of_year..Date.new(last_year).end_of_year)
       end
+
+      @pagy, @testimonials = pagy(@testimonials.order(created_at: :desc))
     end
 
 
