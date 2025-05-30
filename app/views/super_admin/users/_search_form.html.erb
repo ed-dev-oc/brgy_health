@@ -5,14 +5,14 @@
 
         <div class="d-flex gap-2">
         <div>
-          <div class="input-group">
+          <div class="input-group" style="min-width: 265px;">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
             <%= f.search_field :first_name_cont, class: "form-control", placeholder: "Search First Name" %>
           </div>
         </div>
 
         <div>
-          <div class="input-group">
+          <div class="input-group" style="min-width: 265px;">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
             <%= f.search_field :last_name_cont, class: "form-control", placeholder: "Search Last Name" %>
           </div>
@@ -55,5 +55,6 @@
         </div>
       <% end %>
       </div>
+
     </div>
   </div>
