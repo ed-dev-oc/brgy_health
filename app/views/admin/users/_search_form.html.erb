@@ -1,16 +1,18 @@
-<%= search_form_for @q, url: admin_users_path, method: :get, html: { class: "d-flex align-items-start gap-2 flex-wrap" } do |f| %>
-  <div class="input-group" style="min-width: 280px;">
-    <span class="input-group-text bg-white border-end-0">
-      <i class="bi bi-search"></i>
-    </span>
-    <%= f.search_field :email_or_first_name_or_last_name_cont,
-        class: "form-control border-start-0",
-        placeholder: "Search Barangay Name" %>
+<%= search_form_for @q, url: admin_users_path, method: :get, html: { class: "d-flex flex-wrap justify-content-between gap-2" } do |f| %>
+  <div class="d-flex align-items-center">
+    <div class="input-group" style="min-width: 280px;">
+      <span class="input-group-text bg-white border-end-0">
+        <i class="bi bi-search"></i>
+      </span>
+      <%= f.search_field :email_or_first_name_or_last_name_cont,
+          class: "form-control border-start-0",
+          placeholder: "Search Barangay Name" %>
+    </div>
   </div>
 
-  <div class="dropdown">
-    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filtersDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-      <i class="bi bi-filter"></i> Filters
+  <div class="dropdown d-flex align-items-center gap-2">
+    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filtersDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 150px;">
+      <i class="bi bi-filter me-1"></i> Filters
     </button>
     <div class="dropdown-menu p-3 shadow" aria-labelledby="filtersDropdown" style="min-width: 250px;">
       <div class="mb-3">
@@ -23,7 +25,6 @@
       </div>
       <%= submit_tag "Apply Filters", class: "btn btn-primary w-100" %>
     </div>
+    <%= submit_tag "Search", class: "btn btn-primary", style: "min-width: 150px;" %>
   </div>
-
-  <%= submit_tag "Search", class: "btn btn-primary" %>
 <% end %>

@@ -12,12 +12,12 @@
       </div>
     </div>
 
-  <%if current_user&.admin?%>
-    <div>
-      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newUserModal">
-        New Staff User
-      </button>
-    </div>
+    <% if current_user&.admin? %>
+      <div>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newUserModal">
+          New Staff User
+        </button>
+      </div>
     <% end %>
   </div>
 
