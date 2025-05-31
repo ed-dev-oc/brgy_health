@@ -47,20 +47,21 @@
       <!-- Details Card -->
       <div class="card border-0 shadow-sm mb-5">
         <div class="card-body">
-          <h5 class="card-title text-primary mb-4">Event Details</h5>
+          <h5 class="card-title text-green-600 mb-4">Event Details</h5>
 
           <div class="row">
             <!-- Date and Time -->
             <div class="col-md-6 mb-3">
               <h6 class="text-muted small mb-1">Date</h6>
               <p class="mb-3">
+                <i class="bi bi-calendar-event me-2"></i>
                 <%= announcement.start_date.to_date.to_formatted_s(:long) %>
                 <% if announcement.start_date.to_date != announcement.end_date.to_date %>
                   to <%= announcement.end_date.to_date.to_formatted_s(:long) %>
                 <% end %>
               </p>
 
-              <h6 class="text-muted small mb-1">Time</h6>
+              <h6 class="text-muted small mb-1"><i class="bi bi-clock me-2"></i> Time</h6>
               <p>
                 <%= announcement.open_time.strftime("%I:%M %p") %> to 
                 <%= announcement.close_time.strftime("%I:%M %p") %>
@@ -70,12 +71,12 @@
             <!-- Location and Capacity -->
             <div class="col-md-6 mb-3">
               <% if announcement.location.present? %>
-                <h6 class="text-muted small mb-1">Location</h6>
+                <h6 class="text-muted small mb-1"><i class="bi bi-geo-alt me-2"></i> Location</h6>
                 <p class="mb-3"><%= announcement.location %></p>
               <% end %>
 
               <% if announcement.max_patients.present? %>
-                <h6 class="text-muted small mb-1">Maximum Participants</h6>
+                <h6 class="text-muted small mb-1"><i class="bi bi-people me-2"></i> Maximum Participants</h6>
                 <p><%= announcement.max_patients %></p>
               <% end %>
             </div>
@@ -83,9 +84,24 @@
 
           <!-- Audience -->
           <% if announcement.audience.present? %>
-            <h6 class="text-muted small mb-1">Intended Audience</h6>
-            <p><%= announcement.audience %></p>
+            <h6 class="text-muted small mb-1">Intended For</h6>
+            <div class="d-flex flex-wrap gap-1">
+              <% announcement.audience.split(',').each do |audience| %>
+                <span class="badge bg-green-600"><%= audience %></span>
+              <% end %>
+            </div>
           <% end %>
+        </div>
+      </div>
+
+      <!-- Health Program Description Card -->
+      <div class="card border-0 mb-5" style="background-color: #f0f7ff;">
+        <div class="card-body">
+          <h5 class="card-title text-green-600 mb-3">About the Health Program</h5>
+          <h6 class="text-muted small mb-2"><%= announcement.health_program.name %></h6>
+          <div class="rich-text-content">
+            <p><%= announcement.health_program.description %></p>
+          </div>
         </div>
       </div>
 
@@ -113,13 +129,12 @@
         <% end %>
       </div>
 
-      <% if current_page?(announcement_path(announcement.public_uid)) %>
-        <div class="d-flex gap-3 mt-5">
-          <%= link_to "View All Announcements", root_path(anchor: :AnnouncementCarousel), class: "btn btn-outline-secondary" %>
+      <div class="d-flex justify-content-center gap-3 mt-5">
+        <%= link_to "View All Announcements", root_path(anchor: :AnnouncementCarousel), class: "btn btn-outline-secondary px-5 py-3" %>
 
-          <%= link_to "Set Appointment", "#", class: "btn btn-primary", data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "form")}"} %>
-        </div>
-      <% end %>
+        <%= link_to "Set Appointment", "#", class: "btn btn-green-600 px-5 py-3", data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "form")}"} if user_signed_in? %>
+        <%= render partial: "barangay/announcements/modal_form" %>
+      </div>
     </div>
   </div>
 </div>
