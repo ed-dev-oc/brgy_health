@@ -132,7 +132,7 @@
       <div class="d-flex justify-content-center gap-3 mt-5">
         <%= link_to "View All Announcements", root_path(anchor: :AnnouncementCarousel), class: "btn btn-outline-secondary px-5 py-3" %>
 
-        <%= link_to "Set Appointment", "#", class: "btn btn-green-600 px-5 py-3", data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "form")}"} %>
+        <%= link_to "Set Appointment", "#", class: "btn btn-green-600 px-5 py-3", data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "form")}"} if user_signed_in? %>
       </div>
     </div>
   </div>
