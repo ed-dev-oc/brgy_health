@@ -1,0 +1,106 @@
+<div data-controller="splide-loader">
+  <!-- Main Slider -->
+  <div data-splide-loader-target="mainSlides" class="splide" style="padding: 1px !important;">
+    <div class="splide__track">
+      <ul class="splide__list">
+        <% event.images.each do |image| %>
+          <li class="splide__slide">
+            <%= image_tag(image.variant(resize_to_fill: [900, 600])) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Thumbnail Slider -->
+  <div data-splide-loader-target="thumbnailSlides" class="splide" style="padding-top: 1px !important; padding-bottom: 1px !important;">
+    <div class="splide__track">
+      <ul class="splide__list">
+        <% event.images.each do |image| %>
+          <li class="splide__slide">
+            <%= image_tag(image.variant(resize_to_fill: [900, 600])) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Status Badge -->
+      <div class="mb-4">
+        <span class="badge <%= badge_status_class(event.status) %>">
+          <%= event.status.titleize %>
+        </span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="display-5 fw-bold mb-4"><%= event.name %></h1>
+
+      <!-- Description (rich text) -->
+      <div class="rich-text-content mb-5">
+        <%= event.description %>
+      </div>
+
+      <!-- Details Card -->
+      <div class="card border-0 shadow-sm mb-5">
+        <div class="card-body">
+          <h5 class="card-title text-green-600 mb-4">Event Details</h5>
+
+          <div class="row">
+            <!-- Date and Time -->
+            <div class="col-md-6 mb-3">
+              <h6 class="text-muted small mb-1">Date</h6>
+              <p class="mb-3">
+                <i class="bi bi-calendar-event me-2"></i>
+                <%= event.start_date.to_date.to_formatted_s(:long) %>
+                <% if event.start_date.to_date != event.end_date.to_date %>
+                  to <%= event.end_date.to_date.to_formatted_s(:long) %>
+                <% end %>
+              </p>
+            </div>
+
+            <!-- Location and Capacity -->
+            <div class="col-md-6 mb-3">
+              <% if event.location.present? %>
+                <h6 class="text-muted small mb-1"><i class="bi bi-geo-alt me-2"></i> Location</h6>
+                <p class="mb-3"><%= event.location %></p>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Audience -->
+          <% if event.audience.present? %>
+            <h6 class="text-muted small mb-1">Intended For</h6>
+            <div class="d-flex flex-wrap gap-1">
+              <span class="badge bg-green-600"><%= event.audience.titleize %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Additional Information -->
+      <div class="d-flex align-items-center flex-wrap gap-5 mb-4">
+        <% if event.barangay.present? %>
+          <div>
+            <h6 class="text-muted small mb-1">Barangay</h6>
+            <p class="mb-0"><%= event.barangay.name %></p>
+          </div>
+        <% end %>
+
+        <% if event.posted_by.present? %>
+          <div>
+            <h6 class="text-muted small mb-1">Posted By</h6>
+            <p class="mb-0"><%= event.posted_by.full_name %></p>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="d-flex justify-content-center gap-3 mt-5">
+        <%= link_to "View All events", root_path(anchor: :EventCarousel), class: "btn btn-outline-secondary px-5 py-3" %>
+      </div>
+    </div>
+  </div>
+</div>

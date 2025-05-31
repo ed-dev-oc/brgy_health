@@ -39,7 +39,13 @@ class Admin::EventsController < AdminController
   private
 
   def event_params
-    params.require(:event).permit(:name, :description, :start_date, :end_date, :audience, :location, :status, images: [])
+    permitted = [
+      :name, :description, :start_date, :end_date, :audience, :location, :status
+    ]
+
+    permitted << { images: [] } unless params[:event][:images] == [ "" ]
+
+    params.require(:event).permit(permitted)
   end
 
   def set_event
