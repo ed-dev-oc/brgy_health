@@ -46,7 +46,11 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :dashboard, only: [ :index ]
-    resources :announcements
+    resources :announcements, only: [ :index, :create, :update, :show ] do
+       member do
+        patch :archive
+      end
+    end
     resources :health_programs
 
     resources :appointments, only: [ :index, :show ] do

@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-end">
       <%= link_to "#", class: "btn btn-primary", data: { bs_toggle: "modal", bs_target: "##{ dom_id(@event, "form_modal") }" } do %>
         <i class="bi bi-plus"></i>
-        New Event      
+        New Event
       <% end %>
 
       <%= render partial: "admin/events/form_modal", locals: { event: @event } %>
