@@ -1,0 +1,55 @@
+<div class="my-2">
+  <%= search_form_for @q, url: admin_announcements_path, class: "d-flex gap-2" do |search_form| %>
+    <div class="flex-shrink">
+      <div class="input-group">
+        <span class="input-group-text" id="basic-addon1">
+          <%= search_form.label :name_cont do %>
+            <i class="bi bi-search"></i>
+          <% end %>
+        </span>
+
+        <%= search_form.search_field :name_cont, class: "form-control", placeholder: "Name Search" %>
+      </div>
+    </div>
+
+    <div class="flex-fill d-flex gap-2 justify-content-end">
+      <div class="dropdown">
+        <button type="button" class="btn btn-green-600 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+          <i class="bi bi-filter"></i>
+          Filters
+        </button>
+        <div class="dropdown-menu p-4">
+          <div class="my-2">
+            <%= search_form.label :posted_by_full_name_cont, "Posted By", class: "form-label" %>
+            <%= search_form.text_field :posted_by_full_name_cont, class: "form-control" %>
+          </div>
+          <div class="my-2">
+            <%= search_form.label :start_date_gteq, "Start Date From", class: "form-label" %>
+            <%= search_form.datetime_field :start_date_gteq, class: "form-control" %>
+          </div>
+          <div class="my-2">
+            <%= search_form.label :end_date_lteq, "End Date To", class: "form-label" %>
+            <%= search_form.datetime_field :end_date_lteq, class: "form-control" %>
+          </div>
+          <div class="my-2">
+            <%= search_form.label :audience_eq, "Audiences", class: "form-label" %>
+            <%= search_form.select :audience_eq, Event.audiences.map { |key, value| [key.titleize, value] }, { include_blank: "All" }, { class: "form-select" } %>
+          </div>
+          <div class="my-2">
+            <%= search_form.label :status_eq, "Status", class: "form-label" %>
+            <%= search_form.select :status_eq, Event.statuses.map { |key, value| [key.titleize, value] }, { include_blank: "All" }, { class: "form-select" } %>
+          </div>
+          <hr class="dropdown-divider">
+          <div class="my-2">
+            <%= link_to "Clear Filters", admin_events_path, class: "btn btn-primary w-100" %>
+          </div>
+        </div>
+      </div>
+
+      <%= button_tag class: "btn btn-green-600", type: "submit", data: { turbo_submits_with: "Searching..." } do %>
+        <i class="bi bi-search"></i>
+        Search
+      <% end %>
+    </div>
+  <% end %>
+</div>

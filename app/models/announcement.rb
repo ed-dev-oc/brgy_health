@@ -12,6 +12,7 @@ class Announcement < ApplicationRecord
 
   enum :status, [ :draft, :active, :canceled, :completed, :archived ]
   has_rich_text :description
+  has_many_attached :images
 
   attribute :start_date, :datetime, default: -> { Time.current.change(hour: 9, minute: 0, second: 0) }
   attribute :end_date, :datetime, default: -> { Time.current.change(hour: 17, minute: 0, second: 0) }
@@ -24,8 +25,25 @@ class Announcement < ApplicationRecord
   validates :open_time, comparison: { less_than: :close_time, message: "must be before the close time" }
   validates :close_time, comparison: { greater_than: :open_time, message: "must be after the open time" }
   validates :max_patients, numericality: { only_integer: true, greater_than_or_equal_to: 1, message: "must be a positive whole number" }
+  validate :images_presence, on: :create
 
   def self.ransackable_attributes(auth_object = nil)
     [ "audience", "barangay_id", "close_time", "created_at", "end_date", "id", "location", "max_patients", "name", "open_time", "posted_by_id", "public_uid", "start_date", "status", "updated_at" ]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    [ "appointments", "barangay", "health_program", "images_attachments", "images_blobs", "posted_by", "rich_text_description" ]
+  end
+
+  ransacker :full_name do |parent|
+    Arel::Nodes::NamedFunction.new("CONCAT_WS", [
+      " ", parent.table[:first_name], parent.table[:middle_name], parent.table[:last_name]
+    ])
+  end
+
+  private
+
+  def images_presence
+    errors.add(:images, "must have at least one image") if images.empty?
   end
 end

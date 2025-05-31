@@ -1,19 +1,26 @@
-<section class="splide" aria-label="Announcements" data-splide-loader-target="multipleSlides" id="AnnouncementCarousel">
-  <div class="mb-3">
-    <h2 id="carousel-heading">Upcoming Announcements</h2>
+<% if announcements.empty? %>
+  <div class="p-5">
+    <div class="mb-3">
+      <h2 id="carousel-heading">Upcoming Announcements</h2>
+    </div>
+    <div class="text-center">
+      <span class="badge bg-green-600 py-3 px-4">EMPTY ANNOUNCEMENT</span>
+    </div>
   </div>
+<% else %>
+  <section class="splide" aria-label="Announcements" data-splide-loader-target="multipleSlides" id="AnnouncementCarousel">
+    <div class="mb-3">
+      <h2 id="carousel-heading">Upcoming Announcements</h2>
+    </div>
 
-  <div class="splide__track">
-    <ul class="splide__list">
-      <% if announcements.empty? %>
-        <span class="badge text-bg-green-600 py-3 px-4">EMPTY ANNOUNCEMENT</span>
-      <% else %>
+    <div class="splide__track">
+      <ul class="splide__list">
         <% announcements.each do |announcement| %>
           <li class="splide__slide">
             <%= render partial: "barangay/announcements/card", locals: { announcement: announcement } %>
           </li>
         <% end %>
-      <% end %>
-    </ul>
-  </div>
-</section>
+      </ul>
+    </div>
+  </section>
+<% end %>

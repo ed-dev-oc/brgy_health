@@ -1,0 +1,15 @@
+<div class="modal fade" id="<%= dom_id(announcement, "form_modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(announcement, "form_modal") %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="<%= dom_id(announcement, "form_modal") %>Label"><%= announcement.new_record? ? "New Announcement" : announcement.name %></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= turbo_frame_tag dom_id(announcement, "form") do %>
+          <%= render partial: "admin/announcements/form", locals: { announcement: announcement } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
