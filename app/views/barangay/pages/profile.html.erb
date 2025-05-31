@@ -1,17 +1,23 @@
-<h1 class="mb-4">Edit Profile</h1>
-<div class="row container-fluid">
-  <div class="col-md-5 mb-4">
-    <%= render "barangay/partials/profile/profile_form" %>
+<div class="container my-3">
+  <div class="d-flex align-items-center mb-4">
+    <h1>Edit Profile</h1>
+    <div class="flex-grow-1 text-end">
+      <%= link_to "Log Out", destroy_user_session_path, data: { turbo_method: :DELETE, turbo_confirm: "Are your sure?" }, class: "btn btn-danger" %>
+    </div>
   </div>
-  <div class="col-md-5 mb-4">
-    <%= render "barangay/partials/profile/personal_information_form" %>
+  <div class="row container-fluid">
+    <div class="col-md-5 mb-4">
+      <%= render "barangay/partials/profile/profile_form" %>
+    </div>
+    <div class="col-md-5 mb-4">
+      <%= render "barangay/partials/profile/personal_information_form" %>
+    </div>
+    <div class="col-md-5 mb-4">
+      <%= render "barangay/partials/profile/address_form" %>
+    </div>
+    <div class="col-md-5 mb-4">
+      <%= render "barangay/partials/profile/credentials_form" %>
+    </div>
   </div>
-      <div class="col-md-5 mb-4">
-    <%= render "barangay/partials/profile/address_form" %>
-  </div>
-  <div class="col-md-5 mb-4">
-    <%= render "barangay/partials/profile/credentials_form" %>
-  </div>
+
 </div>
-
-

@@ -48,47 +48,45 @@
       </div>
     </section>
   <% end %>
-  <hr>
-  <div class="row gap-3 justify-content-center">
-    <div class="col-12">
-      <h3>Quick Links</h3>
-    </div>
-    <div class="col text-center">
-      <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
-        <div class="d-flex flex-column gap-2 align-items-center">
-          <i class="bi bi-calendar-check-fill fs-3"></i>
-          <strong>Appointments</strong>
-        </div>
-      <% end %>
-    </div>
-    <div class="col text-center">
-      <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
-        <div class="d-flex flex-column gap-2 align-items-center">
-          <i class="bi bi-clipboard2-pulse fs-3"></i>
-          <strong>Medical Records</strong>
-        </div>
-      <% end %>
-    </div>
-    <div class="col text-center">
-      <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
-        <div class="d-flex flex-column gap-2 align-items-center">
-          <i class="bi bi-person-fill fs-3"></i>
-          <strong>Profile</strong>
-        </div>
-      <% end %>
-    </div>
-    <div class="col text-center">
-      <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
-        <div class="d-flex flex-column gap-2 align-items-center">
-          <i class="bi bi-telephone-fill fs-3"></i>
-          <strong>Emergency Contact</strong>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div>
 
-<% if user_signed_in? %>
-  <%= edit_profile_button(current_user) %>
-  <%= link_to "Log Out", destroy_user_session_path, data: { turbo_method: :DELETE, turbo_confirm: "Are your sure?" }, class: "btn btn-danger" %>
-<% end %>
+  <% if user_signed_in? %>
+    <hr>
+    <div class="row gap-3 justify-content-center">
+      <div class="col-12">
+        <h3>Quick Links</h3>
+      </div>
+      <div class="col text-center">
+        <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
+          <div class="d-flex flex-column gap-2 align-items-center">
+            <i class="bi bi-calendar-check-fill fs-3"></i>
+            <strong>Appointments</strong>
+          </div>
+        <% end %>
+      </div>
+      <div class="col text-center">
+        <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
+          <div class="d-flex flex-column gap-2 align-items-center">
+            <i class="bi bi-clipboard2-pulse fs-3"></i>
+            <strong>Medical Records</strong>
+          </div>
+        <% end %>
+      </div>
+      <div class="col text-center">
+        <%= link_to edit_profile_path(current_user), class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
+          <div class="d-flex flex-column gap-2 align-items-center">
+            <i class="bi bi-person-fill fs-3"></i>
+            <strong>Profile</strong>
+          </div>
+        <% end %>
+      </div>
+      <div class="col text-center">
+        <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
+          <div class="d-flex flex-column gap-2 align-items-center">
+            <i class="bi bi-telephone-fill fs-3"></i>
+            <strong>Emergency Contact</strong>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

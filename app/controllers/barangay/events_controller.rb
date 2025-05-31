@@ -6,15 +6,14 @@ class Barangay::EventsController < BarangayController
   end
 
   def show
-    @appointment = Appointment.new(Event: @Event)
   end
 
   private
 
   def set_event
-    @Event = Event.find_by_public_uid(params.expect(:id))
+    @event = Event.find_by_public_uid(params.expect(:id))
 
-    if @Event.nil?
+    if @event.nil?
       redirect_to events_path, status: :see_other, alert: "Event not found."
     end
   end
