@@ -53,7 +53,7 @@ class Admin::AnnouncementsController < AdminController
 
   # Only allow a list of trusted parameters through.
   def announcement_params
-    params.require(:announcement).permit(
+    permitted = [
       :name,
       :description,
       :start_date,
@@ -65,9 +65,12 @@ class Admin::AnnouncementsController < AdminController
       :audience,
       :status,
       :health_program_id,
-      images: [],
       health_program_attributes: [ :name, :description, :status ]
-    ).merge(
+    ]
+
+    permitted << { images: [] } unless params[:announcement][:images] == [ "" ]
+
+    params.require(:announcement).permit(permitted).merge(
       posted_by: current_user,
       barangay: current_tenant
     )
