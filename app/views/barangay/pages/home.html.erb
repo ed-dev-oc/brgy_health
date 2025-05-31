@@ -5,13 +5,88 @@
       <h1 class="display-4 fw-bold mb-4"><%= @hero_banner.title %></h1>
       <p class="lead mb-4"><%= @hero_banner.subheadline %></p>
       <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-        <%= link_to "View Announcements", announcements_path, class: "btn btn-primary btn-lg btn-cta" %>
-
-        <button type="button" class="btn btn-outline-light btn-lg btn-cta">View Events</button>
+        <%= link_to "View Announcements", root_path(anchor: 'AnnouncementCarousel'), class: "btn btn-primary btn-lg btn-cta" %>
+        <%= link_to "View Events", root_path(anchor: 'EventCarousel'), class: "btn btn-outline-light btn-lg btn-cta" %>
       </div>
     </div>
   </div>
 </section>
+
+<div class="container d-flex flex-column" data-controller="splide-loader">
+  <%= turbo_frame_tag :announcements_carousel_frame, src: announcements_path(format: :turbo_stream), loading: :lazy do %>
+    <section class="splide" aria-label="Announcements" data-splide-loader-target="multipleSlides" id="AnnouncementCarousel">
+      <div class="mb-3">
+        <h2 id="carousel-heading">Upcoming Announcements</h2>
+      </div>
+
+      <div class="splide__track">
+        <ul class="splide__list">
+          <% 3.times do |i| %>
+            <li class="splide__slide">
+              <%= render partial: "barangay/announcements/card_placeholder" %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </section>
+  <% end %>
+
+  <%= turbo_frame_tag :events_carousel_frame, src: events_path(format: :turbo_stream), loading: :lazy do %>
+    <section class="splide" aria-label="Events" data-splide-loader-target="multipleSlides" id="EventCarousel">
+      <div class="mb-3">
+        <h2 id="carousel-heading">Upcoming Events</h2>
+      </div>
+
+      <div class="splide__track">
+        <ul class="splide__list">
+          <% 3.times do |i| %>
+            <li class="splide__slide">
+              <%= render partial: "barangay/events/card_placeholder" %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </section>
+  <% end %>
+  <hr>
+  <div class="row gap-3 justify-content-center">
+    <div class="col-12">
+      <h3>Quick Links</h3>
+    </div>
+    <div class="col text-center">
+      <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
+        <div class="d-flex flex-column gap-2 align-items-center">
+          <i class="bi bi-calendar-check-fill fs-3"></i>
+          <strong>Appointments</strong>
+        </div>
+      <% end %>
+    </div>
+    <div class="col text-center">
+      <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
+        <div class="d-flex flex-column gap-2 align-items-center">
+          <i class="bi bi-clipboard2-pulse fs-3"></i>
+          <strong>Medical Records</strong>
+        </div>
+      <% end %>
+    </div>
+    <div class="col text-center">
+      <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
+        <div class="d-flex flex-column gap-2 align-items-center">
+          <i class="bi bi-person-fill fs-3"></i>
+          <strong>Profile</strong>
+        </div>
+      <% end %>
+    </div>
+    <div class="col text-center">
+      <%= link_to "#", class: "btn btn-outline-green-600 py-3 px-5 w-75 h-100" do %>
+        <div class="d-flex flex-column gap-2 align-items-center">
+          <i class="bi bi-telephone-fill fs-3"></i>
+          <strong>Emergency Contact</strong>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
 
 <% if user_signed_in? %>
   <%= edit_profile_button(current_user) %>
