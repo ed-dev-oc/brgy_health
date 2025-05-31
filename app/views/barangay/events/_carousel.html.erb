@@ -1,0 +1,19 @@
+<section class="splide" aria-label="Events" data-splide-loader-target="multipleSlides" id="EventCarousel">
+  <div class="mb-3">
+    <h2 id="carousel-heading">Upcoming Events</h2>
+  </div>
+
+  <div class="splide__track">
+    <ul class="splide__list">
+      <% if events.empty? %>
+        <span class="badge text-bg-green-600 py-3 px-4">EMPTY EVENT</span>
+      <% else %>
+        <% events.each do |event| %>
+          <li class="splide__slide">
+            <%= render partial: "barangay/events/card", locals: { event: event } %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+</section>

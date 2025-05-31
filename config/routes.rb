@@ -39,6 +39,8 @@ Rails.application.routes.draw do
           patch :flag_as_cancelled
         end
       end
+
+      resources :events, only: [ :index, :show ]
     end
   end
 

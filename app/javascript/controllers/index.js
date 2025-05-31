@@ -21,3 +21,6 @@ application.register("register-service-worker", RegisterServiceWorkerController)
 
 import SelectPhilippinesAddressController from "./select_philippines_address_controller"
 application.register("select-philippines-address", SelectPhilippinesAddressController)
+
+import SplideLoaderController from "./splide_loader_controller"
+application.register("splide-loader", SplideLoaderController)

@@ -2,8 +2,7 @@ class Barangay::AnnouncementsController < BarangayController
   before_action :set_announcement, only: [ :show ]
 
   def index
-    @q = Announcement.ransack(params[:q])
-    @pagy, @announcements = pagy(@q.result(distinct: true))
+    @announcements = Announcement.active
   end
 
   def show
