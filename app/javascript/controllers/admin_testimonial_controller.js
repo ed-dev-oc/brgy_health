@@ -4,9 +4,13 @@ import * as bootstrap from "bootstrap"
 // Connects to data-controller="admin-testimonial"
 export default class extends Controller {
   connect() {
-    setTimeout(() => {
+    this.timeoutId = setTimeout(() => {
       const modal = new bootstrap.Modal(this.element)
       modal.show()
     }, 6000)
+  }
+
+  disconnect() {
+    clearTimeout(this.timeoutId)
   }
 }
