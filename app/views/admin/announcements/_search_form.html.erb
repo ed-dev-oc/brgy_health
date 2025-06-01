@@ -32,12 +32,12 @@
             <%= search_form.datetime_field :end_date_lteq, class: "form-control" %>
           </div>
           <div class="my-2">
-            <%= search_form.label :audience_eq, "Audiences", class: "form-label" %>
-            <%= search_form.select :audience_eq, Event.audiences.map { |key, value| [key.titleize, value] }, { include_blank: "All" }, { class: "form-select" } %>
+            <%= search_form.label :audience_cont, "Audiences", class: "form-label" %>
+            <%= search_form.text_field :audience_cont, class: "form-control" %>
           </div>
           <div class="my-2">
             <%= search_form.label :status_eq, "Status", class: "form-label" %>
-            <%= search_form.select :status_eq, Event.statuses.map { |key, value| [key.titleize, value] }, { include_blank: "All" }, { class: "form-select" } %>
+            <%= search_form.select :status_eq, Announcement.statuses.map { |key, value| [key.titleize, value] }, { include_blank: "All" }, { class: "form-select" } %>
           </div>
           <hr class="dropdown-divider">
           <div class="my-2">
