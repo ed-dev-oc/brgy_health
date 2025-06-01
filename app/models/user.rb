@@ -88,8 +88,8 @@ class User < ApplicationRecord
     "user_#{self.public_uid}_notification"
   end
 
-  def full_name
-    [ first_name, last_name ].compact.join(" ")
+  def initials
+    "#{self.first_name.first.capitalize}#{self.last_name.first.capitalize}"
   end
 
   private
@@ -139,28 +139,28 @@ class User < ApplicationRecord
  end
 
   def notify_user_of_credential_change
-  changed_attributes = {}
+    changed_attributes = {}
 
-  {
-    "email" => :email,
-    "password" => :encrypted_password,
-    "first_name" => :first_name,
-    "middle_name" => :middle_name,
-    "last_name" => :last_name,
-    "suffix" => :suffix,
-    "subdivision" => :subdivision_id
-  }.each do |label, attr|
-    if saved_change_to_attribute?(attr)
-      old_value, new_value = saved_changes[attr.to_s]
-      changed_attributes[label] = {
-        from: old_value,
-        to: new_value
-      }
+    {
+      "email" => :email,
+      "password" => :encrypted_password,
+      "first_name" => :first_name,
+      "middle_name" => :middle_name,
+      "last_name" => :last_name,
+      "suffix" => :suffix,
+      "subdivision" => :subdivision_id
+    }.each do |label, attr|
+      if saved_change_to_attribute?(attr)
+        old_value, new_value = saved_changes[attr.to_s]
+        changed_attributes[label] = {
+          from: old_value,
+          to: new_value
+        }
+      end
     end
-  end
 
-  UserCredentialChangedNotifier.with(
-    changed_attributes: changed_attributes
-  ).deliver_later(self)
-end
+    UserCredentialChangedNotifier.with(
+      changed_attributes: changed_attributes
+    ).deliver_later(self)
+  end
 end

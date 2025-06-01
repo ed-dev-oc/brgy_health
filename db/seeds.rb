@@ -7,6 +7,8 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+placeholder_image_path = Rails.root.join("app/assets/images/placeholder_image.jpeg")
+
 lao_barangay = Barangay.create!(
   name: "Lao",
   region: "Region VIII (Eastern Visayas)",
@@ -97,7 +99,7 @@ san_isidro_health_program = HealthProgram.create!(
   status: 1
 )
 
-lao_announcement = Announcement.create!(
+lao_announcement = Announcement.new(
   barangay_id: lao_barangay.id,
   posted_by_id: lao_admin.id,
   health_program_id: lao_health_program.id,
@@ -112,8 +114,14 @@ lao_announcement = Announcement.create!(
   audience: "All Residents",
   status: 1
 )
+lao_announcement.images.attach(
+  io: File.open(placeholder_image_path),
+  filename: File.basename(placeholder_image_path),
+  content_type: "image/png"
+)
+lao_announcement.save
 
-san_isidro_announcement = Announcement.create!(
+san_isidro_announcement = Announcement.new(
   barangay_id: san_isidro_barangay.id,
   posted_by_id: san_isidro_admin.id,
   health_program_id: san_isidro_health_program.id,
@@ -128,6 +136,12 @@ san_isidro_announcement = Announcement.create!(
   audience: "All Residents",
   status: 1
 )
+san_isidro_announcement.images.attach(
+  io: File.open(placeholder_image_path),
+  filename: File.basename(placeholder_image_path),
+  content_type: "image/png"
+)
+san_isidro_announcement.save
 
 lao_patient_appointment = Appointment.create!(
   barangay_id: lao_barangay.id,
