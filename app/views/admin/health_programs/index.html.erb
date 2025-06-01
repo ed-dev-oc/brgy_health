@@ -1,22 +1,18 @@
 <% content_for :title, "Health Programs" %>
 
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h2 mb-0">Health Programs</h1>
-  </div>
-
   <div class="row mb-4">
-    <div class="col-md-6">
+    <div class="col-md-4">
       <%= form_with url: admin_health_programs_path, method: :get, local: true do %>
         <div class="input-group">
           <span class="input-group-text"><i class="bi bi-search"></i></span>
           <%= text_field_tag :q, @query, class: "form-control", type: "search", placeholder: "Search programs..." %>
-          <button class="btn btn-primary" type="submit">Search</button>
+          <button class="btn btn-green-600" type="submit">Search</button>
         </div>
       <% end %>
     </div>
-    <div class="col-md-6 text-end">
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newHealthProgramModal">
+    <div class="col-md-8 text-md-end">
+      <button class="btn btn-green-600" data-bs-toggle="modal" data-bs-target="#newHealthProgramModal">
         New Health Program
       </button>
     </div>
@@ -34,7 +30,7 @@
               <p class="card-text">
                 <%= truncate(admin_health_program.description, length: 100) %>
               </p>
-              <%= link_to "View Details", [:admin, admin_health_program], class: "btn btn-outline-primary btn-sm" %>
+              <%= link_to "View Details", [:admin, admin_health_program], class: "btn btn-outline-green-600 btn-sm" %>
             </div>
           </div>
         </div>
