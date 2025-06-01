@@ -3,7 +3,7 @@
     <h1 class="display-4">Barangay <%= @barangay.name %></h1>
     <%= link_to "Visit Subdomain Page",
                 "http://#{@barangay.subdomain}.lvh.me:3000",
-                class: "btn btn-primary",
+                class: "btn btn-green-600",
                 target: "_blank",
                 rel: "noopener" %>
   </div>
@@ -14,7 +14,7 @@
       <p class="card-text mb-1">
         <strong>Status:</strong>
         <% if @barangay.verified? %>
-          <span class="badge bg-success"><%= @barangay.verified_status %></span>
+          <span class="badge bg-primary"><%= @barangay.verified_status %></span>
         <% else %>
           <span class="badge bg-warning text-dark"><%= @barangay.verified_status %></span>
         <% end %>
@@ -35,7 +35,7 @@
             <span class="badge bg-warning text-dark ms-2">Needs Validation</span>
           <% end %>
         </div>
-        <%= link_to "View Profile", super_admin_user_path(user.public_uid), class: "btn btn-sm btn-outline-info" %>
+        <%= link_to "View Profile", super_admin_user_path(user.public_uid), class: "btn btn-sm btn-outline-green-600" %>
       </li>
     <% end %>
   </ul>

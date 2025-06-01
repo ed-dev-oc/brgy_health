@@ -1,5 +1,5 @@
 <table class="table table-striped table-hover align-middle">
-  <thead class="table-dark">
+  <thead class="table-success text-white">
     <tr>
       <th>Name</th>
       <th>City</th>
@@ -18,13 +18,13 @@
         <td><%= barangay.region %></td>
         <td>
           <% if barangay.verified? %>
-            <span class="badge bg-success"><%= barangay.verified_status %></span>
+            <span class="badge bg-primary"><%= barangay.verified_status %></span>
           <% else %>
             <span class="badge bg-warning text-dark"><%= barangay.verified_status %></span>
           <% end %>
         </td>
         <td>
-          <%= link_to "Show", super_admin_barangay_path(barangay), class: "btn btn-sm btn-info" %>
+          <%= link_to "Show", super_admin_barangay_path(barangay), class: "btn btn-sm btn-outline-green-600" %>
         </td>
       </tr>
     <% end %>

@@ -16,7 +16,7 @@
 
       <div class="d-flex gap-2 flex-wrap justify-content-end">
         <div class="dropdown">
-          <button class="btn btn-outline-primary dropdown-toggle" type="button" id="filtersDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 150px;">
+          <button class="btn btn-outline-green-600 dropdown-toggle" type="button" id="filtersDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 150px;">
             <i class="bi bi-filter"></i> Filters
           </button>
           <div class="dropdown-menu p-3 shadow" aria-labelledby="filtersDropdown" style="min-width: 300px;">
@@ -33,12 +33,12 @@
                           class: "form-select" %>
             </div>
             <div class="d-grid">
-              <%= f.submit "Apply Filters", class: "btn btn-primary" %>
+              <%= f.submit "Apply Filters", class: "btn btn-green-600" %>
             </div>
           </div>
         </div>
         
-        <%= f.submit "Search", class: "btn btn-primary", style: "min-width: 150px;" %>
+        <%= f.submit "Search", class: "btn btn-green-600", style: "min-width: 150px;" %>
       </div>
 
     <% end %>
