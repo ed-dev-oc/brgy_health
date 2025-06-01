@@ -48,7 +48,6 @@ export default class extends Controller {
       fixedWidth: 104,
       fixedHeight: 58,
       isNavigation: true,
-      padding: 0,
       gap: 10,
       focus: 'left',
       padding: '1em',
