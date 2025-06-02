@@ -1,8 +1,4 @@
 <div class="container-fluid">
-  <h2 class="text-center text-2xl fw-bold text-secondary mb-4">
-    Brgy. Health Center - Testimonials
-  </h2>
-
   <%= render "super_admin/testimonials/search_form" %>
 
 <div class="card shadow-sm">
@@ -29,7 +25,7 @@
             <td class="text-center"><%= testimonial.rating %></td>
             <td class="text-center">
               <button type="button"
-                  class="btn btn-info btn-sm"
+                  class="btn btn-outline-green-600 btn-sm"
                   data-bs-toggle="modal"
                   data-bs-target="#testimonialModal_<%= testimonial.id %>">
               View
@@ -44,7 +40,7 @@
       </tbody>
     </table>
       <div>
-        <%== pagy_bootstrap_nav(@pagy) if @pagy && @testimonials.any? %>
+        <%== pagy_bootstrap_nav(@pagy) if @pagy && @testimonials.any? && @pagy.pages > 1 %>
       </div>
     </div>
     </div>

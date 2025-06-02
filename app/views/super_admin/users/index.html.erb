@@ -1,6 +1,4 @@
 <div class="container">
-  <h1 class="mb-4 text-center fw-bold text-secondary">Validated Users</h1>
-
   <%= render "super_admin/users/search_form" %>
 
   <div class="card shadow-sm">
@@ -29,7 +27,7 @@
                 <% end %>
               </td>
               <td class="text-center">
-                <%= link_to "View", super_admin_user_path(user.public_uid), class: "btn btn-info btn-sm me-1" %>
+                <%= link_to "View", super_admin_user_path(user.public_uid), class: "btn btn-outline-green-600 btn-sm me-1" %>
 
                 <% if user.flag_list.include?("require_validation") %>
                   <%= link_to "Remove Validation", 

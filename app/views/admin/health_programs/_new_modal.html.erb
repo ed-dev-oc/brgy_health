@@ -2,7 +2,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <%= form_with model: [:admin, admin_health_program], local: true do |form| %>
-        <div class="modal-header bg-primary text-white">
+        <div class="modal-header bg-green-600 text-white">
           <h5 class="modal-title" id="newHealthProgramModalLabel">New Health Program</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -29,7 +29,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <%= form.submit "Create", class: "btn btn-primary" %>
+          <%= form.submit "Create", class: "btn btn-green-600" %>
         </div>
       <% end %>
     </div>

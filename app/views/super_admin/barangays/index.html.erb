@@ -1,5 +1,3 @@
-<h1 class="mb-4 fw-bold text-secondary">Barangays</h1>
-
 <%= render 'search_form', q: @q, cities: @cities, provinces: @provinces, regions: @regions %>
 
 <div class="card shadow-sm">
@@ -7,7 +5,7 @@
     <%= render 'table', barangays: @barangays %>
 
     <div>
-      <%== pagy_bootstrap_nav(@pagy) %>
+      <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
     </div>
   </div>
 </div>  
