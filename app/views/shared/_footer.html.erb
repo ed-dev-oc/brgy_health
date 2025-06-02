@@ -44,7 +44,8 @@
           <% if ActsAsTenant.current_tenant.present? %>
             <%= link_to "About Us", about_us_pages_path, class: "text-light text-decoration-none" %>
             <%= link_to "Contact Us", contact_us_pages_path, class: "text-light text-decoration-none" %>
-            <%= link_to "Annoucements", root_path(anchor: "AnnouncementCarousel"), class: "text-light text-decoration-none" %>
+            <%= link_to "Announcements", root_path(anchor: "AnnouncementCarousel"), class: "text-light text-decoration-none" %>
+            <%= link_to "Events", root_path(anchor: "EventCarousel"), class: "text-light text-decoration-none" %>
           <% else %>
             <%= link_to "About Us", main_page_path(:about_us), class: "text-light text-decoration-none" %>
             <%= link_to "Contact Us", main_page_path(:contact_us), class: "text-light text-decoration-none" %>

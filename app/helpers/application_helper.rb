@@ -5,6 +5,10 @@ module ApplicationHelper
     current_page?(path) ? "active" : ""
   end
 
+  def icon_for_state(path, active_state, inactive_state)
+    current_page?(path) ? active_state : inactive_state
+  end
+
   def administrator_path_helper
     if current_user.super_admin?
       super_admin_dashboard_index_path
@@ -26,6 +30,14 @@ module ApplicationHelper
       image_tag url_for(user.profile.variant(resize_to_limit: [ 200, 200 ]).processed), alt: alt, class: "rounded"
     else
       image_tag "https://placehold.co/80x80/146c43/white?text=#{user.initials}", alt: alt, class: "rounded", style: "width: 200px; height: 200px;"
+    end
+  end
+
+  def profile_url(user)
+    if user.profile.attached?
+      url_for(user.profile.variant(resize_to_limit: [ 80, 80 ]).processed)
+    else
+      "https://placehold.co/80x80/146c43/white?text=#{user.initials}"
     end
   end
 

@@ -1,9 +1,10 @@
-<div>
-  <%= turbo_stream_from current_user.notification_channel %>
+<%= turbo_stream_from current_user.notification_channel %>
 
-  <a href="#" class="fs-5 position-relative nav-link p-0" data-bs-toggle="modal" data-bs-target="#notificationModal" aria-controls="notificationOffcanvas">
-    <%= turbo_frame_tag :notification_status_frame, src: status_notifications_path(format: :turbo_stream), loading: :lazy do  %>
-      <i class="bi bi-bell-fill"></i>
-    <% end %>
-  </a>
-</div>
+<%= link_to "#", data: { bs_toggle: "modal", bs_target: "#notificationModal"}, 
+    class: "position-relative nav-link bg-dark-subtle d-inline-flex align-items-center justify-content-center rounded-circle #{ navbar_link_status(root_path) }",
+    style: "width: 32px; height: 32px;" do %>
+
+  <%= turbo_frame_tag :notification_status_frame, src: status_notifications_path(format: :turbo_stream), loading: :lazy do  %>
+    <i class="bi bi-bell"></i>
+  <% end %>
+<% end %>
