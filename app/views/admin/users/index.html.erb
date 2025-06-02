@@ -42,8 +42,4 @@
   </div>
 </div>
 
-<% @staff_users.each do |user| %>
-  <%= render partial: "user_modal", locals: { user: user } %>
-<% end %>
-
 <%= render "new_user_modal", user: User.new %>

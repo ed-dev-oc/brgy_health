@@ -1,0 +1,61 @@
+<div class="container py-4">
+  <h2>User Details (ID: <%= @user.id %>)</h2>
+
+  <div class="mb-3">
+    <p>Current profile:</p>
+    <% if @user.profile.present? %>
+      <%= image_tag @user.profile.variant(resize_to_limit: [200, 200]), class: "img-fluid rounded-circle", alt: "User Avatar" %>
+    <% else %>
+      <%= image_tag "https://placehold.co/80x80/146c43/white?text=#{@user.initials}", class: "rounded", style: "width: 200px; height: 200px;" %>
+    <% end %>
+  </div>
+
+  <dl class="row">
+    <% {
+      "Email" => @user.email,
+      "Public UID" => @user.public_uid,
+      "First Name" => @user.first_name,
+      "Middle Name" => @user.middle_name,
+      "Last Name" => @user.last_name,
+      "Suffix" => @user.suffix,
+      "Phone Number" => @user.phone_number,
+      "Role" => @user.role,
+      "Barangay ID" => @user.barangay_id,
+      "Subdivision ID" => @user.subdivision_id,
+      "Flags" => @user.flag_list.join(", "),
+      "Created At" => @user.created_at.strftime('%B %d, %Y %l:%M %p'),
+      "Updated At" => @user.updated_at.strftime('%B %d, %Y %l:%M %p')
+    }.each do |label, value| %>
+      <dt class="col-sm-4"><%= label %></dt>
+      <dd class="col-sm-8"><%= value %></dd>
+    <% end %>
+  </dl>
+
+  <hr>
+  <h5>Appointments</h5>
+
+  <% if @user.appointments.any? %>
+    <table class="table table-sm table-striped">
+      <thead>
+        <tr>
+          <th>Scheduled At</th>
+          <th>Status</th>
+          <th>Reason</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @user.appointments.order(scheduled_at: :desc).each do |appointment| %>
+          <tr>
+            <td><%= appointment.scheduled_at.strftime('%b %d, %Y %I:%M %p') %></td>
+            <td><%= appointment.status.capitalize %></td>
+            <td><%= appointment.reason.presence || "-" %></td>
+            <td><%= appointment.notes.presence || "-" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No appointments found for this user.</p>
+  <% end %>
+</div>

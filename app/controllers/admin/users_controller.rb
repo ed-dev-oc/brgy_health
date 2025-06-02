@@ -50,6 +50,7 @@ class Admin::UsersController < AdminController
   end
 
   def show
+    @user = User.find(params[:id])
   end
 
   def toggle_status
