@@ -14,14 +14,14 @@
       </button>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton_<%= user.id %>">
         <li>
-          <%= link_to admin_user_path(user), class: "dropdown-item d-flex align-items-center text-dark" do %>
+          <%= link_to admin_user_path(user.public_uid), class: "dropdown-item d-flex align-items-center text-dark" do %>
             <i class="bi bi-eye me-2"></i> View
           <% end %>
         </li>
 
         <% if current_user&.admin? && user.role == "staff" %>
           <li>
-            <%= link_to edit_admin_user_path(user), class: "dropdown-item d-flex align-items-center text-dark" do %>
+            <%= link_to edit_admin_user_path(user.public_uid), class: "dropdown-item d-flex align-items-center text-dark" do %>
               <i class="bi bi-pencil me-2"></i> Edit
             <% end %>
           </li>
