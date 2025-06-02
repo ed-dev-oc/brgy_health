@@ -3,7 +3,7 @@ class Admin::AppointmentsController < AdminController
 
   def index
     @q = Appointment.ransack(params[:q])
-    @pagy, @appointments = pagy(@q.result(distinct: true))
+    @pagy, @appointments = pagy(@q.result(distinct: true).order(created_at: :desc))
   end
 
   def show
@@ -18,11 +18,11 @@ class Admin::AppointmentsController < AdminController
     if @appointment.rejected!
       flash.notice = "Appointment was successfully rejected."
 
-      redirect_to admin_appointments_path
+      redirect_back fallback_location: admin_appointments_path
     else
       flash.alert = "Appointment was not rejected."
 
-      redirect_to admin_appointments_path
+      redirect_back fallback_location: admin_appointments_path
     end
   end
 
@@ -30,11 +30,11 @@ class Admin::AppointmentsController < AdminController
     if @appointment.update(status: :approved, health_worker: current_user)
       flash.notice = "Appointment was successfully accepted."
 
-      redirect_to admin_appointments_path
+      redirect_back fallback_location: admin_appointments_path
     else
       flash.alert = "Appointment was not accepted."
 
-      redirect_to admin_appointments_path, status: :unprocessable_entity
+      redirect_back fallback_location: admin_appointments_path, status: :unprocessable_entity
     end
   end
 

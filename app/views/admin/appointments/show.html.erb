@@ -1,29 +1,209 @@
-<p>ID: <%= @appointment.public_uid %></p>
-<p>Announcement Name: <%= @appointment.announcement.name %></p>
-<p>Scheduled At: <%= @appointment.scheduled_at.to_formatted_s(:long) %></p>
-<p>Status: <%= @appointment.status %></p>
-<p>Reason: <%= @appointment.reason %></p>
-<p>Notes: <%= @appointment.notes %></p>
-<% @appointment.flag_list.each do |flag| %>
-  <p>Flag: <%= flag %></p>
-<% end %>
+<main class="">
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Appointment Details</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <%= link_to admin_appointments_path(), class: "btn btn-sm btn-primary" do %>
+        <i class="bi bi-arrow-left"></i> Back to List
+      <% end %>
+    </div>
+  </div>
 
-<% if @appointment.approved? %>
-  <%= link_to "Completed", "#", class: "btn btn-primary", data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "modal")}" } %>
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <div class="card info-card mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <h5 class="card-title">Appointment #<span class="text-primary"><%= @appointment.public_uid %></span></h5>
+            <span class="badge <%= badge_status_class(@appointment.status) %>">
+              <%= @appointment.status.humanize %>
+            </span>
+          </div>
 
-  <%= render partial: "admin/appointments/completed_modal" %>
-<% end %>
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <p class="mb-2"><span class="detail-label">Patient:</span>
+                <strong><%= @appointment.patient.full_name %></strong>
+                <%= display_profile_image(@appointment.patient) %>
+              </p>
+              <p class="mb-2"><span class="detail-label">Health Worker:</span>
+                <strong><%= @appointment.health_worker&.full_name %></strong>
+              </p>
+              <p class="mb-2"><span class="detail-label">Barangay:</span>
+                <strong><%= @appointment.barangay.name %></strong>
+              </p>
+            </div>
+            <div class="col-md-6">
+              <p class="mb-2"><span class="detail-label">Scheduled Date:</span>
+                <strong><%= @appointment.scheduled_at.to_fs(:long) %></strong>
+              </p>
+              <p class="mb-2"><span class="detail-label">Created:</span>
+                <strong><%= @appointment.created_at.to_fs(:long) %></strong>
+              </p>
+              <div class="d-flex gap-2">
+                <span class="detail-label">Flags:</span>
+                <% if @appointment.flag_list.any? %>
+                  <% @appointment.flag_list.each do |flag| %>
+                    <span class="badge text-bg-secondary">
+                      <%= flag.humanize %>
+                    </span>
+                  <% end %>
+                <% else %>
+                  <span class="badge text-bg-secondary">
+                    No Flags
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-<% if @appointment.completed? && @appointment.flag_list.exclude?("follow_up_check_up") %>
-  <%= link_to "Follow Up Check Up", "#", class: "btn btn-primary", data: { bs_toggle: "modal", bs_target: "##{dom_id(@new_appointment, "follow_up_modal")}" } %>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h6 class="mb-0">Appointment Details</h6>
+        </div>
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Reason for Visit</h6>
+          <p class="card-text"><%= @appointment.reason %></p>
 
-  <%= render partial: "admin/appointments/follow_up_modal" %>
-<% end %>
+          <h6 class="card-subtitle mb-2 text-muted mt-3">Notes</h6>
+          <p class="card-text"><%= @appointment.notes.presence || "No additional notes provided." %></p>
 
-<% if @appointment.flag_list.include?("follow_up_check_up") %>
-  <%= link_to "View Follow Up Check Up", admin_appointment_path(@appointment.follow_up.public_uid), class: "btn btn-primary" %>
-<% end %>
+          <% if @appointment.announcement_id %>
+            <div class="alert alert-info mt-3">
+              <i class="bi bi-info-circle-fill"></i> Related to announcement: 
+              <%= link_to @appointment.announcement.name, admin_announcement_path(@appointment.announcement.public_uid) %>
+            </div>
+          <% end %>
+        </div>
+      </div>
 
-<% if @appointment.has_parent_appointment? %>
-  <%= link_to "Previous Appointment", admin_appointment_path(@appointment.parent_appointment.public_uid), class: "btn btn-primary" %>
-<% end %>
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h6 class="mb-0">Activity Log</h6>
+          <button class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="activity-log">
+            <div class="border-2 border-start border-primary px-2 mb-3">
+              <div class="d-flex justify-content-between">
+                <strong>Appointment created</strong>
+                <small class="text-muted">Today, 02:15 PM</small>
+              </div>
+              <p class="mb-1">Created by: Admin User</p>
+              <small class="text-muted small">Initial status: Pending</small>
+            </div>
+
+            <div class="border-2 border-start border-primary px-2 mb-3">
+              <div class="d-flex justify-content-between">
+                <strong>Rescheduled</strong>
+                <small class="text-muted">Today, 02:30 PM</small>
+              </div>
+              <p class="mb-1">Changed from: November 14, 2023 3:00 PM</p>
+              <p class="mb-1">Changed to: November 15, 2023 10:30 AM</p>
+              <small class="text-muted small">Changed by: Dr. Maria Santos</small>
+            </div>
+
+            <div class="border-2 border-start border-primary px-2 mb-3">
+              <div class="d-flex justify-content-between">
+                <strong>Notes updated</strong>
+                <small class="text-muted">Today, 03:45 PM</small>
+              </div>
+              <p class="mb-1">Added patient request for morning appointment</p>
+              <small class="text-muted small">Updated by: Admin User</small>
+            </div>
+
+            <div class="border-2 border-start border-primary px-2">
+              <div class="d-flex justify-content-between">
+                <strong>Health worker assigned</strong>
+                <small class="text-muted">Today, 04:20 PM</small>
+              </div>
+              <p class="mb-1">Assigned to: Dr. Maria Santos</p>
+              <small class="text-muted small">Assigned by: System</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h6 class="mb-0">Actions</h6>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+
+            <% if @appointment.pending? %>
+              <%= link_to flag_as_approved_admin_appointment_path(@appointment.public_uid), data: { turbo_method: :PATCH, turbo_confirm: "Are you sure?"}, class: "btn btn-success" do %>
+                <i class="bi bi-check-circle-fill"></i>
+                Approve
+              <% end %>
+            <% end %>
+
+            <% if @appointment.approved? %>
+              <%= link_to "Completed", "#", class: "btn btn-primary", data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "modal")}" } %>
+
+              <%= render partial: "admin/appointments/completed_modal" %>
+            <% end %>
+
+            <% if @appointment.completed? && @appointment.flag_list.exclude?("follow_up_check_up") %>
+              <%= link_to "Follow Up Check Up", "#", class: "btn btn-outline-primary", data: { bs_toggle: "modal", bs_target: "##{dom_id(@new_appointment, "follow_up_modal")}" } %>
+
+              <%= render partial: "admin/appointments/follow_up_modal" %>
+            <% end %>
+
+            <% if @appointment.follow_up_id %>
+              <%= link_to admin_appointment_path(@appointment.follow_up.public_uid), class: "btn btn-secondary" do %>
+                <i class="bi bi-arrow-left"></i>
+                Previous Appointment
+              <% end %>
+            <% end %>
+
+            <% if @appointment.flag_list.include?("follow_up_check_up") %>
+              <%= link_to admin_appointment_path(@appointment.parent_appointment.public_uid), class: "btn btn-primary" do %>
+                <i class="bi bi-calendar-check"></i>
+                View Follow Up Check Up
+              <% end %>
+            <% end %>
+
+            <% if @appointment.pending? %>
+              <%= link_to flag_as_rejected_admin_appointment_path(@appointment.public_uid), data: { turbo_method: :PATCH, turbo_confirm: "Are you sure?" }, class: "btn btn-danger" do %>
+                <i class="bi bi-x-circle-fill"></i>
+                Reject Appointment
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header">
+          <h6 class="mb-0">Patient Information</h6>
+        </div>
+        <div class="card-body">
+          <div class="text-center mb-3">
+            <%= display_profile_image(@appointment.patient) %>
+            <h5><%= @appointment.patient.full_name %></h5>
+          </div>
+          <p class="small mb-1"><span class="detail-label">Email:</span> <%= @appointment.patient.email %></p>
+          <p class="small mb-1"><span class="detail-label">Contact:</span> <%= @appointment.patient.phone_number %></p>
+          <%= link_to "View Full Profile", "#", class: "btn btn-sm btn-outline-primary w-100 mt-2" %>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h6 class="mb-0">System Information</h6>
+        </div>
+        <div class="card-body">
+          <p class="small mb-1"><span class="detail-label">ID:</span> <%= @appointment.id %></p>
+          <p class="small mb-1"><span class="detail-label">Public UID:</span> <%= @appointment.public_uid %></p>
+          <p class="small mb-1"><span class="detail-label">Last Updated:</span> <%= @appointment.updated_at.to_fs(:long) %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
