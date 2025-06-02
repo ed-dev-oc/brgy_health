@@ -23,6 +23,7 @@
   </head>
 
   <body>
+    <%= render partial: "shared/notification_modal" %>
     <%= render partial: "admin/testimonials/form_modal" if @testimonial.present?  %>
     <%= render partial: "shared/web_push" %>
     <%= render(FlashComponent.new(flash: flash)) %>

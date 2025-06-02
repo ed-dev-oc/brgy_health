@@ -6,36 +6,4 @@
       <i class="bi bi-bell-fill"></i>
     <% end %>
   </a>
-
-  <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="notificationModalLabel">Notifications</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <%= turbo_frame_tag :notifications_frame, src: notifications_path(format: :turbo_stream), loading: :lazy do %>
-            <ul class="nav nav-underline-success nav-underline justify-content-center d-flex">
-              <li class="nav-item flex-grow-1 text-center">
-                <a class="nav-link active text-green-600" aria-current="page" href="#">All</a>
-              </li>
-              <li class="nav-item flex-grow-1 text-center">
-                <a class="nav-link" href="#">Unread</a>
-              </li>
-              <li class="nav-item flex-grow-1 text-center">
-                <a class="nav-link" href="#">Read</a>
-              </li>
-            </ul>
-
-            <div class="text-center py-5">
-              <div class="spinner-border text-success" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
