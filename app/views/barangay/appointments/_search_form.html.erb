@@ -1,0 +1,21 @@
+<%= search_form_for @q, url: appointments_path, class: "row g-3" do |f| %>
+  <div class="col-md-3">
+    <label for="statusFilter" class="form-label">Status</label>
+    <%= f.label :status_eq, "Status" %>
+    <%= f.select :status_eq, Appointment.statuses.map { |key, value| [key.titleize, value] }, { include_blank: "All Appointments" }, { class: "form-select" } %>
+  </div>
+
+  <div class="col-md-3">
+    <%= f.label :scheduled_at_gteq, "From", class: "form-label" %>
+    <%= f.datetime_field :scheduled_at_gteq, class: "form-control" %>
+  </div>
+  <div class="col-md-3">
+    <%= f.label :scheduled_at_lteq, "To", class: "form-label" %>
+    <%= f.datetime_field :scheduled_at_lteq, class: "form-control" %>
+  </div>
+  <div class="col-md-3 d-flex align-items-end">
+    <button class="btn btn-outline-green-600 w-100" type="submit">
+      <i class="bi bi-funnel"></i> Filter
+    </button>
+  </div>
+<% end %>

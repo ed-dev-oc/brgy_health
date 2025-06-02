@@ -34,7 +34,7 @@ Rails.application.routes.draw do
         resources :appointments, only: [ :create ]
       end
 
-      resources :appointments, only: [ :index ] do
+      resources :appointments, only: [ :index, :show ] do
         member do
           patch :flag_as_cancelled
         end

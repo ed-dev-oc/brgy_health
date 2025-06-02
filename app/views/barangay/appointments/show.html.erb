@@ -1,0 +1,181 @@
+<div class="container py-3">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-4">
+            <div>
+              <h2 class="border-4 border-start border-green-600 ps-2">Appointment #<%= @appointment.public_uid %></h2>
+              <div class="d-flex gap-2">
+                <span class="badge <%= badge_status_class(@appointment.status) %> rounded-pill fs-6"><%= @appointment.status.titleize %></span>
+
+                <% if @appointment.flag_list.any? %>
+                  <% @appointment.flag_list.each do |flag| %>
+                    <span class="badge <%= badge_status_class(@appointment.status) %> rounded-pill fs-6">
+                      <%= flag.titleize %>
+                    </span>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="appointmentActions" data-bs-toggle="dropdown" aria-expanded="false">
+                Actions
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="appointmentActions">
+                <li>
+                  <%= link_to announcement_path(@appointment.announcement.public_uid), class: "dropdown-item" do %>
+                    <i class="bi bi-eye"></i> View Announcement
+                  <% end %>
+                </li>
+                <li><a class="dropdown-item" href="#"><i class="bi bi-pencil"></i> Reschedule</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <%= link_to flag_as_cancelled_appointment_path(@appointment.public_uid), 
+                    data: { turbo_method: :PATCH, turbo_confirm: "Are you sure?" }, 
+                    class: "dropdown-item text-danger" do %>
+
+                    <i class="bi bi-x-circle"></i> Cancel Appointment
+                  <% end %>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="d-flex align-items-start gap-2 mb-4">
+                <div class="bg-green-100 rounded-circle px-2 py-1">
+                  <i class="bi bi-calendar-event fs-5 text-green-600"></i>
+                </div>
+                <div>
+                  <h5 class="mb-1">Date & Time</h5>
+                  <p class="mb-0 fs-5"><%= @appointment.scheduled_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+                </div>
+              </div>
+
+              <div class="d-flex mb-4 align-items-start gap-2">
+                <div class="bg-green-100 rounded-circle px-2 py-1">
+                  <i class="bi bi-person-badge fs-5 text-green-600"></i>
+                </div>
+                <div>
+                  <h5 class="mb-1">Health Worker</h5>
+                  <p class="mb-0 fs-5">
+                    <% if @appointment.health_worker.present? %>
+                      <%= @appointment.health_worker&.full_name %>
+                    <% else %>
+                      <span class="badge text-bg-secondary rounded-pill">N/A</span>
+                    <% end %>
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex mb-4 align-items-start gap-2">
+                <div class="bg-green-100 rounded-circle px-2 py-1">
+                  <i class="bi bi-geo-alt fs-5 text-green-600"></i>
+                </div>
+                <div>
+                  <h5 class="mb-1">Location</h5>
+                  <p class="mb-0 fs-5"><%= @appointment.barangay.full_address %></p>
+                  <p class="text-muted mb-0"><%= @appointment.announcement.location %></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="d-flex mb-4 align-items-start gap-2">
+                <div class="bg-green-100 rounded-circle px-2 py-1">
+                  <i class="bi bi-file-earmark-text fs-5 text-green-600"></i>
+                </div>
+                <div>
+                  <h5 class="mb-1">Reason</h5>
+                  <p class="mb-0 fs-5">
+                    <% if @appointment.reason.present? %>
+                      <%= @appointment.reason %>
+                    <% else %>
+                      <span class="badge text-bg-secondary rounded-pill">N/A</span>
+                    <% end %>
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex mb-4 align-items-start gap-2">
+                <div class="bg-green-100 rounded-circle px-2 py-1">
+                  <i class="bi bi-chat-left-text fs-5 text-green-600"></i>
+                </div>
+                <div>
+                  <h5 class="mb-1">Notes</h5>
+                  <p class="mb-0 fs-5">
+                    <% if @appointment.notes.present? %>
+                      <%= @appointment.notes %>
+                    <% else %>
+                      <span class="badge text-bg-secondary rounded-pill">N/A</span>
+                    <% end %>
+                  </p>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-start gap-2">
+                <div class="bg-green-100 rounded-circle px-2 py-1">
+                  <i class="bi bi-link-45deg fs-5 text-green-600"></i>
+                </div>
+                <div>
+                  <h5 class="mb-1">Related</h5>
+                  <p class="mb-0">
+                    <% if @appointment.follow_up_id %>
+                      <%= link_to admin_appointment_path(@appointment.follow_up.public_uid), class: "btn btn-sm btn-outline-green-600" do %>
+                        <i class="bi bi-arrow-left"></i>
+                        View Previous Appointment
+                      <% end %>
+                    <% else %>
+                      <button class="btn btn-sm btn-outline-green-600" disabled>
+                        <i class="bi bi-arrow-left"></i>
+                        View Previous Appointment
+                      </button>
+                    <% end %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Reminders</h5>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info">
+            <div class="d-flex">
+              <i class="bi bi-info-circle fs-4 me-3"></i>
+              <div>
+                <h6 class="alert-heading">Appointment Reminder</h6>
+                <p class="mb-0">You will receive a SMS reminder 24 hours before your appointment.</p>
+              </div>
+            </div>
+          </div>
+          <div class="alert alert-warning">
+            <div class="d-flex">
+              <i class="bi bi-exclamation-triangle fs-4 me-3"></i>
+              <div>
+                <h6 class="alert-heading">Preparation Instructions</h6>
+                <p class="mb-0">Please arrive 15 minutes early and bring your health card and any current medications.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <%= link_to appointments_path, class: "btn btn-outline-secondary" do %>
+          <i class="bi bi-arrow-left"></i> Back
+        <% end %>
+
+        <button class="btn btn-primary action-btn">
+          <i class="bi bi-calendar-plus"></i> Reschedule
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

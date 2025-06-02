@@ -1,11 +1,14 @@
 class Barangay::AppointmentsController < BarangayController
   before_action :authenticate_user!
   before_action :set_announcement, only: %i[create]
-  before_action :set_appointment, only: %i[flag_as_cancelled]
+  before_action :set_appointment, only: %i[flag_as_cancelled show]
 
   def index
     @q = current_user.appointments.ransack(params[:q])
-    @pagy, @appointments = pagy(@q.result(distinct: true))
+    @pagy, @appointments = pagy(@q.result(distinct: true).order(created_at: :desc), limit: 5)
+  end
+
+  def show
   end
 
   def create
