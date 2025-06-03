@@ -19,7 +19,6 @@ class Admin::UsersController < AdminController
   end
 
   def edit
-    
   end
 
   def create
@@ -46,7 +45,6 @@ class Admin::UsersController < AdminController
   end
 
   def show
-    
   end
 
   def toggle_status
