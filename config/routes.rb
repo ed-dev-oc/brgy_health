@@ -56,12 +56,13 @@ Rails.application.routes.draw do
       end
     end
 
-      resources :cms, only: [ :index, :update ]
-      resources :testimonials, only: [ :create, :update ]
+    resources :cms, only: [ :index, :update ]
+    resources :testimonials, only: [ :create, :update ]
 
     resources :users, only: [ :index, :edit, :update, :create, :show ] do
       member do
         patch :toggle_status
+        get :medical_records
       end
     end
 

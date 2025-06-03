@@ -1,7 +1,7 @@
 class Admin::UsersController < AdminController
   include Pagy::Backend
 
-  before_action :set_user, only: [ :edit, :update, :show, :toggle_status ]
+  before_action :set_user, only: [ :edit, :update, :show, :toggle_status, :medical_records ]
 
   def index
     @q = User.ransack(params[:q])
@@ -65,6 +65,13 @@ class Admin::UsersController < AdminController
     else
       redirect_to admin_users_path, alert: "Failed to update user status."
     end
+  end
+
+  def medical_records
+    @appointments = Appointment
+    .includes(:health_worker)
+    .where(patient_id: @user.id)
+    .order(scheduled_at: :desc)
   end
 
   private
