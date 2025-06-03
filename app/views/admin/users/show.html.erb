@@ -1,9 +1,13 @@
 <div class="container py-4">
   <div class="row">
     <div class="col-md-12 mb-4 d-flex justify-content-between align-items-center">
-      <h2 class="fw-bold mb-0">User Details <small class="text-muted">(ID: <%= @user.public_uid %>)</small></h2>
+      <h2 class="fw-bold mb-0">
+        User Details
+        <small class="text-muted">(ID: <%= @user.public_uid %>)</small>
+      </h2>
       <%= link_to "← Back to List", admin_users_path, class: "btn btn-outline-secondary" %>
     </div>
+
     <hr class="mb-4">
 
     <div class="col-md-8">
@@ -22,64 +26,56 @@
         </div>
       </div>
 
-      <!-- User Information Card -->
+      <!-- User Information -->
       <div class="card mb-4">
         <div class="card-header fw-bold">User Information</div>
         <div class="card-body">
+          <% user_info = {
+            "First Name" => @user.first_name,
+            "Middle Name" => @user.middle_name || "N/A",
+            "Last Name" => @user.last_name,
+            "Suffix" => @user.suffix || "N/A",
+            "Phone Number" => @user.phone_number || "N/A",
+            "Role" => @user.role,
+            "Barangay" => @user.barangay&.name || "N/A",
+            "Subdivision" => @user.subdivision&.name || "N/A"
+          } %>
+
           <dl class="row mb-0">
-            <dt class="col-sm-4 text-muted">First Name</dt>
-            <dd class="col-sm-8"><%= @user.first_name %></dd>
-
-            <dt class="col-sm-4 text-muted">Middle Name</dt>
-            <dd class="col-sm-8"><%= @user.middle_name || "N/A" %></dd>
-
-            <dt class="col-sm-4 text-muted">Last Name</dt>
-            <dd class="col-sm-8"><%= @user.last_name %></dd>
-
-            <dt class="col-sm-4 text-muted">Suffix</dt>
-            <dd class="col-sm-8"><%= @user.suffix || "N/A" %></dd>
-
-            <dt class="col-sm-4 text-muted">Phone Number</dt>
-            <dd class="col-sm-8"><%= @user.phone_number || "N/A" %></dd>
-
-            <dt class="col-sm-4 text-muted">Role</dt>
-            <dd class="col-sm-8"><%= @user.role %></dd>
-
-            <dt class="col-sm-4 text-muted">Barangay</dt>
-            <dd class="col-sm-8"><%= @user.barangay&.name || "N/A" %></dd>
-
-            <dt class="col-sm-4 text-muted">Subdivision</dt>
-            <dd class="col-sm-8"><%= @user.subdivision&.name || "N/A" %></dd>
+            <% user_info.each do |label, value| %>
+              <dt class="col-sm-4 text-muted"><%= label %></dt>
+              <dd class="col-sm-8"><%= value %></dd>
+            <% end %>
           </dl>
         </div>
       </div>
 
       <!-- Activity Log -->
       <div class="card mb-4">
-        <div class="card-header fw-bold">Activity Log</div>
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+          Activity Log
+          <button class="btn btn-sm btn-outline-secondary" title="Refresh">
+            <i class="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
         <div class="card-body">
-          <ul class="list-group list-group-flush small">
-            <li class="list-group-item">
-              <i class="bi bi-pencil-square me-2 text-primary"></i>
-              Profile updated
-              <small class="text-muted float-end">2 hours ago</small>
-            </li>
-            <li class="list-group-item">
-              <i class="bi bi-calendar-check me-2 text-success"></i>
-              Appointment booked
-              <small class="text-muted float-end">1 day ago</small>
-            </li>
-            <li class="list-group-item">
-              <i class="bi bi-envelope-open me-2 text-warning"></i>
-              Email verified
-              <small class="text-muted float-end">3 days ago</small>
-            </li>
-            <li class="list-group-item">
-              <i class="bi bi-shield-lock me-2 text-danger"></i>
-              Password changed
-              <small class="text-muted float-end">1 week ago</small>
-            </li>
-          </ul>
+          <% activity_log = [
+            { icon: "bi-pencil-square", text: "Profile updated", detail: "Updated by: User", time: "2 hours ago", border: "primary" },
+            { icon: "bi-calendar-check", text: "Appointment booked", detail: "Booked by: User", time: "1 day ago", border: "success" },
+            { icon: "bi-envelope-open", text: "Email verified", detail: "Verified via confirmation link", time: "3 days ago", border: "warning" },
+            { icon: "bi-shield-lock", text: "Password changed", detail: "Changed by: User", time: "1 week ago", border: "danger" }
+          ] %>
+
+          <% activity_log.each do |log| %>
+            <div class="border-start border-4 ps-3 mb-4 border-<%= log[:border] %>">
+              <div class="fw-semibold">
+                <i class="bi <%= log[:icon] %> me-2 text-<%= log[:border] %>"></i>
+                <%= log[:text] %>
+              </div>
+              <div class="text-muted small"><%= log[:detail] %></div>
+              <div class="text-end text-muted small"><%= log[:time] %></div>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
@@ -108,14 +104,16 @@
       <div class="card">
         <div class="card-header fw-bold">Metadata</div>
         <div class="card-body">
-          <p class="mb-2 text-muted small">Created</p>
-          <p><i class="bi bi-calendar-event me-1"></i><%= @user.created_at.strftime('%B %d, %Y, %l:%M %p') %></p>
+          <% metadata = {
+            "Created" => [@user.created_at, "calendar-event"],
+            "Last Updated" => [@user.updated_at, "clock-history"],
+            "Public UID" => [@user.public_uid, "fingerprint"]
+          } %>
 
-          <p class="mb-2 text-muted small">Last Updated</p>
-          <p><i class="bi bi-clock-history me-1"></i><%= @user.updated_at.strftime('%B %d, %Y, %l:%M %p') %></p>
-
-          <p class="mb-2 text-muted small">Public UID</p>
-          <p><i class="bi bi-fingerprint me-1"></i><%= @user.public_uid %></p>
+          <% metadata.each do |label, (value, icon)| %>
+            <p class="mb-2 text-muted small"><%= label %></p>
+            <p><i class="bi bi-<%= icon %> me-1"></i><%= value.is_a?(Time) ? value.strftime('%B %d, %Y, %l:%M %p') : value %></p>
+          <% end %>
 
           <% if @user.flag_list.any? %>
             <p class="mb-2 text-muted small">Flags</p>
