@@ -90,15 +90,20 @@
           <% end %>
 
           <% if @user.appointments.any? %>
-            <%= link_to "View Appointments", admin_appointment_path(@user.appointments.last.public_uid), class: "btn btn-outline-green-600" %>
+            <%= link_to admin_appointment_path(@user.appointments.last.public_uid), class: "btn btn-outline-green-600" do %>
+              <i class="bi bi-calendar-check me-2"></i> View Appointments
+            <% end %>
           <% else %>
             <button class="btn btn-outline-secondary" disabled>No Appointments</button>
           <% end %>
 
-          <a href="#" class="btn btn-outline-green-600">
-            <i class="bi bi-journal-medical me-2"></i>
-            Medical Records
-          </a>
+          <% if @user.appointments.any? %>
+            <%= link_to medical_records_admin_user_path(@user.public_uid), class: "btn btn-outline-green-600" do %>
+              <i class="bi bi-journal-medical me-2"></i> Medical Records
+            <% end %>
+          <% else %>
+            <button class="btn btn-outline-secondary" disabled>No Medical Records</button>
+          <% end %>
         </div>
       </div>
 

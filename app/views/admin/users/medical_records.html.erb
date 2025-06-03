@@ -1,0 +1,83 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Medical Records</h2>
+    <%= link_to "← Back to User", admin_user_path(@user.public_uid), class: "btn btn-outline-secondary" %>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body d-flex align-items-center">
+      <div class="me-4">
+        <%= display_profile_image(@user) %>
+      </div>
+      <div class="flex-grow-1">
+        <div class="mb-2">
+          <% if @user.flag_list.any? %>
+            <% @user.flag_list.each do |flag| %>
+              <span class="badge bg-<%= flag == "active" ? "success" : "secondary" %> text-uppercase me-1">
+                <%= flag %>
+              </span>
+            <% end %>
+          <% end %>
+        </div>
+        <h3 class="mb-1"><%= [@user.first_name, @user.middle_name, @user.last_name, @user.suffix].compact.join(' ') %></h3>
+        <p class="mb-1"><strong>Email:</strong> <%= @user.email.presence || "Not provided" %></p>
+        <p class="mb-1"><strong>Phone:</strong> <%= @user.phone_number.presence || "Not provided" %></p>
+        <p class="mb-1"><strong>Patient ID:</strong> <%= @user.public_uid %></p>
+        <p class="mb-0"><strong>Role:</strong> <%= @user.role.titleize %></p>
+      </div>
+    </div>
+  </div>
+
+  <%# Appointment History Table %>
+  <div class="card">
+    <div class="card-header fw-bold">
+      Appointment History
+    </div>
+    <div class="card-body">
+      <% if @appointments.any? %>
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th>Date & Time</th>
+                <th>Health Worker</th>
+                <th>Reason</th>
+                <th>Notes</th>
+                <th>Status</th>
+                <th>Follow-Up</th>
+                <th>Flags</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @appointments.each do |appt| %>
+                <tr>
+                  <td><%= appt.id %></td>
+                  <td><%= appt.scheduled_at.strftime("%B %d, %Y %I:%M %p") %></td>
+                  <td><%= appt.health_worker&.full_name || "N/A" %></td>
+                  <td><%= appt.reason.presence || "Not specified" %></td>
+                  <td><%= appt.notes.presence || "—" %></td>
+                  <td>
+                    <span class="badge bg-<%= appt.status == "completed" ? "success" : "warning" %>">
+                      <%= appt.status.titleize %>
+                    </span>
+                  </td>
+                  <td>
+                    <%= appt.follow_up_id ? "Yes (##{appt.follow_up_id})" : "No" %>
+                  </td>
+                  <td>
+                    <%= appt.flag_list.any? ? appt.flag_list.join(", ") : "—" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-secondary text-center">
+          No medical records found for this patient.
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
