@@ -1,61 +1,93 @@
 <div class="container py-4">
-  <h2>User Details (ID: <%= @user.public_uid %>)</h2>
+  <div class="row">
+    <div class="col-md-12 mb-4 d-flex justify-content-between align-items-center">
+      <h2 class="fw-bold mb-0">User Details <small class="text-muted">(ID: <%= @user.public_uid %>)</small></h2>
+      <%= link_to "← Back to List", admin_users_path, class: "btn btn-outline-secondary" %>
+    </div>
+    <hr class="mb-4">
 
-  <div class="mb-3">
-    <p>Current profile:</p>
-    <% if @user.profile.present? %>
-      <%= image_tag @user.profile.variant(resize_to_limit: [200, 200]), class: "img-fluid rounded-circle", alt: "User Avatar" %>
-    <% else %>
-      <%= image_tag "https://placehold.co/80x80/146c43/white?text=#{@user.initials}", class: "rounded", style: "width: 200px; height: 200px;" %>
-    <% end %>
+    <div class="col-md-8">
+      <!-- Profile Card -->
+      <div class="card mb-4">
+        <div class="card-body d-flex align-items-center">
+          <% if @user.profile.present? %>
+            <%= display_profile_image(@user) %>
+          <% else %>
+            <%= image_tag "https://placehold.co/200x200/146c43/white?text=#{@user.initials}", class: "rounded-circle me-3" %>
+          <% end %>
+          <div>
+            <p class="mb-0 fw-semibold"><%= @user.email %></p>
+            <small class="text-muted">User Role: <%= @user.role.capitalize %></small>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Information Card -->
+      <div class="card mb-4">
+        <div class="card-header fw-bold">User Information</div>
+        <div class="card-body">
+          <dl class="row mb-0">
+            <dt class="col-sm-4 text-muted">First Name</dt>
+            <dd class="col-sm-8"><%= @user.first_name %></dd>
+
+            <dt class="col-sm-4 text-muted">Middle Name</dt>
+            <dd class="col-sm-8"><%= @user.middle_name %></dd>
+
+            <dt class="col-sm-4 text-muted">Last Name</dt>
+            <dd class="col-sm-8"><%= @user.last_name %></dd>
+
+            <dt class="col-sm-4 text-muted">Suffix</dt>
+            <dd class="col-sm-8"><%= @user.suffix %></dd>
+
+            <dt class="col-sm-4 text-muted">Phone Number</dt>
+            <dd class="col-sm-8"><%= @user.phone_number %></dd>
+
+            <dt class="col-sm-4 text-muted">Role</dt>
+            <dd class="col-sm-8"><%= @user.role %></dd>
+
+            <dt class="col-sm-4 text-muted">Barangay</dt>
+            <dd class="col-sm-8"><%= @user.barangay&.name || "N/A" %></dd>
+
+            <dt class="col-sm-4 text-muted">Subdivision</dt>
+            <dd class="col-sm-8"><%= @user.subdivision&.name || "N/A" %></dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <!-- Quick Actions -->
+      <div class="card mb-4">
+        <div class="card-header fw-bold">Quick Actions</div>
+        <div class="card-body d-grid gap-2">
+          <%= link_to "Edit User", edit_admin_user_path(@user.public_uid), class: "btn btn-primary" %>
+          <% if @user.appointments.any? %>
+            <%= link_to "View Appointments", admin_appointment_path(@user.appointments.last.public_uid), class: "btn btn-outline-primary" %>
+          <% else %>
+            <button class="btn btn-outline-secondary" disabled>No Appointments</button>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Metadata -->
+      <div class="card">
+        <div class="card-header fw-bold">Metadata</div>
+        <div class="card-body">
+          <p class="mb-2 text-muted small">Created</p>
+          <p><i class="bi bi-calendar-event me-1"></i><%= @user.created_at.strftime('%B %d, %Y, %l:%M %p') %></p>
+
+          <p class="mb-2 text-muted small">Last Updated</p>
+          <p><i class="bi bi-clock-history me-1"></i><%= @user.updated_at.strftime('%B %d, %Y, %l:%M %p') %></p>
+
+          <p class="mb-2 text-muted small">Public UID</p>
+          <p><i class="bi bi-fingerprint me-1"></i><%= @user.public_uid %></p>
+
+          <% if @user.flag_list.any? %>
+            <p class="mb-2 text-muted small">Flags</p>
+            <p><i class="bi bi-flag me-1"></i><%= @user.flag_list.join(", ") %></p>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <dl class="row">
-    <% {
-      "Email" => @user.email,
-      "Public UID" => @user.public_uid,
-      "First Name" => @user.first_name,
-      "Middle Name" => @user.middle_name,
-      "Last Name" => @user.last_name,
-      "Suffix" => @user.suffix,
-      "Phone Number" => @user.phone_number,
-      "Role" => @user.role,
-      "Barangay ID" => @user.barangay_id,
-      "Subdivision ID" => @user.subdivision_id,
-      "Flags" => @user.flag_list.join(", "),
-      "Created At" => @user.created_at.strftime('%B %d, %Y %l:%M %p'),
-      "Updated At" => @user.updated_at.strftime('%B %d, %Y %l:%M %p')
-    }.each do |label, value| %>
-      <dt class="col-sm-4"><%= label %></dt>
-      <dd class="col-sm-8"><%= value %></dd>
-    <% end %>
-  </dl>
-
-  <hr>
-  <h5>Appointments</h5>
-
-  <% if @user.appointments.any? %>
-    <table class="table table-sm table-striped">
-      <thead>
-        <tr>
-          <th>Scheduled At</th>
-          <th>Status</th>
-          <th>Reason</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @user.appointments.order(scheduled_at: :desc).each do |appointment| %>
-          <tr>
-            <td><%= appointment.scheduled_at.strftime('%b %d, %Y %I:%M %p') %></td>
-            <td><%= appointment.status.capitalize %></td>
-            <td><%= appointment.reason.presence || "-" %></td>
-            <td><%= appointment.notes.presence || "-" %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  <% else %>
-    <p>No appointments found for this user.</p>
-  <% end %>
 </div>
