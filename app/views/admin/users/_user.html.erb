@@ -7,14 +7,40 @@
       <%= user.flag_list.include?("active") ? "Active" : "Inactive" %>
     </span>
   </td>
-  <td class="d-flex gap-2">
-    <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#userModal_<%= user.id %>">
-      View
-    </button>
-    <% if user.flag_list.include?("active") %>
-          <%= button_to "Deactivate", toggle_status_admin_user_path(user), method: :patch, data: { confirm: "Are you sure you want to deactivate this user?", turbo: false }, class: "btn btn-danger btn-sm" %>
-      <% else %>
-          <%= button_to "Activate", toggle_status_admin_user_path(user), method: :patch, data: { confirm: "Are you sure you want to activate this user?", turbo: false }, class: "btn btn-success btn-sm" %>
-      <% end %>
+  <td>
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" id="dropdownMenuButton_<%= user.id %>" data-bs-toggle="dropdown" aria-expanded="false">
+        Actions
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton_<%= user.id %>">
+        <li>
+          <%= link_to admin_user_path(user.public_uid), class: "dropdown-item d-flex align-items-center text-dark" do %>
+            <i class="bi bi-eye me-2"></i> View
+          <% end %>
+        </li>
+
+        <% if current_user&.admin? && user.role == "staff" %>
+          <li>
+            <%= link_to edit_admin_user_path(user.public_uid), class: "dropdown-item d-flex align-items-center text-dark" do %>
+              <i class="bi bi-pencil me-2"></i> Edit
+            <% end %>
+          </li>
+        <% end %>
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+          <% if user.flag_list.include?("active") %>
+            <%= button_to toggle_status_admin_user_path(user), method: :patch, form: { "data-turbo" => "false" }, data: { confirm: "Are you sure you want to deactivate this user?" }, class: "dropdown-item text-danger d-flex align-items-center" do %>
+              <i class="bi bi-x-circle-fill me-2"></i> Deactivate
+            <% end %>
+          <% else %>
+            <%= button_to toggle_status_admin_user_path(user), method: :patch, form: { "data-turbo" => "false" }, data: { confirm: "Are you sure you want to activate this user?" }, class: "dropdown-item text-success d-flex align-items-center" do %>
+              <i class="bi bi-check-circle-fill me-2"></i> Activate
+            <% end %>
+          <% end %>
+        </li>
+      </ul>
+    </div>
   </td>
 </tr>

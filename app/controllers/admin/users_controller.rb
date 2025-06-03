@@ -19,7 +19,7 @@ class Admin::UsersController < AdminController
   end
 
   def edit
-    @user = User.find(params[:id])
+    
   end
 
   def create
@@ -35,10 +35,6 @@ class Admin::UsersController < AdminController
   end
 
   def update
-    if @user.role == "super_admin"
-      params[:user].delete(:role)
-    end
-
     flag_str = params[:user].delete(:flag_list)
     params[:user][:flag_list] = flag_str.to_s.split(",").map(&:strip) if flag_str
 
@@ -50,6 +46,7 @@ class Admin::UsersController < AdminController
   end
 
   def show
+    
   end
 
   def toggle_status
@@ -73,7 +70,7 @@ class Admin::UsersController < AdminController
   private
 
   def set_user
-    @user = User.find(params[:id])
+     @user = User.find_by(public_uid: params[:id]) || User.find_by(id: params[:id])
   end
 
   def user_params

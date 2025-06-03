@@ -2,7 +2,7 @@
   <div class="modal-dialog modal-lg"> 
     <div class="modal-content shadow-sm rounded-4">
       <%= form_with model: [:admin, user], url: admin_users_path, local: true, html: { class: "needs-validation", novalidate: true } do |f| %>
-        <div class="modal-header bg-primary text-white rounded-top-4">
+        <div class="modal-header bg-green-600 text-white rounded-top-4">
           <h5 class="modal-title" id="newUserModalLabel">Add Staff User</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -55,7 +55,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <%= f.submit "Create User", class: "btn btn-primary" %>
+          <%= f.submit "Create User", class: "btn btn-green-600" %>
         </div>
       <% end %>
     </div>

@@ -1,12 +1,6 @@
 require Rails.root.join("lib", "constraints", "subdomain_constraint")
 
 Rails.application.routes.draw do
-  namespace :admin do
-    get "users/index"
-    get "users/edit"
-    get "users/show"
-  end
-
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -65,7 +59,7 @@ Rails.application.routes.draw do
       resources :cms, only: [ :index, :update ]
       resources :testimonials, only: [ :create, :update ]
 
-    resources :users, only: [ :index, :edit, :update, :create ] do
+    resources :users, only: [ :index, :edit, :update, :create, :show ] do
       member do
         patch :toggle_status
       end
