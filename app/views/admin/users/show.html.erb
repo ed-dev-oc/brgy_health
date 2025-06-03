@@ -53,6 +53,35 @@
           </dl>
         </div>
       </div>
+
+      <!-- Activity Log -->
+      <div class="card mb-4">
+        <div class="card-header fw-bold">Activity Log</div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush small">
+            <li class="list-group-item">
+              <i class="bi bi-pencil-square me-2 text-primary"></i>
+              Profile updated
+              <small class="text-muted float-end">2 hours ago</small>
+            </li>
+            <li class="list-group-item">
+              <i class="bi bi-calendar-check me-2 text-success"></i>
+              Appointment booked
+              <small class="text-muted float-end">1 day ago</small>
+            </li>
+            <li class="list-group-item">
+              <i class="bi bi-envelope-open me-2 text-warning"></i>
+              Email verified
+              <small class="text-muted float-end">3 days ago</small>
+            </li>
+            <li class="list-group-item">
+              <i class="bi bi-shield-lock me-2 text-danger"></i>
+              Password changed
+              <small class="text-muted float-end">1 week ago</small>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <div class="col-md-4">
@@ -61,7 +90,7 @@
         <div class="card-header fw-bold">Quick Actions</div>
         <div class="card-body d-grid gap-2">
           <%= link_to "Edit User", edit_admin_user_path(@user.public_uid), class: "btn btn-green-600" %>
-          
+
           <% if @user.appointments.any? %>
             <%= link_to "View Appointments", admin_appointment_path(@user.appointments.last.public_uid), class: "btn btn-outline-green-600" %>
           <% else %>
