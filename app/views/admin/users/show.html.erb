@@ -31,13 +31,13 @@
             <dd class="col-sm-8"><%= @user.first_name %></dd>
 
             <dt class="col-sm-4 text-muted">Middle Name</dt>
-            <dd class="col-sm-8"><%= @user.middle_name %></dd>
+            <dd class="col-sm-8"><%= @user.middle_name || "N/A" %></dd>
 
             <dt class="col-sm-4 text-muted">Last Name</dt>
             <dd class="col-sm-8"><%= @user.last_name %></dd>
 
             <dt class="col-sm-4 text-muted">Suffix</dt>
-            <dd class="col-sm-8"><%= @user.suffix %></dd>
+            <dd class="col-sm-8"><%= @user.suffix || "N/A" %></dd>
 
             <dt class="col-sm-4 text-muted">Phone Number</dt>
             <dd class="col-sm-8"><%= @user.phone_number %></dd>
