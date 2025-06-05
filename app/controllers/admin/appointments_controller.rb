@@ -1,5 +1,5 @@
 class Admin::AppointmentsController < AdminController
-  before_action :set_appointment, only: [ :show, :flag_as_rejected, :flag_as_approved, :follow_up_check_up, :flag_as_completed ]
+  before_action :set_appointment, only: [ :show, :flag_as_rejected, :flag_as_approved, :follow_up_check_up, :flag_as_completed, :cancel_schedule ]
 
   def index
     @q = Appointment.ransack(params[:q])
@@ -61,6 +61,14 @@ class Admin::AppointmentsController < AdminController
     end
   end
 
+  def cancel_schedule
+    if @appointment.update(cancel_appointment_params)
+      flash[:notice] = "Appointment was successfully cancelled."
+    else
+      flash[:alert] = "Appointment was not cancelled."
+    end
+  end
+
   private
 
   def flag_as_completed_params
@@ -69,6 +77,10 @@ class Admin::AppointmentsController < AdminController
 
   def follow_up_check_up_params
     params.require(:appointment).permit(:scheduled_at, :reason)
+  end
+
+  def cancel_appointment_params
+    params.require(:appointment).permit(:cancel_reason).merge(status: :cancelled)
   end
 
   def set_appointment

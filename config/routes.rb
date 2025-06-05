@@ -30,7 +30,7 @@ Rails.application.routes.draw do
 
       resources :appointments, only: [ :index, :show ] do
         member do
-          patch :flag_as_cancelled
+          patch :cancel_schedule
         end
       end
 
@@ -53,6 +53,7 @@ Rails.application.routes.draw do
         patch :flag_as_approved
         post :follow_up_check_up
         patch :flag_as_completed
+        patch :cancel_schedule
       end
     end
 

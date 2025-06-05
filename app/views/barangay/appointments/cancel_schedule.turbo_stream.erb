@@ -1,0 +1,11 @@
+<%= turbo_stream.replace :flash do %>
+  <%= render FlashComponent.new(flash: flash) %>
+<% end %>
+
+<% if @appointment.errors.empty? %>
+  <%= turbo_stream.action(:redirect, appointment_path(@appointment.public_uid)) %>
+<% else %>
+  <%= turbo_stream.replace dom_id(@appointment, "cancel_schedule_form"),
+    partial: "barangay/appointments/cancel_form",
+    locals: { appointment: @appointment } %>
+<% end %>

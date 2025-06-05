@@ -1,7 +1,7 @@
 class Barangay::AppointmentsController < BarangayController
   before_action :authenticate_user!
   before_action :set_announcement, only: %i[create]
-  before_action :set_appointment, only: %i[flag_as_cancelled show]
+  before_action :set_appointment, only: %i[show cancel_schedule]
 
   def index
     @q = current_user.appointments.ransack(params[:q])
@@ -24,11 +24,11 @@ class Barangay::AppointmentsController < BarangayController
     end
   end
 
-  def flag_as_cancelled
-    if @appointment.cancelled!
-      redirect_to appointments_path, notice: "Appointment was successfully cancelled."
+  def cancel_schedule
+    if @appointment.update(cancel_appointment_params)
+      flash[:notice] = "Appointment was successfully cancelled."
     else
-      redirect_to appointments_path, alert: "Appointment failed to be cancelled."
+      flash[:alert] = "Appointment was not cancelled."
     end
   end
 
@@ -36,6 +36,10 @@ class Barangay::AppointmentsController < BarangayController
 
   def appointment_params
     params.require(:appointment).permit(:scheduled_at, :reason)
+  end
+
+  def cancel_appointment_params
+    params.require(:appointment).permit(:cancel_reason).merge(status: :cancelled)
   end
 
   def set_appointment

@@ -54,6 +54,15 @@
                 <% end %>
               </div>
             </div>
+
+            <% if @appointment.cancelled? %>
+              <div class="col-12">
+                <div class="alert alert-danger">
+                  <i class="bi bi-exclamation-circle-fill"></i>
+                  Cancel Reason: <%= @appointment.cancel_reason %>
+                </div>
+              </div>
+            <% end %>
           </div>
         </div>
       </div>
@@ -169,11 +178,23 @@
               <% end %>
             <% end %>
 
-            <% if @appointment.pending? %>
+            <% if Appointment::ADMIN_VALID_FOR_APPROVE_AND_REJECTED_STATUS.include?(@appointment.status.to_sym) %>
               <%= link_to flag_as_rejected_admin_appointment_path(@appointment.public_uid), data: { turbo_method: :PATCH, turbo_confirm: "Are you sure?" }, class: "btn btn-danger" do %>
                 <i class="bi bi-x-circle-fill"></i>
                 Reject Appointment
               <% end %>
+            <% end %>
+
+            <% if Appointment::ADMIN_VALID_FOR_CANCELLATION_STATUS.include?(@appointment.status.to_sym) %>
+              <%= link_to "#", 
+                data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "cancel_schedule_modal")}" }, 
+                class: "btn btn-danger" do %>
+
+                <i class="bi bi-x-circle-fill"></i>
+                Cancel Appointment
+              <% end %>
+
+              <%= render partial: "admin/appointments/cancel_modal" %>
             <% end %>
           </div>
         </div>
