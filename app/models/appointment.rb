@@ -17,10 +17,15 @@ class Appointment < ApplicationRecord
 
   acts_as_taggable_on :flags # FollowUpCheckUp, Missed
   enum :status, [ :pending, :approved, :completed, :rejected, :cancelled ]
+  VALID_FOR_RESCHEDULE_STATUS = [ :pending, :approved ].freeze
+  VALID_FOR_CANCELLATION_STATUS = [ :pending, :approved ].freeze
+  ADMIN_VALID_FOR_APPROVE_AND_REJECTED_STATUS = [ :pending ].freeze
+  ADMIN_VALID_FOR_CANCELLATION_STATUS = [ :approved ].freeze
 
   attribute :scheduled_at, :datetime, default: -> { Time.current.change(hour: 9, minute: 0, second: 0) }
 
   validates :scheduled_at, presence: true
+  validates :cancel_reason, presence: true, if: :cancelled?
   after_update :completed_appointment
   after_create :send_admin_and_staff_notification
   after_update :send_notification_status_changed
@@ -52,7 +57,7 @@ class Appointment < ApplicationRecord
 
   def send_notification_status_changed
     if saved_change_to_status?
-      users = self.cancelled? ? self.barangay.admin_and_staff : self.patient
+      users = (self.barangay.admin_and_staff.to_a + [ self.patient ]).uniq
 
       AppointmentStatusChangedNotifier.with(record: self).deliver(users)
     end

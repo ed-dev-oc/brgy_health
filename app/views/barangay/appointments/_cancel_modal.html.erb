@@ -1,0 +1,15 @@
+<div class="modal fade" id="<%= dom_id(@appointment, "cancel_schedule_modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(@appointment, "cancel_schedule_modal") %>Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="<%= dom_id(@appointment, "cancel_schedule_modal") %>Label">Cancel Appointment</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= turbo_frame_tag dom_id(@appointment, "cancel_schedule_form") do %>
+          <%= render partial: "barangay/appointments/cancel_form", locals: { appointment: @appointment } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

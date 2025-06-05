@@ -16,6 +16,7 @@ class Barangay < ApplicationRecord
 
   after_validation :set_subdomain_from_slug
   after_create :generate_pages
+
   def admin_and_staff
     users.where(role: [ :admin, :staff ])
   end

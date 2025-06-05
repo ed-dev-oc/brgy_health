@@ -37,7 +37,7 @@
                     <% end %>
                   </li>
 
-                  <% if appointment.pending? %>
+                  <% if Appointment::ADMIN_VALID_FOR_APPROVE_AND_REJECTED_STATUS.include?(appointment.status.to_sym) %>
                     <li>
                       <%= link_to flag_as_approved_admin_appointment_path(appointment.public_uid), data: { turbo_method: :PATCH, turbo_confirm: "Are you sure?"}, class: "dropdown-item text-green-600" do %>
                         <i class="bi bi-check-circle-fill"></i>

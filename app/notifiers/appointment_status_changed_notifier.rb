@@ -33,16 +33,28 @@ class AppointmentStatusChangedNotifier < ApplicationNotifier
     def message
       case record.status
       when "approved"
-        "Your appointment for #{record.announcement.name} on #{record.scheduled_at.to_formatted_s(:long)} has been approved. Please arrive on time."
+        if recipient.admin? || recipient.staff?
+          "Admin / staff approved the appointment to patient #{record.patient.full_name} for #{record.announcement.name} on #{record.scheduled_at.to_formatted_s(:long)}."
+        else
+          "Hello #{record.patient.full_name}, Your appointment for #{record.announcement.name} on #{record.scheduled_at.to_formatted_s(:long)} has been approved. Please arrive on time."
+        end
       when "rejected"
-        "We're sorry, your appointment for #{record.announcement.name} on #{record.scheduled_at.to_formatted_s(:long)} was not approved."
+        if recipient.admin? || recipient.staff?
+          "Admin / staff rejected the appointment to patient #{record.patient.full_name} for #{record.announcement.name} on #{record.scheduled_at.to_formatted_s(:long)}."
+        else
+          "We're sorry #{record.patient.full_name}, your appointment for #{record.announcement.name} on #{record.scheduled_at.to_formatted_s(:long)} was not approved."
+        end
       when "cancelled"
-        "The patient cancelled their appointment for #{record.announcement.name} on #{record.scheduled_at.to_formatted_s(:long)}."
+        if recipient.admin? || recipient.staff?
+          "Admin / staff cancelled the appointment to patient #{record.patient.full_name} for #{record.announcement.name} on #{record.scheduled_at.to_formatted_s(:long)}."
+        else
+          "Hello #{record.patient.full_name}, your appointment was cancelled for #{record.announcement.name} on #{record.scheduled_at.to_formatted_s(:long)}."
+        end
       else
         if recipient.admin? || recipient.staff?
-          "Patient appointment status changed: #{record.patient.full_name} to #{record.announcement.name}."
+          "Patient appointment status changed: #{record.patient.full_name} to #{record.announcement.name}, please check."
         else
-          "Your appointment status changed to #{record.announcement.name}, please check."
+          "Hello #{record.patient.full_name}, Your appointment status changed to #{record.announcement.name}, please check."
         end
       end
     end
@@ -55,7 +67,7 @@ class AppointmentStatusChangedNotifier < ApplicationNotifier
       if recipient.admin? || recipient.staff?
         admin_appointment_path(record.public_uid)
       else
-        appointments_path
+        appointment_path(record.public_uid)
       end
     end
   end
