@@ -1,5 +1,5 @@
 class Admin::AppointmentsController < AdminController
-  before_action :set_appointment, only: [ :show, :flag_as_rejected, :flag_as_approved, :follow_up_check_up, :flag_as_completed, :cancel_schedule ]
+  before_action :set_appointment, only: [ :show, :flag_as_rejected, :flag_as_approved, :follow_up_check_up, :flag_as_completed, :cancel_schedule, :flag_as_reschedule ]
 
   def index
     @q = Appointment.ransack(params[:q])
@@ -69,6 +69,18 @@ class Admin::AppointmentsController < AdminController
     end
   end
 
+  def flag_as_reschedule
+    @appointment.flag_list.add("rescheduled")
+
+    if @appointment.update(reschedule_params)
+      flash[:notice] = "Appointment was successfully rescheduled."
+
+      AppointmentRescheduleNotifier.with(record: @appointment).deliver(@appointment.patient)
+    else
+      flash[:alert] = "Appointment was not rescheduled."
+    end
+  end
+
   private
 
   def flag_as_completed_params
@@ -81,6 +93,10 @@ class Admin::AppointmentsController < AdminController
 
   def cancel_appointment_params
     params.require(:appointment).permit(:cancel_reason).merge(status: :cancelled)
+  end
+
+  def reschedule_params
+    params.require(:appointment).permit(:scheduled_at, :reschedule_reason, :reason)
   end
 
   def set_appointment

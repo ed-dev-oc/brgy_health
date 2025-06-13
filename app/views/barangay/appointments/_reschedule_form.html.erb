@@ -1,0 +1,25 @@
+<%= form_with(model: appointment, url: flag_as_reschedule_appointment_path(appointment.public_uid)) do |form| %>
+  <% if appointment.errors.any? %>
+    <div class="text-danger">
+      <h2><%= pluralize(appointment.errors.count, "error") %> prohibited this appointment from being saved:</h2>
+
+      <ul>
+        <% appointment.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-2">
+    <%= form.label :scheduled_at, class: "form-label fw-bold" %>
+    <%= form.datetime_field :scheduled_at, class: "form-control", required: true %>
+  </div>
+  <div class="my-2">
+    <%= form.label :reschedule_reason, class: "form-label fw-bold" %>
+    <%= form.textarea :reschedule_reason, rows: 3, class: "form-control", required: true %>
+  </div>
+  <div class="my-2">
+    <%= form.submit "Reschedule Appointment", class: "btn btn-green-600", data: { turbo_confirm: "Are you sure?", turbo_submits_with: "Submitting..." } %>
+  </div>
+<% end %>

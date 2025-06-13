@@ -43,7 +43,7 @@
                 <span class="detail-label">Flags:</span>
                 <% if @appointment.flag_list.any? %>
                   <% @appointment.flag_list.each do |flag| %>
-                    <span class="badge text-bg-secondary">
+                    <span class="badge <%= badge_status_class(flag) %>">
                       <%= flag.humanize %>
                     </span>
                   <% end %>
@@ -60,6 +60,15 @@
                 <div class="alert alert-danger">
                   <i class="bi bi-exclamation-circle-fill"></i>
                   Cancel Reason: <%= @appointment.cancel_reason %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @appointment.flag_list.include?("rescheduled") %>
+              <div class="col-12">
+                <div class="alert alert-warning">
+                  <i class="bi bi-exclamation-circle-fill"></i>
+                  Reschedule Reason: <%= @appointment.reschedule_reason %>
                 </div>
               </div>
             <% end %>
@@ -176,6 +185,17 @@
                 <i class="bi bi-calendar-check"></i>
                 View Follow Up Check Up
               <% end %>
+            <% end %>
+
+            <% if display_resceduled_button?(@appointment) %>
+              <%= link_to "#",
+                data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "reschedule_modal")}"},
+                class: "btn btn-secondary" do %>
+
+                <i class="bi bi-calendar-plus"></i> Reschedule
+              <% end %>
+
+              <%= render partial: "admin/appointments/reschedule_modal"%>
             <% end %>
 
             <% if Appointment::ADMIN_VALID_FOR_APPROVE_AND_REJECTED_STATUS.include?(@appointment.status.to_sym) %>

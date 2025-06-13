@@ -1,7 +1,7 @@
 class Barangay::AppointmentsController < BarangayController
   before_action :authenticate_user!
   before_action :set_announcement, only: %i[create]
-  before_action :set_appointment, only: %i[show cancel_schedule]
+  before_action :set_appointment, only: %i[show cancel_schedule flag_as_reschedule]
 
   def index
     @q = current_user.appointments.ransack(params[:q])
@@ -32,6 +32,19 @@ class Barangay::AppointmentsController < BarangayController
     end
   end
 
+  def flag_as_reschedule
+    @appointment.flag_list.add("rescheduled")
+
+    if @appointment.update(reschedule_params)
+      flash[:notice] = "Appointment was successfully rescheduled."
+
+      admin_and_staff = @appointment.barangay.admin_and_staff
+      AppointmentRescheduleNotifier.with(record: @appointment).deliver(admin_and_staff)
+    else
+      flash[:alert] = "Appointment was not rescheduled."
+    end
+  end
+
   private
 
   def appointment_params
@@ -40,6 +53,10 @@ class Barangay::AppointmentsController < BarangayController
 
   def cancel_appointment_params
     params.require(:appointment).permit(:cancel_reason).merge(status: :cancelled)
+  end
+
+  def reschedule_params
+    params.require(:appointment).permit(:scheduled_at, :reschedule_reason, :reason).merge(status: :pending)
   end
 
   def set_appointment

@@ -11,7 +11,7 @@
 
                 <% if @appointment.flag_list.any? %>
                   <% @appointment.flag_list.each do |flag| %>
-                    <span class="badge <%= badge_status_class(@appointment.status) %> rounded-pill fs-6">
+                    <span class="badge <%= badge_status_class(flag) %> rounded-pill fs-6">
                       <%= flag.titleize %>
                     </span>
                   <% end %>
@@ -30,7 +30,14 @@
                 </li>
 
                 <% if Appointment::VALID_FOR_RESCHEDULE_STATUS.include?(@appointment.status.to_sym) %>
-                  <li><a class="dropdown-item" href="#"><i class="bi bi-pencil"></i> Reschedule</a></li>
+                  <li>
+                    <%= link_to "#",
+                      data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "reschedule_modal")}"},
+                      class: "dropdown-item" do %>
+
+                      <i class="bi bi-calendar-plus"></i> Reschedule
+                    <% end if display_resceduled_button?(@appointment) %>
+                  </li>
                 <% end %>
 
                 <% if Appointment::VALID_FOR_CANCELLATION_STATUS.include?(@appointment.status.to_sym) %>
@@ -46,6 +53,7 @@
                 <% end %>
               </ul>
             </div>
+            <%= render partial: "barangay/appointments/reschedule_modal" if display_resceduled_button?(@appointment) %>
             <%= render partial: "barangay/appointments/cancel_modal" if Appointment::VALID_FOR_CANCELLATION_STATUS.include?(@appointment.status.to_sym) %>
           </div>
 
@@ -154,6 +162,15 @@
                   </div>
                 </div>
               <% end %>
+
+              <% if @appointment.flag_list.include?("rescheduled") %>
+                <div class="col-12">
+                  <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    Reschedule Reason: <%= @appointment.reschedule_reason %>
+                  </div>
+                </div>
+              <% end %>
             </div>
           </div>
         </div>
@@ -190,9 +207,12 @@
           <i class="bi bi-arrow-left"></i> Back
         <% end %>
 
-        <button class="btn btn-primary action-btn">
+        <%= link_to "#",
+          data: { bs_toggle: "modal", bs_target: "##{dom_id(@appointment, "reschedule_modal")}"},
+          class: "btn btn-primary" do %>
+
           <i class="bi bi-calendar-plus"></i> Reschedule
-        </button>
+        <% end if display_resceduled_button?(@appointment)%>
       </div>
     </div>
   </div>

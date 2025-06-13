@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_05_064519) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_13_052002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -88,6 +88,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_05_064519) do
     t.datetime "updated_at", null: false
     t.integer "status", default: 0
     t.text "cancel_reason"
+    t.text "reschedule_reason"
     t.index ["announcement_id"], name: "index_appointments_on_announcement_id"
     t.index ["barangay_id"], name: "index_appointments_on_barangay_id"
     t.index ["follow_up_id"], name: "index_appointments_on_follow_up_id"

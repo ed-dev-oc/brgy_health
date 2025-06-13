@@ -15,7 +15,7 @@ class Appointment < ApplicationRecord
              dependent: :nullify,
              inverse_of: :follow_up
 
-  acts_as_taggable_on :flags # FollowUpCheckUp, Missed
+  acts_as_taggable_on :flags # FollowUpCheckUp, Missed, Rescheduled
   enum :status, [ :pending, :approved, :completed, :rejected, :cancelled ]
   VALID_FOR_RESCHEDULE_STATUS = [ :pending, :approved ].freeze
   VALID_FOR_CANCELLATION_STATUS = [ :pending, :approved ].freeze
@@ -26,6 +26,9 @@ class Appointment < ApplicationRecord
 
   validates :scheduled_at, presence: true
   validates :cancel_reason, presence: true, if: :cancelled?
+  validates :reschedule_reason, presence: true, if: -> { self.flag_list.include?("reschedule") }
+  validate :scheduled_at_within_announcement_range
+
   after_update :completed_appointment
   after_create :send_admin_and_staff_notification
   after_update :send_notification_status_changed
@@ -66,6 +69,14 @@ class Appointment < ApplicationRecord
   def send_follow_up_check_up_notification
     if self.flag_list.include?("follow_up_check_up")
       FollowUpCheckUpNotifier.with(record: self).deliver(self.patient)
+    end
+  end
+
+  def scheduled_at_within_announcement_range
+    return if scheduled_at.blank?
+
+    unless scheduled_at.between?(announcement.start_date, announcement.end_date)
+      errors.add(:scheduled_at, "must be during the announcement's time range (#{announcement.start_date.strftime("%B %e, %Y")} to #{announcement.end_date.strftime("%B %e, %Y")})")
     end
   end
 end
