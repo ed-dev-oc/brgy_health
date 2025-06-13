@@ -10,6 +10,8 @@ first_appointment:
   follow_up_id:
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
+  cancel_reason: 
+  reschedule_reason:
   status: 1
 
 follow_up_appointment:
@@ -24,4 +26,6 @@ follow_up_appointment:
   follow_up_id: <%= ActiveRecord::FixtureSet.identify(:first_appointment) %>
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
+  cancel_reason: 
+  reschedule_reason:
   status: 1
