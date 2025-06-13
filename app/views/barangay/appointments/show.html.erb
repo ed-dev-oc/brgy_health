@@ -11,7 +11,7 @@
 
                 <% if @appointment.flag_list.any? %>
                   <% @appointment.flag_list.each do |flag| %>
-                    <span class="badge <%= badge_status_class(@appointment.status) %> rounded-pill fs-6">
+                    <span class="badge <%= badge_status_class(flag) %> rounded-pill fs-6">
                       <%= flag.titleize %>
                     </span>
                   <% end %>
