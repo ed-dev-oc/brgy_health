@@ -16,6 +16,7 @@ class Admin::HealthProgramsController < AdminController
 
   # GET /admin/health_programs/1 or /admin/health_programs/1.json
   def show
+    @activity_logs = @admin_health_program.activity_logs.includes(:user).order(created_at: :desc)
   end
 
   # GET /admin/health_programs/new
@@ -33,6 +34,14 @@ class Admin::HealthProgramsController < AdminController
 
     respond_to do |format|
       if @admin_health_program.save
+        # Log the creation action
+        ActivityLog.create!(
+          user: current_user,
+          action: "created",
+          description: "Created health program '#{@admin_health_program.name}'",
+          loggable: @admin_health_program
+        )
+        # Redirect or render based on the request format
         format.html { redirect_to [ :admin, @admin_health_program ], notice: "Health program was successfully created." }
         format.json { render :show, status: :created, location: [ :admin, @admin_health_program ] }
 
@@ -47,6 +56,13 @@ class Admin::HealthProgramsController < AdminController
   def update
     respond_to do |format|
       if @admin_health_program.update(admin_health_program_params)
+        # Log the update action
+        ActivityLog.create!(
+          user: current_user,
+          action: "updated",
+          description: @admin_health_program.generate_change_log_description,
+          loggable: @admin_health_program
+        )
         format.html { redirect_to [ :admin, @admin_health_program ], notice: "Health program was successfully updated." }
         format.json { render :show, status: :ok, location: [ admin, @admin_health_program ] }
       else
@@ -59,6 +75,13 @@ class Admin::HealthProgramsController < AdminController
   # DELETE /admin/health_programs/1 or /admin/health_programs/1.json
   def destroy
     @admin_health_program.destroy!
+    # Log the destruction action
+    ActivityLog.create!(
+      user: current_user,
+      action: "destroyed",
+      description: "Destroyed health program '#{@admin_health_program.name}'",
+      loggable: @admin_health_program
+    )
 
     respond_to do |format|
       format.html { redirect_to admin_health_programs_path, status: :see_other, notice: "Health program was successfully destroyed." }

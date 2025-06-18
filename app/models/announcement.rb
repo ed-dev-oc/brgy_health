@@ -7,6 +7,7 @@ class Announcement < ApplicationRecord
   accepts_nested_attributes_for :health_program, reject_if: :all_blank
 
   has_many :appointments
+  has_many :activity_logs, as: :loggable, dependent: :destroy
   belongs_to :health_program, optional: true
   accepts_nested_attributes_for :health_program, reject_if: :all_blank
 
@@ -40,6 +41,40 @@ class Announcement < ApplicationRecord
       " ", parent.table[:first_name], parent.table[:middle_name], parent.table[:last_name]
     ])
   end
+
+  def generate_change_log_description
+  return unless saved_changes.any?
+
+  messages = []
+
+  saved_changes.except(:updated_at).each do |attr, (old_val, new_val)|
+    case attr
+    when "status"
+      messages << "📢 Status changed from <strong>#{old_val}</strong> to <strong>#{new_val}</strong>"
+    when "name"
+      messages << "📝 Title updated from <code>#{old_val}</code> to <code>#{new_val}</code>"
+    when "location"
+      messages << "📍 Location changed from <code>#{old_val}</code> to <code>#{new_val}</code>"
+    when "start_date", "end_date"
+      messages << "📅 Schedule updated" unless messages.include?("📅 Schedule updated")
+    when "open_time", "close_time"
+      messages << "⏰ Time changed" unless messages.include?("⏰ Time changed")
+    when "audience"
+      messages << "👥 Audience changed from <code>#{old_val}</code> to <code>#{new_val}</code>"
+    when "max_patients"
+      messages << "👤 Max patients updated from <code>#{old_val}</code> to <code>#{new_val}</code>"
+    when "health_program_id"
+      old_program = HealthProgram.find_by(id: old_val)&.name || "None"
+      new_program = HealthProgram.find_by(id: new_val)&.name || "None"
+      messages << "🩺 Health program changed from <strong>#{old_program}</strong> to <strong>#{new_program}</strong>"
+    else
+      messages << "🔧 #{attr.humanize} changed"
+    end
+  end
+
+  messages.any? ? messages.join("<br>") : "No changes detected."
+end
+
 
   private
 

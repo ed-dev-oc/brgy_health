@@ -11,13 +11,22 @@ class Admin::AnnouncementsController < AdminController
 
   # GET /admin/announcements/1 or /admin/announcements/1.json
   def show
+    @activity_logs = @announcement.activity_logs.includes(:user).order(created_at: :desc)
+    @unique_view_count = @announcement.activity_logs.where(action: "viewed").select(:user_id).distinct.count
   end
+
 
   # POST /admin/announcements or /admin/announcements.json
   def create
     @announcement = Announcement.new(announcement_params)
 
     if @announcement.save
+      ActivityLog.create!(
+        user: current_user,
+        action: "created",
+        description: "Created this announcement '#{@announcement.name}'",
+        loggable: @announcement
+      )
       flash[:notice] = "Announcement was successfully created."
     else
       flash[:alert] = "Announcement was not created."
@@ -26,7 +35,24 @@ class Admin::AnnouncementsController < AdminController
 
   # PATCH/PUT /admin/announcements/1 or /admin/announcements/1.json
   def update
-    if @announcement.update(announcement_params)
+    announcement = @announcement
+    old_description = announcement.description&.body&.to_plain_text
+
+    if announcement.update(announcement_params)
+      change_log = announcement.generate_change_log_description
+      new_description = announcement.description&.body&.to_plain_text
+
+      if old_description != new_description
+        change_log = (change_log.presence || "") + "📝 Description was updated"
+      end
+
+      ActivityLog.create!(
+        user: current_user,
+        action: "updated",
+        description: change_log,
+        loggable: announcement
+      )
+
       flash[:notice] = "Announcement was successfully updated."
     else
       flash[:alert] = "Announcement was not updated."
@@ -35,6 +61,12 @@ class Admin::AnnouncementsController < AdminController
 
   def archive
     if @announcement.archived!
+      ActivityLog.create!(
+        user: current_user,
+        action: "archived",
+        description: "Archived announcement titled '#{@announcement.name}'",
+        loggable: @announcement
+      )
       flash[:notice] = "Announcement was successfully archived."
     else
       flash.now[:alert] = "Announcement was not archived."
