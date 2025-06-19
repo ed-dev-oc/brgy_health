@@ -41,6 +41,30 @@ class Announcement < ApplicationRecord
     ])
   end
 
+  def capacity_percentage
+    (appointments.approved.count.to_f / max_patients) * 100
+  end
+
+  def appointment_full?
+    appointments.approved.count >= max_patients
+  end
+
+  def approved_patients_count
+    appointments.approved.count
+  end
+
+  def pending_patients_count
+    appointments.pending.count
+  end
+
+  def canceled_patients_count
+    appointments.cancelled.count
+  end
+
+  def today_appointments_count
+    appointments.approved.where(scheduled_at: Time.zone.today.all_day).count
+  end
+
   private
 
   def images_presence

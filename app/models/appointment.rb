@@ -15,7 +15,7 @@ class Appointment < ApplicationRecord
              dependent: :nullify,
              inverse_of: :follow_up
 
-  acts_as_taggable_on :flags # FollowUpCheckUp, Missed, Rescheduled
+  acts_as_taggable_on :flags # FollowUpCheckUp, Missed, Rescheduled, Waitlisted
   enum :status, [ :pending, :approved, :completed, :rejected, :cancelled ]
   VALID_FOR_RESCHEDULE_STATUS = [ :pending, :approved ].freeze
   VALID_FOR_CANCELLATION_STATUS = [ :pending, :approved ].freeze

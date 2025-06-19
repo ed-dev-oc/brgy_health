@@ -64,7 +64,7 @@ module ApplicationHelper
       "text-bg-primary"
     when "approved", "completed"
       "text-bg-success"
-    when "pending", "rescheduled"
+    when "pending", "rescheduled", "waitlisted"
       "text-bg-warning"
     when "rejected", "canceled", "cancelled", "archived", "missed"
       "text-bg-danger"
