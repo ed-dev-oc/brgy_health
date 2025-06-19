@@ -1,5 +1,5 @@
 class Admin::AnnouncementsController < AdminController
-  before_action :set_announcement, only: [ :show, :update, :archive ]
+  before_action :set_announcement, only: [ :show, :update, :archive, :appointment_details ]
 
   # GET /admin/announcements or /admin/announcements.json
   def index
@@ -39,6 +39,13 @@ class Admin::AnnouncementsController < AdminController
     else
       flash.now[:alert] = "Announcement was not archived."
     end
+  end
+
+  def appointment_details
+    @q = @announcement.appointments.ransack(params[:q])
+    @pagy, @appointments = pagy(@q.result(distinct: true).order(created_at: :desc), limit: 5)
+
+    @capacity_percentage = @announcement.capacity_percentage
   end
 
   private

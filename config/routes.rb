@@ -42,8 +42,9 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :dashboard, only: [ :index ]
     resources :announcements, only: [ :index, :create, :update, :show ] do
-       member do
+      member do
         patch :archive
+        get :appointment_details
       end
     end
     resources :health_programs
@@ -56,6 +57,7 @@ Rails.application.routes.draw do
         patch :flag_as_completed
         patch :cancel_schedule
         patch :flag_as_reschedule
+        get :announcement_capacity
       end
     end
 

@@ -1,5 +1,13 @@
 class Admin::AppointmentsController < AdminController
-  before_action :set_appointment, only: [ :show, :flag_as_rejected, :flag_as_approved, :follow_up_check_up, :flag_as_completed, :cancel_schedule, :flag_as_reschedule ]
+  before_action :set_appointment, only: [
+    :show,
+    :flag_as_rejected,
+    :flag_as_approved,
+    :follow_up_check_up,
+    :flag_as_completed,
+    :cancel_schedule,
+    :flag_as_reschedule,
+    :announcement_capacity ]
 
   def index
     @q = Appointment.ransack(params[:q])
@@ -28,6 +36,11 @@ class Admin::AppointmentsController < AdminController
 
   def flag_as_approved
     if @appointment.update(status: :approved, health_worker: current_user)
+      if @appointment.announcement.appointment_full?
+        @appointment.flag_list.add("waitlisted")
+        @appointment.save
+      end
+
       flash.notice = "Appointment was successfully accepted."
 
       redirect_back fallback_location: admin_appointments_path
@@ -79,6 +92,10 @@ class Admin::AppointmentsController < AdminController
     else
       flash[:alert] = "Appointment was not rescheduled."
     end
+  end
+
+  def announcement_capacity
+    @capacity_percentage = @appointment.announcement.capacity_percentage
   end
 
   private
