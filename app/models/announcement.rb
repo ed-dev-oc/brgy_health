@@ -58,7 +58,7 @@ class Announcement < ApplicationRecord
     when "start_date", "end_date"
       messages << "Schedule updated" unless messages.include?("Schedule updated")
     when "open_time", "close_time"
-      messages << "Time changed" unless messages.include?("Time changed")
+      messages << "Time changed" unless messages.include?("<br>Time changed")
     when "audience"
       messages << "Audience changed from <code>#{old_val}</code> to <code>#{new_val}</code>"
     when "max_patients"
