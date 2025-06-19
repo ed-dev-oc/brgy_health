@@ -43,7 +43,7 @@ class Admin::AnnouncementsController < AdminController
       new_description = announcement.description&.body&.to_plain_text
 
       if old_description != new_description
-        change_log = (change_log.presence || "") + "📝 Description was updated"
+        change_log = (change_log.presence || "") + "Description was updated"
       end
 
       ActivityLog.create!(

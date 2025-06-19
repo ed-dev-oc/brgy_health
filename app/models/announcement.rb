@@ -50,25 +50,25 @@ class Announcement < ApplicationRecord
   saved_changes.except(:updated_at).each do |attr, (old_val, new_val)|
     case attr
     when "status"
-      messages << "📢 Status changed from <strong>#{old_val}</strong> to <strong>#{new_val}</strong>"
+      messages << "Status changed from <strong>#{old_val}</strong> to <strong>#{new_val}</strong>"
     when "name"
-      messages << "📝 Title updated from <code>#{old_val}</code> to <code>#{new_val}</code>"
+      messages << "Title updated from <code>#{old_val}</code> to <code>#{new_val}</code>"
     when "location"
-      messages << "📍 Location changed from <code>#{old_val}</code> to <code>#{new_val}</code>"
+      messages << "Location changed from <code>#{old_val}</code> to <code>#{new_val}</code>"
     when "start_date", "end_date"
-      messages << "📅 Schedule updated" unless messages.include?("📅 Schedule updated")
+      messages << "Schedule updated" unless messages.include?("Schedule updated")
     when "open_time", "close_time"
-      messages << "⏰ Time changed" unless messages.include?("⏰ Time changed")
+      messages << "Time changed" unless messages.include?("Time changed")
     when "audience"
-      messages << "👥 Audience changed from <code>#{old_val}</code> to <code>#{new_val}</code>"
+      messages << "Audience changed from <code>#{old_val}</code> to <code>#{new_val}</code>"
     when "max_patients"
-      messages << "👤 Max patients updated from <code>#{old_val}</code> to <code>#{new_val}</code>"
+      messages << "Max patients updated from <code>#{old_val}</code> to <code>#{new_val}</code>"
     when "health_program_id"
       old_program = HealthProgram.find_by(id: old_val)&.name || "None"
       new_program = HealthProgram.find_by(id: new_val)&.name || "None"
-      messages << "🩺 Health program changed from <strong>#{old_program}</strong> to <strong>#{new_program}</strong>"
+      messages << "Health program changed from <strong>#{old_program}</strong> to <strong>#{new_program}</strong>"
     else
-      messages << "🔧 #{attr.humanize} changed"
+      messages << "#{attr.humanize} changed"
     end
   end
 

@@ -16,11 +16,11 @@ class HealthProgram < ApplicationRecord
     saved_changes.except(:updated_at).each do |attr, (old_val, new_val)|
       case attr
       when "status"
-        messages << "📢 Status changed from <strong>#{old_val}</strong> to <strong>#{new_val}</strong>"
+        messages << "Status changed from <strong>#{old_val}</strong> to <strong>#{new_val}</strong>"
       when "name"
-        messages << "📝 Name updated from <code>#{old_val}</code> to <code>#{new_val}</code>"
+        messages << "Name updated from <code>#{old_val}</code> to <code>#{new_val}</code>"
       when "description"
-        messages << "📝 Description updated"
+        messages << "Description updated"
       end
     end
 
