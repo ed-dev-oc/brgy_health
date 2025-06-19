@@ -14,7 +14,7 @@ def show
     ActivityLog.create!(
       user: current_user,
       action: "viewed",
-      description: "👁️ <b>#{@announcement.name}</b> now has #{temp_count + 1} viewer#{'s' if temp_count + 1 > 1}",
+      description: "<b>#{@announcement.name}</b> now has #{temp_count + 1} viewer#{'s' if temp_count + 1 > 1}",
       loggable: @announcement
     )
   end
