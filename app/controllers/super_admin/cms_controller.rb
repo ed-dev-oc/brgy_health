@@ -9,6 +9,7 @@ class SuperAdmin::CmsController < SuperAdminController
     if @page.update(page_params)
       redirect_to super_admin_cms_path, notice: "Page was successfully updated."
 
+      StaticPageUpdatedNotifier.with(record: @page).deliver(User.admin.tagged_with([ "require_validation" ], exclude: true))
     else
       redirect_to super_admin_cms_path, status: :unprocessable_entity, alert: "Page was not updated."
     end

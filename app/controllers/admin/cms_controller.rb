@@ -8,6 +8,8 @@ class Admin::CmsController < AdminController
   def update
     if @page.update(page_params)
       redirect_to admin_cms_path, notice: "Page was successfully updated."
+
+      StaticPageUpdatedNotifier.with(record: @page).deliver(User.patient)
     else
       redirect_to admin_cms_path, status: :unprocessable_entity, alert: "Page was not updated."
     end
