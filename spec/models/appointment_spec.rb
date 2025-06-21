@@ -27,7 +27,7 @@ RSpec.describe Appointment, type: :model do
         barangay: sample_barangay,
         announcement: sample_announcement,
         patient: patient,
-        scheduled_at: DateTime.now + 1.day
+        scheduled_at: sample_announcement.start_date.advance(hours: 1)
       )
       expect(appointment).to be_valid
     end
@@ -38,7 +38,7 @@ RSpec.describe Appointment, type: :model do
         announcement: sample_announcement,
         patient: patient,
         health_worker: nil,
-        scheduled_at: DateTime.now + 1.day
+        scheduled_at: sample_announcement.start_date.advance(hours: 1)
       )
       expect(appointment).to be_valid
     end
