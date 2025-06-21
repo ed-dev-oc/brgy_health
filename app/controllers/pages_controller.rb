@@ -10,6 +10,8 @@ class PagesController < ApplicationController
       if @page.nil?
         render file: Rails.root.join("public/404.html"), status: :not_found, layout: false
         return
+      else
+        @page.notifications.where(recipient: current_user).mark_as_read if user_signed_in?
       end
 
       render params[:page]

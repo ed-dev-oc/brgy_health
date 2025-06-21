@@ -1,6 +1,14 @@
 class Barangay::PagesController < BarangayController
   def home
     @hero_banner = Page.find_by(section: "homepage_hero_banner")
+
+    if user_signed_in?
+      @hero_banner.notifications.where(recipient: current_user).mark_as_read
+
+      if current_user.admin?
+        current_user.notifications.where(type: "StaticPageUpdatedNotifier::Notification").mark_as_read
+      end
+    end
   end
 
   def show
@@ -12,6 +20,7 @@ class Barangay::PagesController < BarangayController
         return
       end
 
+      @page.notifications.where(recipient: current_user).mark_as_read if user_signed_in?
       render params[:page]
     else
       render file: Rails.root.join("public/404.html"), status: :not_found, layout: false
@@ -24,6 +33,8 @@ class Barangay::PagesController < BarangayController
 
     if @page.nil?
       render file: Rails.root.join("public/404.html"), status: :not_found, layout: false
+    else
+      @page.notifications.where(recipient: current_user).mark_as_read if user_signed_in?
     end
   end
 
@@ -32,6 +43,8 @@ class Barangay::PagesController < BarangayController
 
     if @page.nil?
       render file: Rails.root.join("public/404.html"), status: :not_found, layout: false
+    else
+      @page.notifications.where(recipient: current_user).mark_as_read if user_signed_in?
     end
   end
 end
