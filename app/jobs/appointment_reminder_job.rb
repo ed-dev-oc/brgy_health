@@ -3,15 +3,15 @@ class AppointmentReminderJob < ApplicationJob
 
   def perform(id)
     appointment = Appointment.find_by(id: id)
+    return unless appointment&.approved?
 
-    if appointment.present? && appointment.approved?
-      AppointmentReminderNotifier.with(record: appointment).deliver(appointment.patient)
-      wait_until = appointment.appointment_reminder_job_wait_until_condition
+    AppointmentReminderNotifier.with(record: appointment).deliver(appointment.patient)
 
-      if wait_until
-        job_id = AppointmentReminderJob.set(wait_until: wait_until).perform_later(appointment.id)
+    if wait_until = appointment.appointment_reminder_job_wait_until_condition
+      scheduled_job = AppointmentReminderJob.set(wait_until: wait_until).perform_later(appointment.id)
 
-        appointment.update_columns(reminder_job_id: job_id)
+      if scheduled_job.respond_to?(:job_id)
+        appointment.update(reminder_job_id: scheduled_job.job_id)
       end
     end
   end

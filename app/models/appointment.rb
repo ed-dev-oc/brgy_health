@@ -104,7 +104,9 @@ class Appointment < ApplicationRecord
       if wait_until
         job = AppointmentReminderJob.set(wait_until: wait_until).perform_later(self.id)
 
-        self.update_columns(reminder_job_id: job.job_id)
+        if job.respond_to?(:job_id)
+          self.update_columns(reminder_job_id: job.job_id)
+        end
       end
     end
   end
