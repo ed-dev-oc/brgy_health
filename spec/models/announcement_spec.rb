@@ -102,7 +102,7 @@ RSpec.describe Announcement, type: :model do
 
   describe "date / time validations" do
     it "is invalid with a past start date" do
-      announcement = announcements(:first_announcement)
+      announcement = announcements(:first_announcement).dup
       announcement.start_date = Time.current.advance(days: -1)
 
       expect(announcement).not_to be_valid

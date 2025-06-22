@@ -20,7 +20,7 @@ class Announcement < ApplicationRecord
   attribute :close_time, :time, default: -> { Time.zone.parse("17:00") }
 
   validates :name, :description, :start_date, :end_date, :open_time, :close_time, :location, :max_patients, :audience, :status, presence: true
-  validates :start_date, comparison: { greater_than_or_equal_to: -> { Time.current }, message: "must be in the future" }
+  validates :start_date, comparison: { greater_than_or_equal_to: -> { Time.current }, message: "must be in the future" }, on: :create
   validates :end_date, comparison: { greater_than: :start_date, message: "must be after the start date" }
   validates :open_time, comparison: { less_than: :close_time, message: "must be before the close time" }
   validates :close_time, comparison: { greater_than: :open_time, message: "must be after the open time" }
