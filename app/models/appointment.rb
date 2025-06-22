@@ -33,6 +33,7 @@ class Appointment < ApplicationRecord
   after_create :send_admin_and_staff_notification
   after_update :send_notification_status_changed
   after_update :send_follow_up_check_up_notification
+  after_update :reminder_notification_job
 
   def self.ransackable_attributes(auth_object = nil)
     [ "announcement_id", "barangay_id", "created_at", "follow_up_id", "health_worker_id", "id", "notes", "patient_id", "public_uid", "reason", "scheduled_at", "updated_at", "status" ]
@@ -44,6 +45,18 @@ class Appointment < ApplicationRecord
 
   def has_parent_appointment?
     parent_appointment.present?
+  end
+
+  def appointment_reminder_job_wait_until_condition
+    if Time.now < self.scheduled_at - 24.hours
+      self.scheduled_at - 24.hours
+    elsif Time.now < self.scheduled_at - 60.minutes
+      self.scheduled_at - 60.minutes
+    elsif Time.now < self.scheduled_at - 30.minutes
+      self.scheduled_at - 30.minutes
+    elsif Time.now < self.scheduled_at - 5.minutes
+      self.scheduled_at - 5.minutes
+    end
   end
 
   private
@@ -77,6 +90,24 @@ class Appointment < ApplicationRecord
 
     unless scheduled_at.between?(announcement.start_date, announcement.end_date)
       errors.add(:scheduled_at, "must be during the announcement's time range (#{announcement.start_date.strftime("%B %e, %Y")} to #{announcement.end_date.strftime("%B %e, %Y")})")
+    end
+  end
+
+  def reminder_notification_job
+    if saved_change_to_attribute?(:scheduled_at)
+      if self.reminder_job_id.present?
+        SolidQueue::Job.find_by(active_job_id: self.reminder_job_id)&.discard
+      end
+
+      wait_until = appointment_reminder_job_wait_until_condition
+
+      if wait_until
+        job = AppointmentReminderJob.set(wait_until: wait_until).perform_later(self.id)
+
+        if job.respond_to?(:job_id)
+          self.update_columns(reminder_job_id: job.job_id)
+        end
+      end
     end
   end
 end
