@@ -19,6 +19,14 @@ class Barangay::AppointmentsController < BarangayController
 
     if @appointment.save
       flash[:notice] = "Appointment was successfully created."
+
+      wait_until = @appointment.appointment_reminder_job_wait_until_condition
+
+      if wait_until
+        job = AppointmentReminderJob.set(wait_until: wait_until).perform_later(@appointment.id)
+
+        @appointment.update_columns(reminder_job_id: job.job_id)
+      end
     else
       flash.now[:alert] = "Appointment was not created."
     end
