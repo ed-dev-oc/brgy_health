@@ -75,14 +75,6 @@ class Admin::HealthProgramsController < AdminController
   # DELETE /admin/health_programs/1 or /admin/health_programs/1.json
   def destroy
     @admin_health_program.destroy!
-    # Log the destruction action
-    ActivityLog.create!(
-      user: current_user,
-      action: "destroyed",
-      description: "Destroyed health program '#{@admin_health_program.name}'",
-      loggable: @admin_health_program
-    )
-
     respond_to do |format|
       format.html { redirect_to admin_health_programs_path, status: :see_other, notice: "Health program was successfully destroyed." }
       format.json { head :no_content }

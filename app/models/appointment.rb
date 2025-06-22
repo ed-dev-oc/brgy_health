@@ -8,6 +8,7 @@ class Appointment < ApplicationRecord
   belongs_to :follow_up, class_name: "Appointment", foreign_key: "follow_up_id", optional: true
   has_many :noticed_events, as: :record, dependent: :destroy, class_name: "Noticed::Event"
   has_many :notifications, through: :noticed_events, class_name: "Noticed::Notification"
+  has_many :activity_logs, as: :loggable, dependent: :destroy
 
   has_one :parent_appointment,
              class_name: "Appointment",

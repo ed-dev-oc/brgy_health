@@ -74,4 +74,15 @@ module ApplicationHelper
       "text-bg-secondary"
     end
   end
+
+  def appointment_action_labels
+    {
+      "created" => "Created",
+      "approved" => "Approved",
+      "rejected" => "Rejected",
+      "rescheduled" => "Rescheduled",
+      "cancelled" => "Cancelled",
+      "completed" => "Completed"
+    }
+  end
 end

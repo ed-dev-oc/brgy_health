@@ -18,6 +18,12 @@ class Barangay::AppointmentsController < BarangayController
     @appointment.patient = current_user
 
     if @appointment.save
+      ActivityLog.create!(
+        user: current_user,
+        action: "created",
+        description: "Initial Satus: #{@appointment.status}",
+        loggable: @appointment
+      )
       flash[:notice] = "Appointment was successfully created."
     else
       flash.now[:alert] = "Appointment was not created."

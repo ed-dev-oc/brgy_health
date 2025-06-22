@@ -12,10 +12,17 @@ class Admin::AppointmentsController < AdminController
     end
 
     @appointment.notifications.where(recipient: current_user).mark_as_read
+    @activity_logs = @appointment.activity_logs.includes(:user).order(created_at: :desc)
   end
 
   def flag_as_rejected
     if @appointment.rejected!
+      ActivityLog.create!(
+        user: current_user,
+        action: "rejected",
+        description: "Appointment Rejected",
+        loggable: @appointment
+      )
       flash.notice = "Appointment was successfully rejected."
 
       redirect_back fallback_location: admin_appointments_path
@@ -28,6 +35,12 @@ class Admin::AppointmentsController < AdminController
 
   def flag_as_approved
     if @appointment.update(status: :approved, health_worker: current_user)
+      ActivityLog.create!(
+        user: current_user,
+        action: "approved",
+        description: "Appointment Approved",
+        loggable: @appointment
+      )
       flash.notice = "Appointment was successfully accepted."
 
       redirect_back fallback_location: admin_appointments_path
@@ -39,7 +52,14 @@ class Admin::AppointmentsController < AdminController
   end
 
   def flag_as_completed
+
     if @appointment.update(flag_as_completed_params)
+    ActivityLog.create!(
+      user: current_user,
+      action: "completed",
+      description: "Appointment Completed",
+      loggable: @appointment
+    )
       flash.notice = "Appointment was successfully completed."
     else
       flash.alert = "Appointment was not completed."
@@ -55,6 +75,12 @@ class Admin::AppointmentsController < AdminController
     @appointment.flag_list.add("follow_up_check_up")
 
     if @new_appointment.save && @appointment.save
+      ActivityLog.create!(
+        user: current_user,
+        action: "follow_up_check_up",
+        description: "Follow up check up created",
+        loggable: @new_appointment
+      )
       flash.notice = "New follow up was successfully created."
     else
       flash.alert = "New follow up was not created."
@@ -63,6 +89,12 @@ class Admin::AppointmentsController < AdminController
 
   def cancel_schedule
     if @appointment.update(cancel_appointment_params)
+      ActivityLog.create!(  
+        user: current_user,
+        action: "cancelled",
+        description: "Appointment Cancelled",
+        loggable: @appointment
+      )
       flash[:notice] = "Appointment was successfully cancelled."
     else
       flash[:alert] = "Appointment was not cancelled."
@@ -73,6 +105,12 @@ class Admin::AppointmentsController < AdminController
     @appointment.flag_list.add("rescheduled")
 
     if @appointment.update(reschedule_params)
+      ActivityLog.create!(
+        user: current_user,
+        action: "rescheduled",
+        description: ,
+        loggable: @appointment
+      )
       flash[:notice] = "Appointment was successfully rescheduled."
 
       AppointmentRescheduleNotifier.with(record: @appointment).deliver(@appointment.patient)

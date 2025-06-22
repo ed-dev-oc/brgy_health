@@ -1,0 +1,17 @@
+<% label = appointment_action_labels[log.action] || log.action.humanize %>
+<% actor = log.user&.full_name || "System" %>
+
+<div class="border-start border-3 border-primary ps-3 mb-3">
+  <div class="d-flex justify-content-between">
+    <strong>Appointment <%= label %></strong>
+    <small class="text-muted"><%= log.created_at.strftime("%b %d, %Y • %I:%M %p") %></small>
+  </div>
+  <div class="text-dark">
+    <%if log.action === "created"%>
+        <p><%= label %> by: <%= actor %></p>
+        <small><%= log.description || "No description available." %></small>
+    <% else %>
+        <small><%= label %> by: <%= actor %></small>
+    <% end %>
+  </div>
+</div>
