@@ -18,6 +18,15 @@ development:
     class: AppointmentsMissedJob
     queue: background
     schedule: at 6pm every day
+  periodic_completed_announcement:
+    class: AnnouncementCompletedJob
+    queue: background
+    schedule: at 12am every day
+  periodic_completed_event:
+    class: EventCompletedJob
+    queue: background
+    schedule: at 12am every day
+
 
 production:
   periodic_reminder_appointment:
@@ -28,3 +37,11 @@ production:
     class: AppointmentsMissedJob
     queue: background
     schedule: at 6pm every day
+  periodic_completed_announcement:
+    class: AnnouncementCompletedJob
+    queue: background
+    schedule: at 12am every day
+  periodic_completed_event:
+    class: EventCompletedJob
+    queue: background
+    schedule: at 12am every day
