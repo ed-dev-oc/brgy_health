@@ -1,2 +1,106 @@
-<h1>Super Admin Dashboard</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Super Admin Dashboard</h2>
+  <div>
+    <span class="me-3 text-muted">
+      <i class="bi bi-calendar3"></i>
+      <span id="currentDate"><%= Date.today.strftime("%A, %B %d, %Y") %></span>
+    </span>
+  </div>
+</div>
 
+<div class="row mb-4">
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-start border-primary shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row g-0 align-items-center">
+          <div class="col me-2">
+            <div class="text-xs fw-bold text-primary text-uppercase mb-1">
+              Total Tenant's
+            </div>
+            <div class="h5 mb-0 fw-bold text-gray-800"><%= @total_tenants %></div>
+          </div>
+          <div class="col-auto">
+            <i class="bi bi-building card-icon text-primary fs-2"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-start border-success shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row g-0 align-items-center">
+          <div class="col me-2">
+            <div class="text-xs fw-bold text-success text-uppercase mb-1">
+              Total Admin Unverified
+            </div>
+            <div class="h5 mb-0 fw-bold text-gray-800"><%= @admin_unvalidated %></div>
+          </div>
+          <div class="col-auto">
+            <i class="bi bi-people-fill card-icon text-success fs-2"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-start border-info shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row g-0 align-items-center">
+          <div class="col me-2">
+            <div class="text-xs fw-bold text-info text-uppercase mb-1">
+              Testimonials
+            </div>
+            <div class="h5 mb-0 fw-bold text-gray-800"><%= @total_testimonials %></div>
+          </div>
+          <div class="col-auto">
+            <i class="bi bi-chat-quote card-icon text-info fs-2"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-start border-danger shadow h-100 py-2">
+      <div class="card-body">
+        <div class="row g-0 align-items-center">
+          <div class="col me-2">
+            <div class="text-xs fw-bold text-danger text-uppercase mb-1">
+              Issue Report
+            </div>
+            <div class="h5 mb-0 fw-bold text-gray-800"><%= @total_reports %></div>
+          </div>
+          <div class="col-auto">
+            <i class="bi bi-exclamation-triangle card-icon text-danger fs-2"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-8">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="mb-0">Tenant Metrics</h5>
+        <div id="tenantMetricsChart" style="height: 300px;" class="mt-2">
+          <%= line_chart Barangay.group_by_month(:created_at).count, legend: false %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="mb-3">User Distribution by Region</h5>
+        <div id="tenantDistributionChart" style="height: 300px;" class="mt-2">
+          <%= pie_chart @users_per_region, legend: false %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

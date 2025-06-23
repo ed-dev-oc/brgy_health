@@ -5,6 +5,7 @@ import * as bootstrap from "bootstrap"
 
 import "trix"
 import "@rails/actiontext"
+import "chartkick/chart.js"
 
 Turbo.StreamActions.redirect = function () {
   Turbo.visit(this.target)

@@ -100,3 +100,7 @@ gem "noticed", "~> 2.6"
 gem "mission_control-jobs", "~> 1.0"
 
 gem "web-push", "~> 3.0"
+
+gem "chartkick", "~> 5.2"
+
+gem "groupdate", "~> 6.7"
