@@ -2,6 +2,11 @@ class SuperAdmin::DashboardController < SuperAdminController
   before_action :authorize_super_admin!
 
   def index
+    @total_tenants = Barangay.count
+    @admin_unvalidated = User.tagged_with([ "require_validation" ]).count
+    @total_testimonials = Testimonial.count
+    @total_reports = 0
+    @users_per_region = User.joins(:barangay).group("barangays.region").count
   end
 
   private
