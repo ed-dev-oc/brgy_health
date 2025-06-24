@@ -1,0 +1,100 @@
+<div class="modal fade" id="<%= dom_id(issue_report, "view_modal") %>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Issue Report Details</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row row-gap-2">
+          <div class="col-12">
+            <div>
+              <h4><%= issue_report.title %></h4>
+            </div>
+            <div>
+              <span class="badge <%= badge_status_class(issue_report.issue_type)%>"><%= issue_report.issue_type.titleize %></span>
+              <span class="badge <%= badge_status_class(issue_report.priority)%>"><%= issue_report.priority.titleize %></span>
+              <span class="badge <%= badge_status_class(issue_report.status)%>"><%= issue_report.status.titleize %></span>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card">
+              <div class="card-header">
+                <i class="bi bi-text-paragraph"></i>
+                Description
+              </div>
+              <div class="card-body">
+                <p class="card-text"><%= issue_report.description %></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="card">
+              <div class="card-header">
+                <i class="bi bi-person-fill"></i>
+                Reporter Info
+              </div>
+              <div class="card-body">
+                <div>
+                  <span>
+                    <i class="bi bi-envelope"></i>
+                    Email:
+                  </span>
+                  <span>
+                    <%= issue_report.email %>
+                  </span>
+                </div>
+                <div>
+                  <span>
+                    <i class="bi bi-calendar-event"></i>
+                    Reported:
+                  </span>
+                  <span>
+                    <%= issue_report.created_at.strftime("%B %d, %Y - %I:%M %p") %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 d-flex flex-column">
+            <div>
+              <hr>
+              <h4>
+                <i class="bi bi-card-image"></i>
+                ScreenShots
+              </h4>
+            </div>
+            <div class="text-center bg-secondary p-3">
+              <div id="<%= dom_id(issue_report, "carousel") %>" class="carousel slide">
+                <div class="carousel-inner">
+                  <% if issue_report.images.any? %>
+                    <% issue_report.images.each_with_index do |image, index| %>
+                      <div class="carousel-item <%= index == 0 ? "active" : "" %>">
+                        <%= image_tag(image.variant(resize_to_fill: [450, 300]), class: "img-fluid") %>
+                      </div>
+                    <% end %>
+                  <% else %>
+                    <div class="carousel-item active">
+                      <%= image_tag("https://placehold.co/600x400/146c43/white?text=No+Image+Added", class: "img-fluid") %>
+                    </div>
+                  <% end %>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#<%= dom_id(issue_report, "carousel") %>" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#<%= dom_id(issue_report, "carousel") %>" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

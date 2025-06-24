@@ -24,6 +24,7 @@
           <th scope="col">STATUS</th>
           <th scope="col">REPORTED BY</th>
           <th scope="col">DATE REPORTED</th>
+          <th scope="col">ACTION</th>
         </tr>
       </thead>
       <tbody>
@@ -46,6 +47,12 @@
             </td>
             <td><%= issue_report.email %></td>
             <td><%= issue_report.created_at.strftime("%B %d, %Y - %I:%M %p") %></td>
+            <td>
+              <%= link_to "#", class: "btn btn-outline-primary btn-sm", data: { bs_toggle: "modal", bs_target: "##{dom_id(issue_report, "view_modal")}"} do %>
+                <i class="bi bi-eye"></i>
+              <% end %>
+              <%= render partial: "super_admin/issue_reports/view_modal", locals: { issue_report: issue_report } %>
+            </td>
           </tr>
         <% end %>
       </tbody>
