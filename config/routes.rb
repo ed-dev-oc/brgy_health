@@ -115,4 +115,5 @@ Rails.application.routes.draw do
   end
 
   get "/:page", to: "pages#show", as: :main_page
+  resources :issue_reports, only: [ :create ]
 end

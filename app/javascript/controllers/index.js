@@ -16,6 +16,9 @@ application.register("google-map-api", GoogleMapApiController)
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
+import IssueReportController from "./issue_report_controller"
+application.register("issue-report", IssueReportController)
+
 import NestedAttributesVisibilityController from "./nested_attributes_visibility_controller"
 application.register("nested-attributes-visibility", NestedAttributesVisibilityController)
 
