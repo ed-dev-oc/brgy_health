@@ -4,6 +4,8 @@ class IssueReportsController < ApplicationController
 
     if @issue_report.save
       flash[:notice] = "Issue report was successfully created."
+
+      NewIssueReportNotifier.with(record: @issue_report).deliver(User.super_admin)
     else
       flash.now[:alert] = "Issue report was not created."
     end
