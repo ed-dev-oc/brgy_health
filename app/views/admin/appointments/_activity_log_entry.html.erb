@@ -10,6 +10,9 @@
     <%if log.action === "created"%>
         <p><%= label %> by: <%= actor %></p>
         <small><%= log.description || "No description available." %></small>
+    <% elsif log.action === "rescheduled" || log.action === "cancelled"%>
+        <p><%= log.description || "No description available." %></p>
+        <small><%= label %> by: <%= actor %></small>
     <% else %>
         <small><%= label %> by: <%= actor %></small>
     <% end %>

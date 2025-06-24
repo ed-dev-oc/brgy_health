@@ -92,7 +92,7 @@ class Admin::AppointmentsController < AdminController
       ActivityLog.create!(  
         user: current_user,
         action: "cancelled",
-        description: "Appointment Cancelled",
+        description: "Cancel reason: #{@appointment.cancel_reason}",
         loggable: @appointment
       )
       flash[:notice] = "Appointment was successfully cancelled."
@@ -104,20 +104,30 @@ class Admin::AppointmentsController < AdminController
   def flag_as_reschedule
     @appointment.flag_list.add("rescheduled")
 
-    if @appointment.update(reschedule_params)
+    current_schedule = @appointment.scheduled_at
+    @appointment.assign_attributes(reschedule_params)
+
+    if @appointment.scheduled_at.present?
+      description = "Change from #{current_schedule.strftime("%B %d, %Y %I:%M %p")} Change to #{@appointment.scheduled_at.strftime("%B %d, %Y %I:%M %p")}"
+    else
+      description = "Appointment was flagged as rescheduled."
+    end
+
+    if @appointment.save
       ActivityLog.create!(
         user: current_user,
         action: "rescheduled",
-        description: ,
+        description: description,
         loggable: @appointment
       )
-      flash[:notice] = "Appointment was successfully rescheduled."
 
+      flash[:notice] = "Appointment was successfully rescheduled."
       AppointmentRescheduleNotifier.with(record: @appointment).deliver(@appointment.patient)
     else
       flash[:alert] = "Appointment was not rescheduled."
     end
   end
+
 
   private
 
