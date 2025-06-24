@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_24_113852) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_24_141946) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -150,6 +150,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_113852) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 0
+    t.string "public_uid"
   end
 
   create_table "noticed_events", force: :cascade do |t|

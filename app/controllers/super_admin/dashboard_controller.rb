@@ -5,7 +5,7 @@ class SuperAdmin::DashboardController < SuperAdminController
     @total_tenants = Barangay.count
     @admin_unvalidated = User.tagged_with([ "require_validation" ]).count
     @total_testimonials = Testimonial.count
-    @total_reports = 0
+    @total_reports = IssueReport.count
     @users_per_region = User.joins(:barangay).group("barangays.region").count
   end
 

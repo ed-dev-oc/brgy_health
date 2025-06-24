@@ -1,0 +1,11 @@
+<%= turbo_stream.replace :flash do %>
+  <%= render FlashComponent.new(flash: flash) %>
+<% end %>
+
+<% if @issue_report.errors.empty? %>
+  <%= turbo_stream.action(:redirect, super_admin_issue_reports_path) %>
+<% else %>
+  <%= turbo_stream.update dom_id(@issue_report, "form"),
+    partial: "super_admin/issue_reports/status_update_form",
+    locals: { issue_report: @issue_report } %>
+<% end %>

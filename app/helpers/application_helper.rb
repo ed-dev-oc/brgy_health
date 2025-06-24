@@ -60,16 +60,18 @@ module ApplicationHelper
 
   def badge_status_class(status)
     case status.to_s
-    when "active", "visible", "follow_up_check_up"
+    when "active", "visible", "follow_up_check_up", "medium", "open"
       "text-bg-primary"
-    when "approved", "completed"
+    when "approved", "completed", "closed"
       "text-bg-success"
-    when "pending", "rescheduled", "waitlisted"
+    when "pending", "rescheduled", "waitlisted", "security", "high", "resolved"
       "text-bg-warning"
-    when "rejected", "canceled", "cancelled", "archived", "missed"
+    when "rejected", "canceled", "cancelled", "archived", "missed", "bug", "critical"
       "text-bg-danger"
-    when "draft", "inactive", "hidden"
+    when "draft", "inactive", "hidden", "low"
       "text-bg-secondary"
+    when "feature_request", "ui_ux", "in_progress"
+      "text-bg-info"
     else
       "text-bg-secondary"
     end

@@ -35,6 +35,11 @@
             <i class="bi bi-layout-text-window"></i>
             CMS
           <% end %>
+
+          <%= link_to super_admin_issue_reports_path, class: "nav-link text-white #{ navbar_link_status(super_admin_issue_reports_path)}" do %>
+            <i class="bi bi-exclamation-triangle"></i>
+            Issue Reports
+          <% end %>
         </li>
       </ul>
 
