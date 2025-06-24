@@ -104,3 +104,6 @@ gem "web-push", "~> 3.0"
 gem "chartkick", "~> 5.2"
 
 gem "groupdate", "~> 6.7"
+
+gem 'paper_trail'
+

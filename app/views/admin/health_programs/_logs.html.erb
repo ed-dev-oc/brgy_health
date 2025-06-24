@@ -1,0 +1,31 @@
+<div class="card-body">
+  <% versions.each do |version| %>
+    <% user = User.find_by(id: version.whodunnit) %>
+    <% changeset = version.changeset&.symbolize_keys || {} %>
+    <% timestamp = version.created_at.strftime("%B %d, %Y %I:%M %p") %>
+
+    <% if version.event == "update" && changeset.present? %>
+      <% changeset.each do |field, (old_val, new_val)| %>
+        <div class="border-start border-4 ps-3 mb-4 border-primary">
+         <div class="d-flex justify-content-between align-items-center">
+            <div class="fw-semibold"><%= field.to_s.humanize %> updated</div>
+            <div class="text-end text-muted small"><%= timestamp %></div>
+          </div>
+          <div class="text-muted small">
+            <%= field.to_s.humanize %> changed from <strong><%= old_val %></strong> to <strong><%= new_val %></strong>
+          </div>
+          <div class="text-muted small">Changed by: <%= user&.full_name || "Unknown" %></div>
+        </div>
+      <% end %>
+    <% elsif version.event == "create" %>
+      <div class="border-start border-4 ps-3 mb-4 border-primary">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="fw-semibold">Program created</div>
+            <div class="text-end text-muted small"><%= timestamp %></div>
+        </div>
+        <div class="text-muted small">Created by: <%= user&.full_name || 'Unknown' %></div>
+        <div class="text-muted small fst-italic">Initial status: <%= version.reify&.status || 'N/A' %></div>
+      </div>
+    <% end %>
+  <% end %>
+</div>

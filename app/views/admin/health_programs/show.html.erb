@@ -44,47 +44,15 @@
       <!-- Health Program Activity Log -->
       <div class="card mb-4">
         <div class="card-header fw-bold d-flex justify-content-between align-items-center">
-          Activity Log
-          <button class="btn btn-sm btn-outline-secondary" title="Refresh">
-            <i class="bi bi-arrow-clockwise"></i>
-          </button>
+          <span>Activity Log</span>
+          <%= link_to admin_health_program_path(@admin_health_program), class: "btn btn-sm btn-outline-secondary" do %>
+            <i class="bi bi-arrow-clockwise"></i> Refresh
+          <% end %>
         </div>
 
-        <div class="card-body">
+        <!--Logs -->
+        <%= render partial: "logs", locals: { versions: @versions } %>
 
-          <!-- Log Entry: Created -->
-          <div class="border-start border-4 ps-3 mb-4 border-primary">
-            <div class="fw-semibold">Program created</div>
-            <div class="text-muted small">Created by: Admin User</div>
-            <div class="text-muted small fst-italic">Initial status: Active</div>
-            <div class="text-end text-muted small">Today, 01:10 PM</div>
-          </div>
-
-          <!-- Log Entry: Updated -->
-          <div class="border-start border-4 ps-3 mb-4 border-primary">
-            <div class="fw-semibold">Details updated</div>
-            <div class="text-muted small">Changed name and description</div>
-            <div class="text-muted small">Updated by: Dr. Santos</div>
-            <div class="text-end text-muted small">Today, 02:45 PM</div>
-          </div>
-
-          <!-- Log Entry: Status Changed to Inactive -->
-          <div class="border-start border-4 ps-3 mb-4 border-primary">
-            <div class="fw-semibold">Deactivated</div>
-            <div class="text-muted small">Status changed from Active to Inactive</div>
-            <div class="text-muted small">Changed by: Admin User</div>
-            <div class="text-end text-muted small">Today, 03:30 PM</div>
-          </div>
-
-          <!-- Log Entry: Status Changed to Active -->
-          <div class="border-start border-4 ps-3 mb-2 border-primary">
-            <div class="fw-semibold">Reactivated</div>
-            <div class="text-muted small">Status changed from Inactive to Active</div>
-            <div class="text-muted small">Changed by: Super Admin</div>
-            <div class="text-end text-muted small">Today, 04:00 PM</div>
-          </div>
-
-        </div>
       </div>
 
 
