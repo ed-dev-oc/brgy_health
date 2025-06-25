@@ -4,6 +4,8 @@ class SuperAdmin::IssueReportsController < SuperAdminController
   def index
     @q = IssueReport.ransack(params[:q])
     @pagy, @issue_reports = pagy(@q.result(distinct: true))
+
+    current_user.notifications.where(type: "NewIssueReportNotifier::Notification").mark_as_read
   end
 
   def status_update

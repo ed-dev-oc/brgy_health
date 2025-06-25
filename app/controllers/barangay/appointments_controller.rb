@@ -9,6 +9,7 @@ class Barangay::AppointmentsController < BarangayController
   end
 
   def show
+    @appointment.notifications.where(recipient: current_user).mark_as_read
   end
 
   def create

@@ -11,14 +11,14 @@ class NotificationsController < ApplicationController
   end
 
   def read
-    @notifications = current_user.notifications.read
+    @notifications = current_user.notifications.read.newest_first
   end
 
   def unread
-    @notifications = current_user.notifications.unread
+    @notifications = current_user.notifications.unread.newest_first
   end
 
   def status
-    @notifications = current_user.notifications.unread
+    @notifications = current_user.notifications.unread.newest_first
   end
 end
