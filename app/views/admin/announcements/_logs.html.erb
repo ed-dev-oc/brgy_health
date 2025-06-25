@@ -28,12 +28,21 @@
 
             <% if field.to_s == "description" %>
               <div class="text-muted small">Description content was updated.</div>
+
             <% elsif field.to_s == "status" %>
               <% old_label = Announcement.statuses.key(old_val.to_i)&.humanize || old_val %>
               <% new_label = Announcement.statuses.key(new_val.to_i)&.humanize || new_val %>
               <div class="text-muted small">
                 Status changed from <strong><%= old_label %></strong> to <strong><%= new_label %></strong>
               </div>
+
+            <% elsif field.to_s == "health_program_id" %>
+              <% old_name = HealthProgram.find_by(id: old_val)&.name || "Unknown" %>
+              <% new_name = HealthProgram.find_by(id: new_val)&.name || "Unknown" %>
+              <div class="text-muted small">
+                Health Program changed from <strong><%= old_name %></strong> to <strong><%= new_name %></strong>
+              </div>
+
             <% else %>
               <div class="text-muted small">
                 Changed from <strong><%= old_val %></strong> to <strong><%= new_val %></strong>
