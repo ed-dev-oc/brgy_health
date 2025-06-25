@@ -1,7 +1,7 @@
 class Admin::AnnouncementsController < AdminController
-  before_action :set_announcement, only: [:show, :update, :archive, :appointment_details]
+  before_action :set_announcement, only: [ :show, :update, :archive, :appointment_details ]
 
-  # GET /admin/announcements
+  # GET /admin/announcements or /admin/announcements.json
   def index
     @q = Announcement.ransack(params[:q])
     @pagy, @announcements = pagy(@q.result(distinct: true))
@@ -9,13 +9,13 @@ class Admin::AnnouncementsController < AdminController
     @announcement.build_health_program
   end
 
-  # GET /admin/announcements/:id
+  # GET /admin/announcements/1 or /admin/announcements/1.json
   def show
     @versions = @announcement.versions.reorder(created_at: :desc)
     @view_logs = @announcement.views.order(created_at: :desc)
   end
 
-  # POST /admin/announcements
+  # POST /admin/announcements or /admin/announcements.json
   def create
     @announcement = Announcement.new(announcement_params)
 
@@ -26,7 +26,7 @@ class Admin::AnnouncementsController < AdminController
     end
   end
 
-  # PATCH/PUT /admin/announcements/:id
+  # PATCH/PUT /admin/announcements/1 or /admin/announcements/1.json
   def update
     if @announcement.update(announcement_params)
       flash[:notice] = "Announcement was successfully updated."
@@ -46,13 +46,14 @@ class Admin::AnnouncementsController < AdminController
   def appointment_details
     @q = @announcement.appointments.ransack(params[:q])
     @pagy, @appointments = pagy(@q.result(distinct: true).order(created_at: :desc), limit: 5)
+
     @capacity_percentage = @announcement.capacity_percentage
   end
 
   private
 
   def set_announcement
-    @announcement = Announcement.find_by_public_uid(params[:id])
+    @announcement = Announcement.find_by_public_uid(params.expect(:id))
 
     if @announcement.nil?
       redirect_to admin_announcements_path, status: :see_other, alert: "Announcement not found."
@@ -63,6 +64,7 @@ class Admin::AnnouncementsController < AdminController
   def announcement_params
     permitted = [
       :name,
+      :description,
       :start_date,
       :end_date,
       :open_time,
@@ -72,11 +74,10 @@ class Admin::AnnouncementsController < AdminController
       :audience,
       :status,
       :health_program_id,
-      health_program_attributes: [:name, :description, :status]
+      health_program_attributes: [ :name, :description, :status ]
     ]
 
-    # Include images only if not empty
-    permitted << { images: [] } unless params[:announcement][:images] == [""]
+    permitted << { images: [] } unless params[:announcement][:images] == [ "" ]
 
     params.require(:announcement).permit(permitted).merge(
       posted_by: current_user,
