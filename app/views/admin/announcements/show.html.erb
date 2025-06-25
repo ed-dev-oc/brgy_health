@@ -188,7 +188,7 @@
 
       <!-- Scrollable log body -->
       <div class="card-body" style="max-height: 300px; overflow-y: auto;">
-        <%= render partial: "logs", locals: { versions: @versions } %>
+        <%= render partial: "logs", locals: { versions: @versions, view_logs: @view_logs } %>
       </div>
     </div>
 

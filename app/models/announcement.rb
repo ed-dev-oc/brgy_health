@@ -7,6 +7,7 @@ class Announcement < ApplicationRecord
   belongs_to :health_program, optional: true
   accepts_nested_attributes_for :health_program, reject_if: :all_blank
 
+  has_many :views, class_name: "AnnouncementView", dependent: :destroy
   has_many :appointments
   has_rich_text :description
   has_many_attached :images

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_24_115334) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_25_130756) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -62,6 +62,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_115334) do
     t.datetime "updated_at", null: false
     t.index ["loggable_type", "loggable_id"], name: "index_activity_logs_on_loggable"
     t.index ["user_id"], name: "index_activity_logs_on_user_id"
+  end
+
+  create_table "announcement_views", force: :cascade do |t|
+    t.bigint "announcement_id", null: false
+    t.bigint "user_id"
+    t.string "ip_address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["announcement_id"], name: "index_announcement_views_on_announcement_id"
+    t.index ["user_id"], name: "index_announcement_views_on_user_id"
   end
 
   create_table "announcements", force: :cascade do |t|
@@ -293,6 +303,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_115334) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "activity_logs", "users"
+  add_foreign_key "announcement_views", "announcements"
+  add_foreign_key "announcement_views", "users"
   add_foreign_key "announcements", "barangays"
   add_foreign_key "announcements", "health_programs"
   add_foreign_key "announcements", "users", column: "posted_by_id"
