@@ -1,18 +1,17 @@
 class Announcement < ApplicationRecord
   generate_public_uid generator: PublicUid::Generators::NumberRandom.new
 
+  has_paper_trail save_changes: true
   acts_as_tenant :barangay
   belongs_to :posted_by, class_name: "User"
   belongs_to :health_program, optional: true
   accepts_nested_attributes_for :health_program, reject_if: :all_blank
 
   has_many :appointments
-  belongs_to :health_program, optional: true
-  accepts_nested_attributes_for :health_program, reject_if: :all_blank
-
-  enum :status, [ :draft, :active, :canceled, :completed, :archived ]
   has_rich_text :description
   has_many_attached :images
+
+  enum :status, [ :draft, :active, :canceled, :completed, :archived ]
 
   attribute :start_date, :datetime, default: -> { Time.current.change(hour: 9, minute: 0, second: 0) }
   attribute :end_date, :datetime, default: -> { Time.current.change(hour: 17, minute: 0, second: 0) }
@@ -26,6 +25,8 @@ class Announcement < ApplicationRecord
   validates :close_time, comparison: { greater_than: :open_time, message: "must be after the open time" }
   validates :max_patients, numericality: { only_integer: true, greater_than_or_equal_to: 1, message: "must be a positive whole number" }
   validate :images_presence, on: :create
+
+  after_save :track_rich_text_description_change
 
   def self.ransackable_attributes(auth_object = nil)
     [ "audience", "barangay_id", "close_time", "created_at", "end_date", "id", "location", "max_patients", "name", "open_time", "posted_by_id", "public_uid", "start_date", "status", "updated_at" ]
@@ -69,5 +70,20 @@ class Announcement < ApplicationRecord
 
   def images_presence
     errors.add(:images, "must have at least one image") if images.empty?
+  end
+
+  def track_rich_text_description_change
+    if previous_changes.blank? && description.saved_change_to_body?
+      PaperTrail.request(enabled: true) do
+        PaperTrail::Version.create!(
+          item: self,
+          event: 'update',
+          whodunnit: PaperTrail.request.whodunnit,
+          object_changes: {
+            description: [description.saved_change_to_body&.first.to_s, description.saved_change_to_body&.last.to_s]
+          }.to_yaml
+        )
+      end
+    end
   end
 end
