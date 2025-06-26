@@ -46,6 +46,8 @@ Rails.application.routes.draw do
         patch :archive
         get :appointment_details
       end
+
+      resources :appointment_reports, only: [ :index ]
     end
     resources :health_programs
 

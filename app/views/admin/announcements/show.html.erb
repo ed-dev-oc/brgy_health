@@ -128,6 +128,11 @@
             Edit Announcement
           </a>
 
+          <%= link_to admin_announcement_appointment_reports_path(@announcement.public_uid, format: :pdf), target: "_blank", class: "btn btn-outline-green-500" do %>
+            <i class="bi bi-file-earmark-pdf-fill"></i>
+            Download PDF Report
+          <% end %>
+
           <%= link_to appointment_details_admin_announcement_path(@announcement.public_uid), class: "btn btn-outline-info" do %>
             <i class="bi bi-calendar-event me-2"></i>View Appointments
           <% end %>
