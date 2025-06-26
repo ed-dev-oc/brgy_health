@@ -97,16 +97,19 @@
       </div>
 
       <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h6 class="mb-0">Activity Log</h6>
-          <button class="btn btn-sm btn-outline-secondary">
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+          <span>Activity Log</span>
+          <%= link_to admin_appointment_path(@appointment.public_uid), class: "btn btn-sm btn-outline-secondary" do %>
             <i class="bi bi-arrow-clockwise"></i>
-          </button>
+          <% end %>
         </div>
-        <div class="card-body">
-          <%= render partial: "logs" %>
+        <div class="card-body p-0">
+          <div style="max-height: 400px; overflow-y: auto;" class="p-3">
+            <%= render partial: "logs" %>
+          </div>
         </div>
       </div>
+
     </div>
 
     <div class="col-md-4">
