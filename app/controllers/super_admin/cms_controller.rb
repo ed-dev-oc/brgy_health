@@ -22,7 +22,7 @@ class SuperAdmin::CmsController < SuperAdminController
   end
 
   def set_pages
-    @pages = Page.where(barangay_id: nil)
+    @pages = Page.includes(:image_attachment, :rich_text_content).where(barangay_id: nil)
   end
 
   def set_page

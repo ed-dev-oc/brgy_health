@@ -10,7 +10,7 @@ class Admin::AppointmentsController < AdminController
     :announcement_capacity ]
 
   def index
-    @q = Appointment.ransack(params[:q])
+    @q = Appointment.includes(:announcement, :patient).ransack(params[:q])
     @pagy, @appointments = pagy(@q.result(distinct: true).order(created_at: :desc))
   end
 

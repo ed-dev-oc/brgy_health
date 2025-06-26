@@ -2,7 +2,7 @@ class SuperAdmin::IssueReportsController < SuperAdminController
   before_action :set_issue_report, only: [ :status_update ]
 
   def index
-    @q = IssueReport.ransack(params[:q])
+    @q = IssueReport.includes(:images_attachments).ransack(params[:q])
     @pagy, @issue_reports = pagy(@q.result(distinct: true))
 
     current_user.notifications.where(type: "NewIssueReportNotifier::Notification").mark_as_read

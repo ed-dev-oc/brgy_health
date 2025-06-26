@@ -18,7 +18,7 @@ class Barangay < ApplicationRecord
   after_create :generate_pages
 
   def admin_and_staff
-    users.where(role: [ :admin, :staff ])
+    users.includes(:taggings).where(role: [ :admin, :staff ])
   end
 
   def full_address

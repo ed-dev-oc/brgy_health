@@ -4,7 +4,7 @@ class Barangay::AppointmentsController < BarangayController
   before_action :set_appointment, only: %i[show cancel_schedule flag_as_reschedule]
 
   def index
-    @q = current_user.appointments.ransack(params[:q])
+    @q = current_user.appointments.includes(:announcement, :health_worker).ransack(params[:q])
     @pagy, @appointments = pagy(@q.result(distinct: true).order(created_at: :desc), limit: 5)
   end
 
