@@ -1,6 +1,7 @@
 class Appointment < ApplicationRecord
   generate_public_uid generator: PublicUid::Generators::NumberRandom.new
 
+  has_paper_trail save_changes: true
   acts_as_tenant :barangay
   belongs_to :announcement
   belongs_to :health_worker, optional: true, foreign_key: :health_worker_id, class_name: "User"

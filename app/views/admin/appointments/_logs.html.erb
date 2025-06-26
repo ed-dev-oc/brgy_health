@@ -1,0 +1,82 @@
+<% if @versions.present? %>
+  <% @versions.sort_by(&:created_at).reverse.each do |version| %>
+    <% user = User.find_by(id: version.whodunnit) %>
+    <% timestamp = version.created_at.strftime("%B %d, %Y %I:%M %p") %>
+    <% changeset = version.object_changes.present? ? YAML.safe_load(
+      version.object_changes,
+      permitted_classes: [Time, Date, Symbol],
+      aliases: true
+    ).symbolize_keys : {} %>
+
+    <% if version.event == "update" && changeset.present? %>
+      <% changeset.each do |field, (old_val, new_val)| %>
+        <% next if field.to_s == "updated_at" %>
+        <div class="border-start border-4 ps-3 mb-4 border-primary">
+          <div class="fw-semibold d-flex justify-content-between align-items-center">
+            <span><%= field.to_s.humanize %> Updated</span>
+            <small class="text-muted"><%= timestamp %></small>
+          </div>
+
+          <% case field.to_s %>
+          <% when "status" %>
+            <% old_label = Appointment.statuses.key(old_val.to_i)&.humanize || old_val %>
+            <% new_label = Appointment.statuses.key(new_val.to_i)&.humanize || new_val %>
+            <div class="text-muted small">
+              Status changed from <strong><%= old_label %></strong> to <strong><%= new_label %></strong>
+            </div>
+
+          <% when "health_worker_id" %>
+            <% old_worker = User.find_by(id: old_val)&.full_name || "Unknown" %>
+            <% new_worker = User.find_by(id: new_val)&.full_name || "Unknown" %>
+            <div class="text-muted small">
+              Assigned to <strong><%= new_worker %></strong>
+            </div>
+
+          <% when "scheduled_at" %>
+            <% formatted_old = Time.parse(old_val.to_s).in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") rescue old_val %>
+            <% formatted_new = Time.parse(new_val.to_s).in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") rescue new_val %>
+            <div class="text-muted small">
+              Changed from <strong><%= formatted_old %></strong> to <strong><%= formatted_new %></strong>
+            </div>
+
+          <% else %>
+            <div class="text-muted small">
+              Changed from <strong><%= old_val %></strong> to <strong><%= new_val %></strong>
+            </div>
+          <% end %>
+
+          <div class="text-muted small">
+            Changed by: <%= user&.full_name || "System" %>
+          </div>
+        </div>
+      <% end %>
+
+    <% elsif version.event == "create" %>
+      <% initial_attrs = version.object.present? ? YAML.safe_load(
+          version.object,
+          permitted_classes: [Time, Date, Symbol],
+          aliases: true
+        ) : {} %>
+      <% initial_attrs = initial_attrs.symbolize_keys if initial_attrs.respond_to?(:symbolize_keys) %>
+
+      <% initial_status = initial_attrs[:status] %>
+      <% readable_status = Appointment.statuses.key(initial_status.to_i)&.humanize || initial_status %>
+
+      <div class="border-start border-4 ps-3 mb-4 border-primary">
+        <div class="fw-semibold d-flex justify-content-between align-items-center">
+          <span>Record Created</span>
+          <small class="text-muted"><%= timestamp %></small>
+        </div>
+
+        <div class="text-muted small">
+          Initial status: <strong><%= readable_status %></strong>
+        </div>
+        <div class="text-muted small">
+          Created by: <%= user&.full_name || "System" %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+<% else %>
+  <p class="text-muted fst-italic">No activity logs available yet.</p>
+<% end %>
