@@ -1,59 +1,61 @@
-<div class="card" id="<%= dom_id(announcement, "card") %>">
-  <div class="card-body">
-    <h5 class="card-title text-green-600"><%= announcement.name %></h5>
+<% cache(announcement) do %>
+  <div class="card" id="<%= dom_id(announcement, "card") %>">
+    <div class="card-body">
+      <h5 class="card-title text-green-600"><%= announcement.name %></h5>
 
-    <div class="card-attributes grid grid-cols-2 gap-2 mt-4">
-      <!-- Health Program -->
-      <div class="flex items-center">
-        <i class="bi bi-heart-pulse text-green-600 mr-2"></i>
-        <span class="text-sm">
-          <strong>Program:</strong>
-          <span><%= announcement.health_program.name %></span>
-        </span>
+      <div class="card-attributes grid grid-cols-2 gap-2 mt-4">
+        <!-- Health Program -->
+        <div class="flex items-center">
+          <i class="bi bi-heart-pulse text-green-600 mr-2"></i>
+          <span class="text-sm">
+            <strong>Program:</strong>
+            <span><%= announcement.health_program.name %></span>
+          </span>
+        </div>
+
+        <!-- Date Range -->
+        <div class="flex items-center">
+          <i class="bi bi-calendar-range text-green-600 mr-2"></i>
+          <span class="text-sm">
+            <strong>Schedule:</strong>
+            <span><%= announcement.start_date.strftime("%Y-%m-%d") %></span> to <span><%= announcement.end_date.strftime("%Y-%m-%d") %></span>
+          </span>
+        </div>
+
+        <!-- Time Range -->
+        <div class="flex items-center">
+          <i class="bi bi-clock text-green-600 mr-2"></i>
+          <span class="text-sm">
+            <strong>Time:</strong>
+            <span><%= announcement.open_time.strftime("%I:%M %p") %></span> - <span><%= announcement.open_time.strftime("%I:%M %p") %></span>
+          </span>
+        </div>
+
+        <!-- Location -->
+        <div class="flex items-center">
+          <i class="bi bi-geo-alt text-green-600 mr-2"></i>
+          <strong>Location:</strong>
+          <span class="text-sm">
+            <span><%= announcement.location %></span>
+          </span>
+        </div>
+
+        <!-- Audience -->
+        <div class="flex items-center">
+          <i class="bi bi-people text-green-600 mr-2"></i>
+          <strong>For:</strong>
+          <span class="text-sm">
+            <span><%= announcement.audience.titleize %></span>
+          </span>
+        </div>
       </div>
 
-      <!-- Date Range -->
-      <div class="flex items-center">
-        <i class="bi bi-calendar-range text-green-600 mr-2"></i>
-        <span class="text-sm">
-          <strong>Schedule:</strong>
-          <span><%= announcement.start_date.strftime("%Y-%m-%d") %></span> to <span><%= announcement.end_date.strftime("%Y-%m-%d") %></span>
-        </span>
+      <div class="text-end mt-4">
+        <%= link_to announcement_path(announcement.public_uid), class: "btn btn-outline-green-600", data: { turbo: :false } do %>
+          <i class="bi bi-eye mr-2"></i>
+          View Details
+        <% end %>
       </div>
-
-      <!-- Time Range -->
-      <div class="flex items-center">
-        <i class="bi bi-clock text-green-600 mr-2"></i>
-        <span class="text-sm">
-          <strong>Time:</strong>
-          <span><%= announcement.open_time.strftime("%I:%M %p") %></span> - <span><%= announcement.open_time.strftime("%I:%M %p") %></span>
-        </span>
-      </div>
-
-      <!-- Location -->
-      <div class="flex items-center">
-        <i class="bi bi-geo-alt text-green-600 mr-2"></i>
-        <strong>Location:</strong>
-        <span class="text-sm">
-          <span><%= announcement.location %></span>
-        </span>
-      </div>
-
-      <!-- Audience -->
-      <div class="flex items-center">
-        <i class="bi bi-people text-green-600 mr-2"></i>
-        <strong>For:</strong>
-        <span class="text-sm">
-          <span><%= announcement.audience.titleize %></span>
-        </span>
-      </div>
-    </div>
-
-    <div class="text-end mt-4">
-      <%= link_to announcement_path(announcement.public_uid), class: "btn btn-outline-green-600", data: { turbo: :false } do %>
-        <i class="bi bi-eye mr-2"></i>
-        View Details
-      <% end %>
     </div>
   </div>
-</div>
+<% end %>
