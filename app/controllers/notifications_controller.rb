@@ -2,7 +2,7 @@ class NotificationsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @notifications = current_user.notifications.newest_first
+    @notifications = current_user.notifications.includes(:event).newest_first
   end
 
   def mark_all_as_read

@@ -63,6 +63,7 @@ group :development do
 
   gem "letter_opener_web", "~> 3.0"
   gem "bullet", "~> 8.0"
+  gem "rack-mini-profiler", "~> 4.0"
 end
 
 group :test do
