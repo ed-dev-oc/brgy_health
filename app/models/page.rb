@@ -1,15 +1,27 @@
 class Page < ApplicationRecord
   acts_as_tenant :barangay, optional: true
 
-  has_many :noticed_events, as: :record, dependent: :destroy, class_name: "Noticed::Event"
-  has_many :notifications, through: :noticed_events, class_name: "Noticed::Notification"
+  has_paper_trail save_changes: true
 
   has_one_attached :image
   has_rich_text :content
-  enum :section, [ :homepage_hero_banner, :about_us, :contact_us, :privacy_policy, :terms_of_use ]
+
+  enum :section, [:homepage_hero_banner, :about_us, :contact_us, :privacy_policy, :terms_of_use]
 
   validates :title, :subheadline, :section, presence: true
-  validates :image, presence: true, if: -> { self.section == "homepage_hero_banner" }
-  validates :content, presence: true, unless: -> { self.section == "homepage_hero_banner" }
-  validates :latitude, :longitude, numericality: true, presence: true, if: -> { self.section == "contact_us" }
+  validates :image, presence: true, if: -> { section == "homepage_hero_banner" }
+  validates :content, presence: true, unless: -> { section == "homepage_hero_banner" }
+  validates :latitude, :longitude, numericality: true, presence: true, if: -> { section == "contact_us" }
+
+  before_save :update_image_timestamp, if: :should_update_image_timestamp?
+
+  private
+
+  def should_update_image_timestamp?
+    image.attached? && (image.attachment.new_record? || image.blob.new_record?)
+  end
+
+  def update_image_timestamp
+    self.image_updated_at = Time.current
+  end
 end

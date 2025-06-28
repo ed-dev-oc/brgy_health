@@ -1,0 +1,39 @@
+<% if versions.present? %>
+  <% versions.each do |version| %>
+    <% user = User.find_by(id: version.whodunnit) %>
+    <% timestamp = version.created_at.in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") %>
+    <% changeset = version.object_changes.present? ? YAML.safe_load(version.object_changes, permitted_classes: [Time, Date, Symbol], aliases: true).symbolize_keys : {} %>
+
+    <% if version.event == "update" && changeset.present? %>
+      <% changeset.each do |field, (old_val, new_val)| %>
+        <% next if field.to_s == "updated_at" %>
+        <div class="border-start border-4 ps-3 mb-4 border-primary">
+          <div class="fw-semibold d-flex justify-content-between">
+            <span><%= field.to_s.humanize %> Updated</span>
+            <small class="text-muted"><%= timestamp %></small>
+          </div>
+
+          <% if field.to_s == "image_updated_at" %>
+            <div class="text-muted small">Hero banner image updated.</div>
+          <% else %>
+            <div class="text-muted small">
+              Changed from <strong><%= old_val %></strong> to <strong><%= new_val %></strong>
+            </div>
+          <% end %>
+
+          <div class="text-muted small">Changed by: <%= user&.full_name || "System" %></div>
+        </div>
+      <% end %>
+    <% elsif version.event == "create" %>
+      <div class="border-start border-4 ps-3 mb-4 border-primary">
+        <div class="fw-semibold d-flex justify-content-between">
+          <span>Page Created</span>
+          <small class="text-muted"><%= timestamp %></small>
+        </div>
+        <div class="text-muted small">Created by: <%= user&.full_name || "System" %></div>
+      </div>
+    <% end %>
+  <% end %>
+<% else %>
+  <p class="text-muted fst-italic">No activity logs available yet.</p>
+<% end %>
