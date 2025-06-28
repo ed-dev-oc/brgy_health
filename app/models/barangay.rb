@@ -6,6 +6,7 @@ class Barangay < ApplicationRecord
   has_many :users
   has_many :health_programs
   has_many :testimonials
+  has_many :pages
 
   acts_as_taggable_on :flags
 
