@@ -27,8 +27,6 @@ class Announcement < ApplicationRecord
   validates :max_patients, numericality: { only_integer: true, greater_than_or_equal_to: 1, message: "must be a positive whole number" }
   validate :images_presence, on: :create
 
-  after_save :track_rich_text_description_change
-
   def self.ransackable_attributes(auth_object = nil)
     [ "audience", "barangay_id", "close_time", "created_at", "end_date", "id", "location", "max_patients", "name", "open_time", "posted_by_id", "public_uid", "start_date", "status", "updated_at" ]
   end
@@ -71,20 +69,5 @@ class Announcement < ApplicationRecord
 
   def images_presence
     errors.add(:images, "must have at least one image") if images.empty?
-  end
-
-  def track_rich_text_description_change
-    if previous_changes.blank? && description.saved_change_to_body?
-      PaperTrail.request(enabled: true) do
-        PaperTrail::Version.create!(
-          item: self,
-          event: 'update',
-          whodunnit: PaperTrail.request.whodunnit,
-          object_changes: {
-            description: [description.saved_change_to_body&.first.to_s, description.saved_change_to_body&.last.to_s]
-          }.to_yaml
-        )
-      end
-    end
   end
 end

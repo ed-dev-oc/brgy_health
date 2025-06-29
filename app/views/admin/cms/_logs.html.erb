@@ -15,6 +15,9 @@
 
           <% if field.to_s == "image_updated_at" %>
             <div class="text-muted small">Hero banner image updated.</div>
+          <% elsif field.to_s == "content" %>
+            <div class="text-muted small">From: <%= truncate(strip_tags(old_val), length: 80) %></div>
+            <div class="text-muted small">To: <%= truncate(strip_tags(new_val), length: 80) %></div>
           <% else %>
             <div class="text-muted small">
               Changed from <strong><%= old_val %></strong> to <strong><%= new_val %></strong>
