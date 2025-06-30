@@ -21,6 +21,7 @@ class Barangay::AnnouncementsController < BarangayController
     end
   end
 
+
   def log_announcement_view
     ip = request.remote_ip
 

@@ -5,11 +5,16 @@
     <% if log.is_a?(PaperTrail::Version) %>
       <% user = User.find_by(id: log.whodunnit) %>
       <% timestamp = log.created_at.strftime("%B %d, %Y %I:%M %p") %>
-      <% changeset = log.object_changes.present? ? YAML.safe_load(
-          log.object_changes,
-          permitted_classes: [Time, Date, Symbol],
-          aliases: true
-        ).symbolize_keys : {} %>
+      <% changeset = begin
+          log.object_changes.present? ? YAML.safe_load(
+            log.object_changes,
+            permitted_classes: [Time, Date, Symbol, ActiveSupport::TimeWithZone, ActiveRecord::Type::Time::Value],
+            aliases: true
+          ).symbolize_keys : {}
+        rescue Psych::DisallowedClass => e
+          Rails.logger.warn "YAML load error: #{e.message}"
+          {}
+        end %>
 
       <% if log.event == "update" && changeset.present? %>
         <% changeset.each do |field, (old_val, new_val)| %>
@@ -57,7 +62,7 @@
       <% elsif log.event == "create" %>
         <div class="border-start border-4 ps-3 mb-4 border-primary">
           <div class="fw-semibold d-flex justify-content-between align-items-center">
-            <span>Record Created</span>
+            <span>Announcement Created</span>
             <small class="text-muted"><%= timestamp %></small>
           </div>
           <div class="text-muted small">Created by: <%= user&.full_name || "System" %></div>

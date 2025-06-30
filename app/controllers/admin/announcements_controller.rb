@@ -12,7 +12,7 @@ class Admin::AnnouncementsController < AdminController
   # GET /admin/announcements/1 or /admin/announcements/1.json
   def show
     @versions = @announcement.versions.reorder(created_at: :desc)
-    @view_logs = @announcement.views.order(created_at: :desc)
+    @view_logs = @announcement.views.where.not(created_at: nil).order(created_at: :desc)
   end
 
   # POST /admin/announcements or /admin/announcements.json
