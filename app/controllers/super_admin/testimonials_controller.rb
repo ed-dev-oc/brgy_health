@@ -30,6 +30,8 @@ module SuperAdmin
       end
 
       @pagy, @testimonials = pagy(@testimonials.order(created_at: :desc))
+
+      current_user.notifications.where(type: "NewTestimonialNotifier::Notification").mark_as_read
     end
 
 

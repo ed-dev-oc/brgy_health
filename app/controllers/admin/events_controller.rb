@@ -2,7 +2,7 @@ class Admin::EventsController < AdminController
   before_action :set_event, only: [ :update, :archive ]
 
   def index
-    @q = Event.ransack(params[:q])
+    @q = Event.includes(:posted_by, :rich_text_description, :images_attachments).ransack(params[:q])
     @pagy, @events = pagy(@q.result(distinct: true))
 
     @event = Event.new

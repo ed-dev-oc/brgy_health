@@ -1,0 +1,147 @@
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+  }
+  .header {
+      text-align: center;
+      margin-bottom: 20px;
+  }
+  .header h1 {
+      color: #2c3e50;
+      margin-bottom: 5px;
+  }
+  .report-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+  }
+  table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 0.9em;
+  }
+  th {
+      background-color: #3498db;
+      color: white;
+      text-align: left;
+      padding: 10px;
+      position: sticky;
+      top: 0;
+  }
+  td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #ddd;
+  }
+  tr:nth-child(even) {
+      background-color: #f2f2f2;
+  }
+  tr:hover {
+      background-color: #e6f7ff;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.35rem;
+    color: #fff;
+    text-align: center;
+    vertical-align: baseline;
+    white-space: nowrap;
+    text-transform: capitalize;
+  }
+
+  .text-bg-primary {
+    background-color: #0d6efd;
+  }
+
+  .text-bg-success {
+    background-color: #198754;
+  }
+
+  .text-bg-warning {
+    background-color: #ffc107;
+    color: #212529; /* dark text on yellow */
+  }
+
+  .text-bg-danger {
+    background-color: #dc3545;
+  }
+
+  .text-bg-secondary {
+    background-color: #6c757d;
+  }
+
+  .text-bg-info {
+    background-color: #0dcaf0;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.8em;
+    color: #7f8c8d;
+    padding-top: 10px;
+  }
+  .compact {
+    white-space: nowrap;
+  }
+</style>
+
+<div class="header">
+  <h1>Appointments Report</h1>
+  <p>Health Management System</p>
+</div>
+
+<div class="report-info">
+  <div><strong>Generated on:</strong> <%= Time.current.strftime("%B %d, %Y at %I:%M %p") %></div>
+  <div><strong>Total Appointments:</strong> <%= @appointments.size %></div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Appointment ID</th>
+      <th>Date/Time</th>
+      <th>Status</th>
+      <th>Patient</th>
+      <th>Health Worker</th>
+      <th>Barangay</th>
+      <th>Service</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @appointments.each do |a| %>
+      <tr>
+        <td><%= a.row_num %></td>
+        <td><%= a.public_uid %></td>
+        <td class="compact">
+          <%= a.scheduled_at.strftime("%b %d, %Y") %><br>
+          <%= a.scheduled_at.strftime("%I:%M %p") %>
+        </td>
+        <td>
+          <span class="badge <%= badge_status_class(a.status) %>"><%= a.status.titleize %></span>
+        </td>
+        <td>
+          <strong>
+            <%= [a.patient_first_name, a.patient_middle_name, a.patient_last_name, a.patient_suffix].compact.join(" ") %>
+          </strong><br>
+          <%= a.patient_email %><br>
+          <%= a.patient_phone_number %>
+        </td>
+        <td>
+          <strong>
+            <%= [a.health_worker_first_name, a.health_worker_middle_name, a.health_worker_last_name, a.health_worker_suffix].compact.join(" ") %>
+          </strong><br>
+          <%= a.health_worker_email %>
+        </td>
+        <td><%= a.barangay.full_address %></td>
+        <td><%= a.announcement_name %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,63 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><i class="bi bi-bug-fill me-2"></i>Issue Management</h1>
+  <div>
+    <%= search_form_for @q, url: super_admin_issue_reports_path, method: :get, class: "d-flex gap-2" do |f| %>
+      <%= f.select :status_eq, IssueReport.statuses.map { |key, value| [key.titleize, value] }, { include_blank: "All Status" }, { class: "form-select" } %>
+
+      <div class="text-end">
+        <button class="btn btn-green-600" type="submit" style="min-width: 150px;">Filter</button>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card table-responsive" style="min-height: 50vh;">
+  <div class="card-body">
+    <table class="table table-striped table-hover align-middle caption-top">
+      <caption>List of issue reports</caption>
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">TITLE</th>
+          <th scope="col">TYPE</th>
+          <th scope="col">PRIORITY</th>
+          <th scope="col">STATUS</th>
+          <th scope="col">REPORTED BY</th>
+          <th scope="col">DATE REPORTED</th>
+          <th scope="col">ACTION</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @issue_reports.each do |issue_report| %>
+          <tr>
+            <td><%= issue_report.public_uid %></td>
+            <td><%= issue_report.title %></td>
+            <td><span class="badge <%= badge_status_class(issue_report.issue_type)%>"><%= issue_report.issue_type.titleize %></span></td>
+            <td><span class="badge <%= badge_status_class(issue_report.priority)%>"><%= issue_report.priority.titleize %></span></td>
+            <td>
+              <span class="badge <%= badge_status_class(issue_report.status)%>"><%= issue_report.status.titleize %></span>
+              <button class="btn btn-sm btn-outline-green-500" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </button>
+              <ul class="dropdown-menu p-4 shadow dropdown-menu-end">
+                <%= turbo_frame_tag dom_id(issue_report, "status_form") do %>
+                  <%= render partial: "super_admin/issue_reports/status_update_form", locals: { issue_report: issue_report } %>
+                <% end %>
+              </ul>
+            </td>
+            <td><%= issue_report.email %></td>
+            <td><%= issue_report.created_at.strftime("%B %d, %Y - %I:%M %p") %></td>
+            <td>
+              <%= link_to "#", class: "btn btn-outline-primary btn-sm", data: { bs_toggle: "modal", bs_target: "##{dom_id(issue_report, "view_modal")}"} do %>
+                <i class="bi bi-eye"></i>
+              <% end %>
+              <%= render partial: "super_admin/issue_reports/view_modal", locals: { issue_report: issue_report } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
+  </div>
+</div>

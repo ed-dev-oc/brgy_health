@@ -4,7 +4,7 @@ class Admin::UsersController < AdminController
   before_action :set_user, only: [ :edit, :update, :show, :toggle_status, :medical_records ]
 
   def index
-    @q = User.ransack(params[:q])
+    @q = User.includes(:taggings).ransack(params[:q])
     users = @q.result
 
     if params[:status].present?

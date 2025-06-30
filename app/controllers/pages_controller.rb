@@ -1,6 +1,8 @@
 class PagesController < ApplicationController
   def home
     @hero_banner = Page.find_by(barangay_id: nil, section: "homepage_hero_banner")
+    @testimonials = Testimonial.visible.includes(user: [ :profile_attachment ]).order(created_at: :desc)
+    @barangays = Barangay.all
   end
 
   def show

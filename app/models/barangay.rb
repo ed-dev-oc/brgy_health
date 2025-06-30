@@ -6,6 +6,7 @@ class Barangay < ApplicationRecord
   has_many :users
   has_many :health_programs
   has_many :testimonials
+  has_many :pages
 
   acts_as_taggable_on :flags
 
@@ -18,7 +19,7 @@ class Barangay < ApplicationRecord
   after_create :generate_pages
 
   def admin_and_staff
-    users.where(role: [ :admin, :staff ])
+    users.includes(:taggings).where(role: [ :admin, :staff ])
   end
 
   def full_address

@@ -39,7 +39,7 @@ class AppointmentReminderNotifier < ApplicationNotifier
     end
 
     def url
-      announcement_path(record.announcement.public_uid)
+      appointment_path(record.public_uid)
     end
   end
 end

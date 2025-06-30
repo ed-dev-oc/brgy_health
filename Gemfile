@@ -62,6 +62,8 @@ group :development do
   gem "web-console"
 
   gem "letter_opener_web", "~> 3.0"
+  gem "bullet", "~> 8.0"
+  gem "rack-mini-profiler", "~> 4.0"
 end
 
 group :test do
@@ -107,3 +109,6 @@ gem "groupdate", "~> 6.7"
 
 gem 'paper_trail'
 
+gem "scenic", "~> 1.8"
+
+gem "grover", "~> 1.2"

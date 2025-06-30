@@ -46,6 +46,8 @@ Rails.application.routes.draw do
         patch :archive
         get :appointment_details
       end
+
+      resources :appointment_reports, only: [ :index ]
     end
     resources :health_programs
 
@@ -112,7 +114,14 @@ Rails.application.routes.draw do
     resources :cms, only: [ :index, :update ]
 
     resources :barangays, only: [ :index, :show ]
+
+    resources :issue_reports, only: [ :index ] do
+      member do
+        patch :status_update
+      end
+    end
   end
 
   get "/:page", to: "pages#show", as: :main_page
+  resources :issue_reports, only: [ :create ]
 end

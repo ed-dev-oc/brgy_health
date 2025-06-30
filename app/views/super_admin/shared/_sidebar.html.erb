@@ -2,7 +2,7 @@
   <div class="collapse show collapse-horizontal h-100" id="collapseWidthExample">
     <div class="d-flex flex-column p-3 text-bg-dark h-100" style="width: 280px;">
       <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-        <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+        <%= image_tag("logo_no_background.png", class: "d-inline-block align-text-top me-2", alt: "Logo", height: 40) %>
 
         <span class="fs-4"><%= current_user.role.titleize %> Panel</span>
       </a>
@@ -35,6 +35,11 @@
             <i class="bi bi-layout-text-window"></i>
             CMS
           <% end %>
+
+          <%= link_to super_admin_issue_reports_path, class: "nav-link text-white #{ navbar_link_status(super_admin_issue_reports_path)}" do %>
+            <i class="bi bi-exclamation-triangle"></i>
+            Issue Reports
+          <% end %>
         </li>
       </ul>
 
@@ -42,7 +47,8 @@
 
       <div class="dropdown">
         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="" width="32" height="32" class="rounded-circle me-2">
+          <%= image_tag(profile_url(current_user), class: "rounded-circle me-2", size: "32x32")  %>
+
           <strong><%= current_user.full_name %></strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow">

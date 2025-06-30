@@ -93,6 +93,9 @@ GEM
     brakeman (7.0.2)
       racc
     builder (3.3.0)
+    bullet (8.0.8)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     capybara (3.40.0)
       addressable
       matrix
@@ -147,6 +150,8 @@ GEM
       activesupport (>= 6.1)
     groupdate (6.7.0)
       activesupport (>= 7.1)
+    grover (1.2.3)
+      nokogiri (~> 1)
     htmlbeautifier (1.4.3)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
@@ -287,6 +292,8 @@ GEM
     raabro (1.4.0)
     racc (1.8.1)
     rack (3.1.12)
+    rack-mini-profiler (4.0.0)
+      rack (>= 1.2.0)
     rack-session (2.1.0)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -401,6 +408,9 @@ GEM
       ffi (~> 1.12)
       logger
     rubyzip (2.4.1)
+    scenic (1.8.0)
+      activerecord (>= 4.0.0)
+      railties (>= 4.0.0)
     securerandom (0.4.1)
     selenium-webdriver (4.31.0)
       base64 (~> 0.2)
@@ -452,6 +462,7 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    uniform_notifier (1.17.0)
     uri (1.0.3)
     useragent (0.16.11)
     view_component (3.21.0)
@@ -494,6 +505,7 @@ DEPENDENCIES
   acts_as_tenant (~> 1.0)
   bootsnap
   brakeman
+  bullet (~> 8.0)
   capybara
   chartkick (~> 5.2)
   cssbundling-rails
@@ -502,6 +514,7 @@ DEPENDENCIES
   devise (~> 4.9)
   friendly_id (~> 5.5)
   groupdate (~> 6.7)
+  grover (~> 1.2)
   htmlbeautifier (~> 1.4)
   image_processing (~> 1.2)
   jbuilder
@@ -517,12 +530,14 @@ DEPENDENCIES
   propshaft
   public_uid (~> 2.2)
   puma (>= 5.0)
+  rack-mini-profiler (~> 4.0)
   rails (~> 8.0.2)
   rails-controller-testing (~> 1.0)
   ransack (~> 4.3)
   rspec-rails (~> 7.0.0)
   rubocop-rails-omakase
   ruby-lsp (~> 0.23.14)
+  scenic (~> 1.8)
   selenium-webdriver
   shoulda-matchers (~> 5.0)
   solid_cable

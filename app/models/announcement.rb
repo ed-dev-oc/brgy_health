@@ -9,10 +9,13 @@ class Announcement < ApplicationRecord
 
   has_many :views, class_name: "AnnouncementView", dependent: :destroy
   has_many :appointments
-  has_rich_text :description
-  has_many_attached :images
+  has_many :appointment_reports
+  belongs_to :health_program, optional: true
+  accepts_nested_attributes_for :health_program, reject_if: :all_blank
 
   enum :status, [ :draft, :active, :canceled, :completed, :archived ]
+  has_rich_text :description
+  has_many_attached :images
 
   attribute :start_date, :datetime, default: -> { Time.current.change(hour: 9, minute: 0, second: 0) }
   attribute :end_date, :datetime, default: -> { Time.current.change(hour: 17, minute: 0, second: 0) }

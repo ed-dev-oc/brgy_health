@@ -1,0 +1,20 @@
+<%= form_with(model: issue_report, url: status_update_super_admin_issue_report_path(issue_report.public_uid)) do |form| %>
+  <% if issue_report.errors.any? %>
+    <div class="text-danger">
+      <ul>
+        <% issue_report.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :status, class: "form-label" %>
+    <%= form.select :status, IssueReport.statuses.map { |key, value| [key.titleize, key] }, { prompt: "Select a audience" }, { class: "form-select", required: true } %>
+  </div>
+  <hr class="dropdown-divider">
+  <div class="text-center">
+    <%= form.submit "Save Status", class: "btn btn-sm btn-primary", data: { turbo_submits_with: "Submitting..." } %>
+  </div>
+<% end %>

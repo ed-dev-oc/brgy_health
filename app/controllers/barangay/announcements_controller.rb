@@ -2,7 +2,7 @@ class Barangay::AnnouncementsController < BarangayController
   before_action :set_announcement, only: [:show]
 
   def index
-    @announcements = Announcement.active
+    @announcements = Announcement.includes(:health_program).active
   end
 
   def show

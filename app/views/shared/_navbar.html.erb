@@ -6,7 +6,7 @@
       </button>
     <% else %>
       <%= link_to root_path(subdomain: ActsAsTenant.current_tenant&.subdomain), class: "navbar-brand" do %>
-        <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+        <%= image_tag("logo_no_background.png", class: "d-inline-block align-text-top", alt: "Logo", height: 30) %>
 
         <%= navbar_title %>
       <% end %>

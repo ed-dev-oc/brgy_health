@@ -2,7 +2,7 @@ class SuperAdmin::UsersController < SuperAdminController
   before_action :set_user, only: [ :show, :validated ]
 
   def index
-    @q = User.ransack(params[:q])
+    @q = User.includes(:barangay, :taggings).ransack(params[:q])
     @pagy, @users = pagy(@q.result(distinct: true))
   end
 

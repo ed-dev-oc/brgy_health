@@ -2,7 +2,7 @@ class NotificationsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @notifications = current_user.notifications.newest_first
+    @notifications = current_user.notifications.includes(:event).newest_first
   end
 
   def mark_all_as_read
@@ -11,14 +11,14 @@ class NotificationsController < ApplicationController
   end
 
   def read
-    @notifications = current_user.notifications.read
+    @notifications = current_user.notifications.read.newest_first
   end
 
   def unread
-    @notifications = current_user.notifications.unread
+    @notifications = current_user.notifications.unread.newest_first
   end
 
   def status
-    @notifications = current_user.notifications.unread
+    @notifications = current_user.notifications.unread.newest_first
   end
 end
