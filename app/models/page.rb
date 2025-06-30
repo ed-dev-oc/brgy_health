@@ -6,6 +6,9 @@ class Page < ApplicationRecord
   has_one_attached :image
   has_rich_text :content
 
+  has_many :noticed_events, as: :record, dependent: :destroy, class_name: "Noticed::Event"
+  has_many :notifications, through: :noticed_events, class_name: "Noticed::Notification"
+
   enum :section, [ :homepage_hero_banner, :about_us, :contact_us, :privacy_policy, :terms_of_use ]
 
   validates :title, :subheadline, :section, presence: true
@@ -25,3 +28,4 @@ class Page < ApplicationRecord
     self.image_updated_at = Time.current
   end
 end
+
