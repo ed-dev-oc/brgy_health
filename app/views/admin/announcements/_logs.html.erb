@@ -44,8 +44,10 @@
               </div>
 
             <% else %>
+              <% formatted_old = Time.parse(old_val.to_s).in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") rescue old_val %>
+              <% formatted_new = Time.parse(new_val.to_s).in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") rescue new_val %>
               <div class="text-muted small">
-                Changed from <strong><%= old_val %></strong> to <strong><%= new_val %></strong>
+                Changed from <strong><%= formatted_old %></strong> to <strong><%= formatted_new %></strong>
               </div>
             <% end %>
 
