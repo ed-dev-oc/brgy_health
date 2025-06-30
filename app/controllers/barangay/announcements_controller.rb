@@ -23,10 +23,16 @@ class Barangay::AnnouncementsController < BarangayController
 
 
   def log_announcement_view
-    ip = request.remote_ip
-
-    unless @announcement.views.exists?(ip_address: ip)
-      @announcement.views.create(user: current_user, ip_address: ip)
+  if current_user
+    unless @announcement.views.exists?(user_id: current_user.id)
+      @announcement.views.create(user: current_user, ip_address: request.remote_ip)
+    end
+  else
+    # fallback for guests (tracked by IP)
+    unless @announcement.views.exists?(user_id: nil, ip_address: request.remote_ip)
+      @announcement.views.create(user: nil, ip_address: request.remote_ip)
     end
   end
+end
+
 end
