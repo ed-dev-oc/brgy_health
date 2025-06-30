@@ -18,7 +18,7 @@ class Admin::AppointmentsController < AdminController
     if @appointment.completed?
       @new_appointment = Appointment.new
     end
-    
+
     @versions = @appointment.versions.reorder(created_at: :desc)
     @appointment.notifications.where(recipient: current_user).mark_as_read
   end

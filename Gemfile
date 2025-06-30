@@ -107,7 +107,7 @@ gem "chartkick", "~> 5.2"
 
 gem "groupdate", "~> 6.7"
 
-gem 'paper_trail'
+gem "paper_trail"
 
 gem "scenic", "~> 1.8"
 

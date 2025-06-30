@@ -6,7 +6,7 @@ class Page < ApplicationRecord
   has_one_attached :image
   has_rich_text :content
 
-  enum :section, [:homepage_hero_banner, :about_us, :contact_us, :privacy_policy, :terms_of_use]
+  enum :section, [ :homepage_hero_banner, :about_us, :contact_us, :privacy_policy, :terms_of_use ]
 
   validates :title, :subheadline, :section, presence: true
   validates :image, presence: true, if: -> { section == "homepage_hero_banner" }

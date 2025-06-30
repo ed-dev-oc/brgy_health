@@ -13,12 +13,12 @@ Rails.application.config.to_prepare do
 
       version = PaperTrail::Version.new(
         item: model,
-        event: 'update',
+        event: "update",
         whodunnit: PaperTrail.request.whodunnit
       )
 
       version.object_changes = {
-        field_name => [saved_change_to_body.first.to_s, saved_change_to_body.last.to_s]
+        field_name => [ saved_change_to_body.first.to_s, saved_change_to_body.last.to_s ]
       }.to_yaml
 
       version.save!
