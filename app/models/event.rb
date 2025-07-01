@@ -1,6 +1,7 @@
 class Event < ApplicationRecord
   generate_public_uid generator: PublicUid::Generators::NumberRandom.new
 
+  has_paper_trail save_changes: true
   acts_as_tenant :barangay
   belongs_to :posted_by, class_name: "User"
   has_rich_text :description
@@ -25,6 +26,7 @@ class Event < ApplicationRecord
   validates :name, :location, :start_date, :end_date, :description, presence: true
   validate :images_presence, on: :create
 
+  before_save :update_image_timestamp, if: :should_update_image_timestamp?
   after_create :send_patient_notification
 
   ransacker :full_name do |parent|
@@ -52,4 +54,13 @@ class Event < ApplicationRecord
 
     NewEventNotifier.with(record: self).deliver(patients)
   end
+
+  def should_update_image_timestamp?
+  images.attachments.any?(&:new_record?)
+  end
+
+  def update_image_timestamp
+    self.image_updated_at = Time.current
+  end
+
 end

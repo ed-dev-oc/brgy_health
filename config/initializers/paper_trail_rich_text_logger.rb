@@ -4,7 +4,7 @@ Rails.application.config.to_prepare do
 
     def log_body_change_for_papertrail
       return unless saved_change_to_body?
-      return unless %w[Page Announcement].include?(record_type)
+      return unless %w[Page Announcement Event].include?(record_type)
 
       model = record_type.constantize.find_by(id: record_id)
       return unless model

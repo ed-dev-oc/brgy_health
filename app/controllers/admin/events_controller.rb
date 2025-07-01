@@ -1,11 +1,16 @@
 class Admin::EventsController < AdminController
-  before_action :set_event, only: [ :update, :archive ]
+  before_action :set_event, only: [ :show, :update, :archive ]
 
   def index
-    @q = Event.includes(:posted_by, :rich_text_description, :images_attachments).ransack(params[:q])
+    @q = Event.includes(:posted_by, :rich_text_description).ransack(params[:q])
     @pagy, @events = pagy(@q.result(distinct: true))
 
     @event = Event.new
+  end
+
+  def show
+    @versions = @event.versions.reorder(created_at: :desc)
+    # @view_logs = @event.event_views.includes(:user).order(created_at: :desc) # if you use EventView
   end
 
   def create

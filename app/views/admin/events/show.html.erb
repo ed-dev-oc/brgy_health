@@ -1,0 +1,149 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold">Event Details</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <%= link_to admin_events_path, class: "btn btn-sm btn-primary" do %>
+        <i class="bi bi-arrow-left"></i> Back to List
+      <% end %>
+    </div>
+  </div>
+  <hr>
+
+  <div class="row">
+    <!-- Left Column: Event Details -->
+    <div class="col-md-7">
+      <div class="mb-3">
+        <h2 class="fw-bold"><%= @event.name %></h2>
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-calendar-event me-2"></i>
+          <span><%= @event.start_date.to_formatted_s(:long) %> - <%= @event.end_date.to_formatted_s(:long) %></span>
+        </div>
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-geo-alt me-2"></i>
+          <span><%= @event.location %></span>
+        </div>
+        <div class="d-flex align-items-center mb-3">
+          <i class="bi bi-people me-2"></i>
+          <span><%= @event.audience.titleize %></span>
+        </div>
+        <div class="mb-3">
+          <span class="badge <%= badge_status_class(@event.status) %>">
+            <%= @event.status.titleize %>
+          </span>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Description</h5>
+          <p class="card-text"><%= @event.description %></p>
+        </div>
+      </div>
+
+      <!-- Activity Logs -->
+      <div class="card mb-4">
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+          <span>Activity Log</span>
+          <%= link_to admin_event_path(@event.public_uid), class: "btn btn-sm btn-outline-secondary" do %>
+            <i class="bi bi-arrow-clockwise"></i>
+          <% end %>
+        </div>
+        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+          <%= render partial: "logs", locals: { versions: @versions } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Quick Actions, Metadata, Images -->
+    <div class="col-md-5">
+      <!-- Quick Actions Card -->
+      <div class="card mb-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Quick Actions</h5>
+        </div>
+        <div class="card-body d-grid gap-2">
+          <%= link_to "#", class: "btn btn-outline-primary", data: { bs_toggle: "modal", bs_target: "##{dom_id(@event, "form_modal")}" } do %>
+            <i class="bi bi-pencil me-1"></i> Edit Event
+          <% end %>
+
+          <%= link_to event_path(@event.public_uid), class: "btn btn-outline-secondary", target: "_blank" do %>
+            <i class="bi bi-eye me-1"></i> View Public Page
+          <% end %>
+
+          <%= link_to archive_admin_event_path(@event.public_uid), class: "btn btn-outline-danger", data: { turbo_method: :PATCH, turbo_submits_with: "Archiving...", turbo_confirm: "Are you sure?" } do %>
+            <i class="bi bi-trash me-1"></i> Archive
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Metadata Card -->
+      <div class="card metadata-card mb-4">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Metadata</h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <h6 class="text-muted small mb-1">Created</h6>
+            <p><i class="bi bi-calendar-plus me-2"></i><%= @event.created_at.strftime("%B %d, %Y, %I:%M %p") %></p>
+          </div>
+          <div class="mb-3">
+            <h6 class="text-muted small mb-1">Last Updated</h6>
+            <p><i class="bi bi-calendar-check me-2"></i><%= @event.updated_at.strftime("%B %d, %Y, %I:%M %p") %></p>
+          </div>
+          <div class="mb-3">
+            <h6 class="text-muted small mb-1">Posted By</h6>
+            <p><i class="bi bi-person me-2"></i><%= @event.posted_by.full_name %></p>
+          </div>
+          <div class="mb-3">
+            <h6 class="text-muted small mb-1">Public UID</h6>
+            <p><i class="bi bi-upc-scan me-2"></i><%= @event.public_uid %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Carousel -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Event Images</h5>
+        </div>
+        <div class="card-body">
+          <div id="<%= dom_id(@event, "carouselIndicators") %>" class="carousel slide">
+            <div class="carousel-indicators">
+              <% @event.images.each_with_index do |image, index| %>
+                <button type="button" data-bs-target="#<%= dom_id(@event, "carouselIndicators") %>" data-bs-slide-to="<%= index %>" class="<%= index == 0 ? "active" : "" %>"></button>
+              <% end %>
+            </div>
+            <div class="carousel-inner">
+              <% @event.images.each_with_index do |image, index| %>
+                <div class="carousel-item <%= index == 0 ? "active" : "" %>">
+                  <%= image_tag(image.variant(resize_to_fill: [600, 400]), class: "d-block w-100") %>
+                </div>
+              <% end %>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#<%= dom_id(@event, "carouselIndicators") %>" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#<%= dom_id(@event, "carouselIndicators") %>" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+
+          <!-- Thumbnails -->
+          <div class="row g-2 mt-3" id="<%= dom_id(@event, "thumbnailGallery") %>">
+            <div class="col-12 d-flex flex-wrap gap-2">
+              <% @event.images.each do |image| %>
+                <%= image_tag(image.variant(resize_to_fill: [150, 100]), class: "img-thumbnail") %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Include form modal at the bottom -->
+<%= render partial: "admin/events/form_modal", locals: { event: @event } %>

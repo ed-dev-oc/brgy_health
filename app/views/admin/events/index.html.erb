@@ -40,17 +40,16 @@
             </td>
             <td>
               <%= render partial: "admin/events/form_modal", locals: { event: event } %>
-              <%= render partial: "admin/events/event", locals: { event: event } %>
               <div class="dropdown">
                 <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                   Actions
                 </button>
                 <ul class="dropdown-menu">
                   <li>
-                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#<%= dom_id(event, "modal") %>">
+                   <%= link_to admin_event_path(event.public_uid), class: "dropdown-item" do %>
                       <i class="bi bi-eye"></i>
                       View
-                    </a>
+                    <% end %>
                   </li>
                   <li>
                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#<%= dom_id(event, "form_modal") %>">

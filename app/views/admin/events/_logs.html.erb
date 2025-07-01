@@ -1,0 +1,123 @@
+<% if versions.any? %>
+  <% versions.reorder(created_at: :desc).each do |log| %>
+    <% user = User.find_by(id: log.whodunnit) %>
+    <% timestamp = log.created_at.strftime("%B %d, %Y %I:%M %p") %>
+    <% changeset = begin
+        log.object_changes.present? ? YAML.safe_load(
+          log.object_changes,
+          permitted_classes: [Time, Date, Symbol, ActiveSupport::TimeWithZone, ActiveRecord::Type::Time::Value],
+          aliases: true
+        ).symbolize_keys : {}
+      rescue Psych::DisallowedClass => e
+        Rails.logger.warn "YAML load error: #{e.message}"
+        {}
+      end %>
+
+    <% if log.event == "update" && changeset.present? %>
+      <% changeset.each do |field, (old_val, new_val)| %>
+        <% next if field.to_s == "updated_at" %>
+
+        <% case field.to_s %>
+        <% when "description" %>
+          <div class="border-start border-4 ps-3 mb-3 border-primary">
+            <div class="fw-semibold d-flex justify-content-between align-items-center">
+              <span>Description Updated</span>
+              <small class="text-muted"><%= timestamp %></small>
+            </div>
+            <div class="text-muted small mb-2">Changed by: <%= user&.full_name || "System" %></div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="border bg-light p-2 small">
+                  <strong>Before:</strong><br>
+                  <div class="rich-text-content"><%= sanitize(old_val) %></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="border bg-light p-2 small">
+                  <strong>After:</strong><br>
+                  <div class="rich-text-content"><%= sanitize(new_val) %></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <% when "image_updated_at" %>
+          <div class="border-start border-4 ps-3 mb-3 border-warning">
+            <div class="fw-semibold d-flex justify-content-between align-items-center">
+              <span>Images Updated</span>
+              <small class="text-muted"><%= timestamp %></small>
+            </div>
+            <div class="text-muted small">
+              Changed by: <%= user&.full_name || "System" %>
+            </div>
+          </div>
+
+        <% when "status" %>
+          <div class="border-start border-4 ps-3 mb-3 border-primary">
+            <div class="fw-semibold d-flex justify-content-between align-items-center">
+              <span>Status Updated</span>
+              <small class="text-muted"><%= timestamp %></small>
+            </div>
+            <div class="text-muted small">
+              Changed from <strong><%= Event.statuses.key(old_val.to_i).titleize %></strong>
+              to <strong><%= Event.statuses.key(new_val.to_i).titleize %></strong><br>
+              Changed by: <%= user&.full_name || "System" %>
+            </div>
+          </div>
+
+        <% when "audience" %>
+          <div class="border-start border-4 ps-3 mb-3 border-primary">
+            <div class="fw-semibold d-flex justify-content-between align-items-center">
+              <span>Audience Updated</span>
+              <small class="text-muted"><%= timestamp %></small>
+            </div>
+            <div class="text-muted small">
+              Changed from <strong><%= Event.audiences.key(old_val.to_i).titleize %></strong>
+              to <strong><%= Event.audiences.key(new_val.to_i).titleize %></strong><br>
+              Changed by: <%= user&.full_name || "System" %>
+            </div>
+          </div>
+
+        <% when "content" %>
+          <div class="border-start border-4 ps-3 mb-3 border-primary">
+            <div class="fw-semibold d-flex justify-content-between align-items-center">
+              <span>Content Updated</span>
+              <small class="text-muted"><%= timestamp %></small>
+            </div>
+            <div class="text-muted small">
+              From: <%= truncate(strip_tags(old_val), length: 80) %><br>
+              To: <%= truncate(strip_tags(new_val), length: 80) %><br>
+              Changed by: <%= user&.full_name || "System" %>
+            </div>
+          </div>
+
+        <% else %>
+          <div class="border-start border-4 ps-3 mb-3 border-primary">
+            <div class="fw-semibold d-flex justify-content-between align-items-center">
+              <span><%= field.to_s.humanize %> Updated</span>
+              <small class="text-muted"><%= timestamp %></small>
+            </div>
+            <div class="text-muted small">
+              Changed from <strong><%= old_val %></strong> to <strong><%= new_val %></strong><br>
+              Changed by: <%= user&.full_name || "System" %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
+    <% elsif log.event == "create" %>
+      <div class="border-start border-4 ps-3 mb-3 border-success">
+        <div class="fw-semibold d-flex justify-content-between align-items-center">
+          <span>Event Created</span>
+          <small class="text-muted"><%= timestamp %></small>
+        </div>
+        <div class="text-muted small">Created by: <%= user&.full_name || "System" %></div>
+      </div>
+    <% end %>
+  <% end %>
+<% else %>
+  <div class="alert alert-info" role="alert">
+    <i class="bi bi-info-circle-fill"></i>
+    No activity logs available for this event.
+  </div>
+<% end %>
