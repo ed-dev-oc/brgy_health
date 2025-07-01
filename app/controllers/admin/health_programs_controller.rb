@@ -16,9 +16,8 @@ class Admin::HealthProgramsController < AdminController
 
   # GET /admin/health_programs/1 or /admin/health_programs/1.json
   def show
-    @versions = @admin_health_program.versions.reorder(created_at: :desc)
+    @versions = @admin_health_program.versions.includes(:item).reorder(created_at: :desc)
   end
-
 
   # GET /admin/health_programs/new
   def new

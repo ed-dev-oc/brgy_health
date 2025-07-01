@@ -22,7 +22,7 @@ class Admin::CmsController < AdminController
   end
 
   def set_pages
-    @pages = Page.includes(:image_attachment, :rich_text_content).all
+    @pages = Page.includes(:image_attachment, :rich_text_content, :versions).all
   end
 
   def set_page
