@@ -25,24 +25,12 @@
               <small class="text-muted"><%= timestamp %></small>
             </div>
             <div class="text-muted small mb-2">Changed by: <%= user&.full_name || "System" %></div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="border bg-light p-2 small">
-                  <strong>Before:</strong><br>
-                  <div class="rich-text-content"><%= sanitize(old_val) %></div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="border bg-light p-2 small">
-                  <strong>After:</strong><br>
-                  <div class="rich-text-content"><%= sanitize(new_val) %></div>
-                </div>
-              </div>
-            </div>
+                <div class="text-muted small">From: <%= truncate(strip_tags(old_val), length: 80) %></div>
+                <div class="text-muted small">To: <%= truncate(strip_tags(new_val), length: 80) %></div>
           </div>
 
         <% when "image_updated_at" %>
-          <div class="border-start border-4 ps-3 mb-3 border-warning">
+          <div class="border-start border-4 ps-3 mb-3 border-primary">
             <div class="fw-semibold d-flex justify-content-between align-items-center">
               <span>Images Updated</span>
               <small class="text-muted"><%= timestamp %></small>
