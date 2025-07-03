@@ -13,6 +13,8 @@ class Announcement < ApplicationRecord
   belongs_to :health_program, optional: true
   accepts_nested_attributes_for :health_program, reject_if: :all_blank
 
+  before_save :update_image_timestamp, if: :should_update_image_timestamp?
+
   enum :status, [ :draft, :active, :canceled, :completed, :archived ]
   has_rich_text :description
   has_many_attached :images
@@ -72,5 +74,13 @@ class Announcement < ApplicationRecord
 
   def images_presence
     errors.add(:images, "must have at least one image") if images.empty?
+  end
+
+  def should_update_image_timestamp?
+    images.attachments.any?(&:new_record?)
+  end
+
+  def update_image_timestamp
+    self.image_updated_at = Time.current
   end
 end

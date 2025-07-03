@@ -4,7 +4,7 @@
   <% all_logs.each do |log| %>
     <% if log.is_a?(PaperTrail::Version) %>
       <% user = User.find_by(id: log.whodunnit) %>
-      <% timestamp = log.created_at.strftime("%B %d, %Y %I:%M %p") %>
+      <% timestamp = log.created_at.in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") %>
       <% changeset = begin
           log.object_changes.present? ? YAML.safe_load(
             log.object_changes,
@@ -17,8 +17,19 @@
         end %>
 
       <% if log.event == "update" && changeset.present? %>
+
+        <% if changeset.key?(:image_updated_at) %>
+          <div class="border-start border-4 ps-3 mb-4 border-primary">
+            <div class="fw-semibold d-flex justify-content-between align-items-center">
+              <span>Images Updated</span>
+              <small class="text-muted"><%= timestamp %></small>
+            </div>
+            <div class="text-muted small">Changed by: <%= user&.full_name || "System" %></div>
+          </div>
+        <% end %>
+
         <% changeset.each do |field, (old_val, new_val)| %>
-          <% next if field.to_s == "updated_at" %>
+          <% next if ["updated_at", "image_updated_at"].include?(field.to_s) %>
           <div class="border-start border-4 ps-3 mb-4 border-primary">
             <div class="fw-semibold d-flex justify-content-between align-items-center">
               <span>
@@ -59,6 +70,7 @@
             <div class="text-muted small">Changed by: <%= user&.full_name || "System" %></div>
           </div>
         <% end %>
+
       <% elsif log.event == "create" %>
         <div class="border-start border-4 ps-3 mb-4 border-primary">
           <div class="fw-semibold d-flex justify-content-between align-items-center">
@@ -73,7 +85,7 @@
       <div class="border-start border-4 ps-3 mb-4 border-primary">
         <div class="fw-semibold d-flex justify-content-between align-items-center">
           <span>Announcement Viewed</span>
-          <small class="text-muted"><%= log.created_at.strftime("%B %d, %Y %I:%M %p") %></small>
+          <small class="text-muted"><%= log.created_at.in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") %></small>
         </div>
         <div class="text-muted small">
           Viewed by:
