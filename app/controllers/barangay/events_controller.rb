@@ -1,5 +1,5 @@
 class Barangay::EventsController < BarangayController
-  before_action :set_event, only: [:show]
+  before_action :set_event, only: [ :show ]
 
   def index
     @events = Event.active

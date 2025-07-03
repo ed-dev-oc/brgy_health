@@ -34,5 +34,4 @@ class Barangay::AnnouncementsController < BarangayController
     end
   end
 end
-
 end

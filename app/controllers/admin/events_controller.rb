@@ -12,7 +12,6 @@ class Admin::EventsController < AdminController
     @versions = @event.versions.reorder(created_at: :desc)
     @view_logs = @event.views.order(created_at: :desc)
     @total_views_count = @event.views.count
-
   end
 
   def create

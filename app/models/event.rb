@@ -63,5 +63,4 @@ class Event < ApplicationRecord
   def update_image_timestamp
     self.image_updated_at = Time.current
   end
-
 end

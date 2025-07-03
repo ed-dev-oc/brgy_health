@@ -28,4 +28,3 @@ class Page < ApplicationRecord
     self.image_updated_at = Time.current
   end
 end
-
