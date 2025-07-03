@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_03_061425) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_03_064800) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -123,6 +123,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_061425) do
   end
 
   create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
+  end
+
+  create_table "event_views", force: :cascade do |t|
+    t.bigint "event_id", null: false
+    t.bigint "user_id"
+    t.string "ip_address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_event_views_on_event_id"
+    t.index ["user_id"], name: "index_event_views_on_user_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -317,6 +327,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_061425) do
   add_foreign_key "appointments", "barangays"
   add_foreign_key "appointments", "users", column: "health_worker_id"
   add_foreign_key "appointments", "users", column: "patient_id"
+  add_foreign_key "event_views", "events"
+  add_foreign_key "event_views", "users"
   add_foreign_key "events", "barangays"
   add_foreign_key "events", "users", column: "posted_by_id"
   add_foreign_key "health_programs", "barangays"

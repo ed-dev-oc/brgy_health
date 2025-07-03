@@ -13,6 +13,7 @@ class Admin::AnnouncementsController < AdminController
   def show
     @versions = @announcement.versions.reorder(created_at: :desc)
     @view_logs = @announcement.views.where.not(created_at: nil).order(created_at: :desc)
+    @total_views_count = @announcement.views.count
   end
 
   # POST /admin/announcements or /admin/announcements.json

@@ -10,7 +10,9 @@ class Admin::EventsController < AdminController
 
   def show
     @versions = @event.versions.reorder(created_at: :desc)
-    # @view_logs = @event.event_views.includes(:user).order(created_at: :desc) # if you use EventView
+    @view_logs = @event.views.order(created_at: :desc)
+    @total_views_count = @event.views.count
+
   end
 
   def create

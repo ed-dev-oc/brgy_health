@@ -6,6 +6,7 @@ class Event < ApplicationRecord
   belongs_to :posted_by, class_name: "User"
   has_rich_text :description
   has_many_attached :images
+  has_many :views, class_name: "EventView", dependent: :destroy
 
   enum :audience, [
     :all_residents,
