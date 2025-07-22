@@ -17,7 +17,6 @@ export default class extends Controller {
   }
 
   async regionInputTargetConnected() {
-    console.log("Visited")
     await this.setRegionOptions()
     await this.setProvinceOptions()
     await this.setCityOptions()
