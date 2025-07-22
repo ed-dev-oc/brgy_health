@@ -1,0 +1,32 @@
+<% if @processed_versions.any? %>
+  <% @processed_versions.each do |log| %>
+    <% log[:changes].each do |change| %>
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="border-start border-4 ps-3 mb-4 border-primary w-100">
+          <div class="fw-semibold">
+            <i class="bi bi-pencil-square me-2 text-primary"></i>
+            <%= change[:field] %> updated
+          </div>
+
+          <% if change[:field] == "Profile image" %>
+            <div class="text-muted small">
+              Updated by: <%= change[:who] %>
+            </div>
+          <% else %>
+            <div class="text-muted small">
+              Changed from <strong><%= change[:old] %></strong> to <strong><%= change[:new] %></strong><br>
+              Updated by: <%= change[:who] %>
+            </div>
+          <% end %>
+        </div>
+        <div class="text-end text-muted small ms-3" style="white-space: nowrap;">
+          <%= change[:time].strftime("%B %d, %Y %I:%M %p") %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+<% else %>
+  <div class="alert alert-info" role="alert">
+    <i class="bi bi-info-circle-fill"></i> No activity logs found.
+  </div>
+<% end %>

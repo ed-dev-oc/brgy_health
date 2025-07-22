@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_03_064800) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_22_110823) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -77,7 +77,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_064800) do
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "health_program_id"
+    t.bigint "health_program_id", null: false
     t.datetime "image_updated_at"
     t.index ["barangay_id"], name: "index_announcements_on_barangay_id"
     t.index ["health_program_id"], name: "index_announcements_on_health_program_id"
@@ -294,6 +294,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_03_064800) do
     t.integer "role"
     t.bigint "barangay_id"
     t.bigint "subdivision_id"
+    t.datetime "image_updated_at"
     t.index ["barangay_id"], name: "index_users_on_barangay_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["first_name", "middle_name", "last_name", "suffix"], name: "index_users_on_full_name", unique: true

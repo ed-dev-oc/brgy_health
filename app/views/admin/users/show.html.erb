@@ -58,26 +58,11 @@
             <i class="bi bi-arrow-clockwise"></i>
           </button>
         </div>
-        <div class="card-body">
-          <% activity_log = [
-            { icon: "bi-pencil-square", text: "Profile updated", detail: "Updated by: User", time: "2 hours ago", border: "primary" },
-            { icon: "bi-calendar-check", text: "Appointment booked", detail: "Booked by: User", time: "1 day ago", border: "success" },
-            { icon: "bi-envelope-open", text: "Email verified", detail: "Verified via confirmation link", time: "3 days ago", border: "warning" },
-            { icon: "bi-shield-lock", text: "Password changed", detail: "Changed by: User", time: "1 week ago", border: "danger" }
-          ] %>
-
-          <% activity_log.each do |log| %>
-            <div class="border-start border-4 ps-3 mb-4 border-<%= log[:border] %>">
-              <div class="fw-semibold">
-                <i class="bi <%= log[:icon] %> me-2 text-<%= log[:border] %>"></i>
-                <%= log[:text] %>
-              </div>
-              <div class="text-muted small"><%= log[:detail] %></div>
-              <div class="text-end text-muted small"><%= log[:time] %></div>
-            </div>
-          <% end %>
+        <div class="card-body overflow-auto" style="max-height: 300px;">
+          <%= render partial: "logs", locals: { versions: @processed_versions } %>
         </div>
       </div>
+
     </div>
 
     <div class="col-md-4">

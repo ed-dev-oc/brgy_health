@@ -8,6 +8,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   acts_as_tenant :barangay, optional: true
+  has_paper_trail save_changes: true
   has_one_attached :profile
 
   belongs_to :barangay, optional: true
@@ -47,6 +48,7 @@ class User < ApplicationRecord
   after_create :send_registration_verification_email,
     :send_notification_to_super_admin, if: -> { self.role == "admin" }
 
+  before_save :update_image_timestamp, if: :should_update_image_timestamp?
   after_update :notify_user_of_credential_change, if: :credentials_changed?
 
   ransacker :full_name do
@@ -162,5 +164,13 @@ class User < ApplicationRecord
     UserCredentialChangedNotifier.with(
       changed_attributes: changed_attributes
     ).deliver_later(self)
+  end
+
+  def should_update_image_timestamp?
+    profile.attached? && profile.attachment.changed?
+  end
+
+  def update_image_timestamp
+    self.image_updated_at = Time.current
   end
 end

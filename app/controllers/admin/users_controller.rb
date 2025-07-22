@@ -44,8 +44,75 @@ class Admin::UsersController < AdminController
     end
   end
 
-  def show
+    def show
+    @versions = @user.versions.reorder(created_at: :desc)
+
+    @processed_versions = @versions.map do |version|
+      changeset = YAML.safe_load(
+        version.object_changes || "",
+        permitted_classes: [Time, Date, Symbol, ActiveSupport::TimeWithZone],
+        aliases: true
+      )&.symbolize_keys || {}
+
+      display_changes = changeset.map do |field, (old_val, new_val)|
+        next if %w[
+          updated_at
+          password
+          password_digest
+          encrypted_password
+          id
+          user_id
+          flag_list
+        ].include?(field.to_s)
+
+        case field.to_s
+        when "role"
+          {
+            field: "Role",
+            old: User.roles.key(old_val.to_i) || "Unknown",
+            new: User.roles.key(new_val.to_i) || "Unknown",
+            who: User.find_by(id: version.whodunnit)&.full_name || "System",
+            time: version.created_at
+          }
+        when "subdivision_id"
+          {
+            field: "Subdivision",
+            old: Subdivision.find_by(id: old_val)&.name || "N/A",
+            new: Subdivision.find_by(id: new_val)&.name || "N/A",
+            who: User.find_by(id: version.whodunnit)&.full_name || "System",
+            time: version.created_at
+          }
+        when "barangay_id"
+          {
+            field: "Barangay",
+            old: Barangay.find_by(id: old_val)&.name || "N/A",
+            new: Barangay.find_by(id: new_val)&.name || "N/A",
+            who: User.find_by(id: version.whodunnit)&.full_name || "System",
+            time: version.created_at
+          }
+        when "image_updated_at"
+          {
+            field: "Profile image",
+            old: old_val ? old_val.strftime("%B %d, %Y %I:%M %p") : "N/A",
+            new: new_val ? new_val.strftime("%B %d, %Y %I:%M %p") : "N/A",
+            who: User.find_by(id: version.whodunnit)&.full_name || "System",
+            time: version.created_at
+          }
+        else
+          {
+            field: field.to_s.humanize,
+            old: old_val,
+            new: new_val,
+            who: User.find_by(id: version.whodunnit)&.full_name || "System",
+            time: version.created_at
+          }
+        end
+      end.compact
+
+      { changes: display_changes }
+    end
   end
+
 
   def toggle_status
     @user = User.find(params[:id])
