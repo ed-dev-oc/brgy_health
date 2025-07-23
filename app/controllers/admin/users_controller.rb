@@ -59,7 +59,6 @@ class Admin::UsersController < AdminController
           updated_at
           password
           password_digest
-          encrypted_password
           id
           user_id
           flag_list
@@ -97,6 +96,13 @@ class Admin::UsersController < AdminController
             new: new_val ? new_val.strftime("%B %d, %Y %I:%M %p") : "N/A",
             who: User.find_by(id: version.whodunnit)&.full_name || "System",
             time: version.created_at
+          }
+        when "encrypted_password"
+          {
+            field: "Password",
+            message: "Password was changed.",
+            who: User.find_by(id: version.whodunnit)&.full_name || "System",
+            time: version.created_at  
           }
         else
           {

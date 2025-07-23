@@ -12,6 +12,10 @@
             <div class="text-muted small">
               Updated by: <%= change[:who] %>
             </div>
+          <% elsif change[:field] == "Password" %>
+            <div class="text-muted small">
+              Updated by: <%= change[:who] %>
+            </div>
           <% else %>
             <div class="text-muted small">
               Changed from <strong><%= change[:old] %></strong> to <strong><%= change[:new] %></strong><br>
