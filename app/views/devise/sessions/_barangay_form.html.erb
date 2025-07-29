@@ -6,7 +6,13 @@
 
   <div class="mb-3">
     <%= f.label :password, class: "form-label" %>
-    <%= f.password_field :password, autocomplete: "current-password", class: "form-control", required: true %>
+
+    <div class="input-group" data-controller="password-visibility">
+      <%= f.password_field :password, class: "form-control", data: { password_visibility_target: "passwordInput"}, required: true %>
+      <button type="button" class="btn btn-outline-secondary" data-action="click->password-visibility#togglePasswordVisibility">
+        <i class="bi bi-eye" data-password-visibility-target="icon"></i>
+      </button>
+    </div>
   </div>
 
   <% if devise_mapping.rememberable? %>

@@ -1,6 +1,6 @@
 <div class="container py-5 d-flex justify-content-center align-items-center">
   <div class="card shadow border-success p-4" style="max-width: 700px; width: 100%;">
-    
+
     <div class="text-center mb-4">
       <%= image_tag "logo_no_background.png", alt: "Logo", height: 60, class: "mb-2" %>
       <h4 class="text-success fw-bold">User Registration</h4>
@@ -15,7 +15,7 @@
         data-select-philippines-address-province-name-value="<%= resource.barangay.province %>"
         data-select-philippines-address-city-name-value="<%= resource.barangay.city %>"
         data-select-philippines-address-brgy-name-value="<%= resource.barangay.name %>">
-        
+
         <h6 class="text-success fw-bold mb-3">Address</h6>
 
         <%= f.fields_for :barangay do |barangay_form| %>
@@ -73,12 +73,24 @@
         <% if @minimum_password_length %>
           <small class="text-muted ms-2">(<%= @minimum_password_length %> characters minimum)</small>
         <% end %>
-        <%= f.password_field :password, autocomplete: "new-password", class: "form-control" %>
+
+        <div class="input-group" data-controller="password-visibility">
+          <%= f.password_field :password, autocomplete: "new-password", class: "form-control", data: { password_visibility_target: "passwordInput"}, required: true %>
+          <button type="button" class="btn btn-outline-secondary" data-action="click->password-visibility#togglePasswordVisibility">
+            <i class="bi bi-eye" data-password-visibility-target="icon"></i>
+          </button>
+        </div>
       </div>
 
       <div class="mb-4">
         <%= f.label :password_confirmation, class: "form-label" %>
-        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control" %>
+
+        <div class="input-group" data-controller="password-visibility">
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", data: { password_visibility_target: "passwordInput"}, required: true %>
+          <button type="button" class="btn btn-outline-secondary" data-action="click->password-visibility#togglePasswordVisibility">
+            <i class="bi bi-eye" data-password-visibility-target="icon"></i>
+          </button>
+        </div>
       </div>
 
       <div class="d-grid">

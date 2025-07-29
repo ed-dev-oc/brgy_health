@@ -22,6 +22,9 @@ application.register("issue-report", IssueReportController)
 import NestedAttributesVisibilityController from "./nested_attributes_visibility_controller"
 application.register("nested-attributes-visibility", NestedAttributesVisibilityController)
 
+import PasswordVisibilityController from "./password_visibility_controller"
+application.register("password-visibility", PasswordVisibilityController)
+
 import RegisterServiceWorkerController from "./register_service_worker_controller"
 application.register("register-service-worker", RegisterServiceWorkerController)
 
