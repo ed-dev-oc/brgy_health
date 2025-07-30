@@ -133,6 +133,11 @@ GEM
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
+    factory_bot (6.5.4)
+      activesupport (>= 6.1.0)
+    factory_bot_rails (6.5.0)
+      factory_bot (~> 6.5)
+      railties (>= 6.1.0)
     ffi (1.17.2-aarch64-linux-gnu)
     ffi (1.17.2-aarch64-linux-musl)
     ffi (1.17.2-arm-linux-gnu)
@@ -507,6 +512,7 @@ DEPENDENCIES
   data_migrate (~> 11.3)
   debug
   devise (~> 4.9)
+  factory_bot_rails
   friendly_id (~> 5.5)
   groupdate (~> 6.7)
   grover (~> 1.2)
