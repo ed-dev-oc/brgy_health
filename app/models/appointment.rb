@@ -86,7 +86,7 @@ class Appointment < ApplicationRecord
   end
 
   def scheduled_at_within_announcement_range
-    return if scheduled_at.blank?
+    return if scheduled_at.blank? || announcement.nil?
 
     unless scheduled_at.between?(announcement.start_date, announcement.end_date)
       errors.add(:scheduled_at, "must be during the announcement's time range (#{announcement.start_date.strftime("%B %e, %Y")} to #{announcement.end_date.strftime("%B %e, %Y")})")

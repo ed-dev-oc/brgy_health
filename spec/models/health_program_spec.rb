@@ -1,52 +1,24 @@
 require 'rails_helper'
 
 RSpec.describe HealthProgram, type: :model do
-  # fixtures :health_programs, :barangays
+  it { should validate_presence_of(:name) }
+  it { should validate_presence_of(:description) }
+  it { should define_enum_for(:status).with_values([ :active, :inactive ]) }
+  it { should have_many(:announcements) }
+  it "validates uniqueness of name scoped to barangay_id" do
+    barangay1 = create(:barangay)
+    barangay2 = create(:barangay)
 
-  # describe "emptiness validation" do
-  #   it "has a invalid name" do
-  #     health_program = health_programs(:bagong_buhay_prenatal)
-  #     health_program.name = nil
+    ActsAsTenant.with_tenant(barangay1) do
+      create(:health_program, name: "Prenatal Test", barangay: barangay1)
+      hp2 = build(:health_program, name: "Prenatal Test", barangay: barangay1)
+      expect(hp2).not_to be_valid
+      expect(hp2.errors[:name]).to include("has already been taken")
+    end
 
-  #     expect(health_program).not_to be_valid
-  #   end
-
-  #   it "has a valid name" do
-  #     health_program = health_programs(:bagong_buhay_prenatal)
-
-  #     expect(health_program).to be_valid
-  #   end
-
-  #   it "has a invalid description" do
-  #     health_program = health_programs(:bagong_buhay_prenatal)
-  #     health_program.description = nil
-
-  #     expect(health_program).not_to be_valid
-  #   end
-
-  #   it "has a valid description" do
-  #     health_program = health_programs(:bagong_buhay_prenatal)
-
-  #     expect(health_program).to be_valid
-  #   end
-  # end
-
-  # describe "uniqueness validation" do
-  #   it "has a invalid duplicate name" do
-  #     health_program = health_programs(:bagong_buhay_prenatal)
-  #     health_program.name = health_programs(:bagong_buhay_newborn_screening).name
-
-  #     expect(health_program).not_to be_valid
-  #   end
-
-  #   it "has a valid duplicate name" do
-  #     ActsAsTenant.with_mutable_tenant do
-  #       health_program = health_programs(:bagong_buhay_prenatal)
-  #       health_program.name = health_programs(:bagong_buhay_newborn_screening).name
-  #       health_program.barangay = barangays(:lao)
-
-  #       expect(health_program).to be_valid
-  #     end
-  #   end
-  # end
+    ActsAsTenant.with_tenant(barangay2) do
+      hp3 = build(:health_program, name: "Prenatal Test", barangay: barangay2)
+      expect(hp3).to be_valid
+    end
+  end
 end
