@@ -70,6 +70,7 @@ Rails.application.routes.draw do
       member do
         patch :toggle_status
         get :medical_records
+        get :user_logs
       end
     end
 

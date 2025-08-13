@@ -1,5 +1,5 @@
-<% if @processed_versions.any? %>
-  <% @processed_versions.each do |log| %>
+<% if processed_versions.any? %>
+  <% processed_versions.each do |log| %>
     <% log[:changes].each do |change| %>
       <div class="d-flex justify-content-between align-items-start">
         <div class="border-start border-4 ps-3 mb-4 border-primary w-100">
