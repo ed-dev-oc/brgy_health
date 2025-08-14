@@ -45,6 +45,7 @@ Rails.application.routes.draw do
       member do
         patch :archive
         get :appointment_details
+        get :announcement_logs
       end
 
       resources :appointment_reports, only: [ :index ]

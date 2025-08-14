@@ -1,102 +1,49 @@
-<% all_logs = (@versions + @view_logs).sort_by(&:created_at).reverse %>
+<% if logs.present? %>
+  <% logs.each do |log| %>
 
-<% if all_logs.present? %>
-  <% all_logs.each do |log| %>
-    <% if log.is_a?(PaperTrail::Version) %>
-      <% user = User.find_by(id: log.whodunnit) %>
-      <% timestamp = log.created_at.in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") %>
-      <% changeset = begin
-          log.object_changes.present? ? YAML.safe_load(
-            log.object_changes,
-            permitted_classes: [Time, Date, Symbol, ActiveSupport::TimeWithZone, ActiveRecord::Type::Time::Value],
-            aliases: true
-          ).symbolize_keys : {}
-        rescue Psych::DisallowedClass => e
-          Rails.logger.warn "YAML load error: #{e.message}"
-          {}
-        end %>
-
-      <% if log.event == "update" && changeset.present? %>
-
-        <% if changeset.key?(:image_updated_at) %>
-          <div class="border-start border-4 ps-3 mb-4 border-primary">
-            <div class="fw-semibold d-flex justify-content-between align-items-center">
-              <span>Images Updated</span>
-              <small class="text-muted"><%= timestamp %></small>
-            </div>
-            <div class="text-muted small">Changed by: <%= user&.full_name || "System" %></div>
-          </div>
-        <% end %>
-
-        <% changeset.each do |field, (old_val, new_val)| %>
-          <% next if ["updated_at", "image_updated_at"].include?(field.to_s) %>
-          <div class="border-start border-4 ps-3 mb-4 border-primary">
-            <div class="fw-semibold d-flex justify-content-between align-items-center">
-              <span>
-                <% if field.to_s == "description" %>
-                  Description Updated
-                <% else %>
-                  <%= field.to_s.humanize %> Updated
-                <% end %>
-              </span>
-              <small class="text-muted"><%= timestamp %></small>
-            </div>
-
-            <% if field.to_s == "description" %>
-              <div class="text-muted small">Description content was updated.</div>
-
-            <% elsif field.to_s == "status" %>
-              <% old_label = Announcement.statuses.key(old_val.to_i)&.humanize || old_val %>
-              <% new_label = Announcement.statuses.key(new_val.to_i)&.humanize || new_val %>
-              <div class="text-muted small">
-                Status changed from <strong><%= old_label %></strong> to <strong><%= new_label %></strong>
-              </div>
-
-            <% elsif field.to_s == "health_program_id" %>
-              <% old_name = HealthProgram.find_by(id: old_val)&.name || "Unknown" %>
-              <% new_name = HealthProgram.find_by(id: new_val)&.name || "Unknown" %>
-              <div class="text-muted small">
-                Health Program changed from <strong><%= old_name %></strong> to <strong><%= new_name %></strong>
-              </div>
-
-            <% else %>
-              <% formatted_old = Time.parse(old_val.to_s).in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") rescue old_val %>
-              <% formatted_new = Time.parse(new_val.to_s).in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") rescue new_val %>
-              <div class="text-muted small">
-                Changed from <strong><%= formatted_old %></strong> to <strong><%= formatted_new %></strong>
-              </div>
-            <% end %>
-
-            <div class="text-muted small">Changed by: <%= user&.full_name || "System" %></div>
-          </div>
-        <% end %>
-
-      <% elsif log.event == "create" %>
+    <% if log.event_type == "update" && log.changeset.present? %>
+      
+      <% if log.image_updated? %>
         <div class="border-start border-4 ps-3 mb-4 border-primary">
           <div class="fw-semibold d-flex justify-content-between align-items-center">
-            <span>Announcement Created</span>
-            <small class="text-muted"><%= timestamp %></small>
+            <span>Images Updated</span>
+            <small class="text-muted"><%= log.timestamp %></small>
           </div>
-          <div class="text-muted small">Created by: <%= user&.full_name || "System" %></div>
+          <div class="text-muted small">Changed by: <%= log.user_name %></div>
         </div>
       <% end %>
 
-    <% elsif log.is_a?(AnnouncementView) %>
+      <% log.changeset.each do |field, (old_val, new_val)| %>
+        <% next if ["updated_at", "image_updated_at"].include?(field.to_s) %>
+        <div class="border-start border-4 ps-3 mb-4 border-primary">
+          <div class="fw-semibold d-flex justify-content-between align-items-center">
+            <span><%= log.special_field_label(field) %></span>
+            <small class="text-muted"><%= log.timestamp %></small>
+          </div>
+          <div class="text-muted small"><%= log.field_change_details(field, old_val, new_val) %></div>
+          <div class="text-muted small">Changed by: <%= log.user_name %></div>
+        </div>
+      <% end %>
+
+    <% elsif log.event_type == "create" %>
+      <div class="border-start border-4 ps-3 mb-4 border-primary">
+        <div class="fw-semibold d-flex justify-content-between align-items-center">
+          <span>Announcement Created</span>
+          <small class="text-muted"><%= log.timestamp %></small>
+        </div>
+        <div class="text-muted small">Created by: <%= log.user_name %></div>
+      </div>
+
+    <% elsif log.event_type == "view" %>
       <div class="border-start border-4 ps-3 mb-4 border-primary">
         <div class="fw-semibold d-flex justify-content-between align-items-center">
           <span>Announcement Viewed</span>
-          <small class="text-muted"><%= log.created_at.in_time_zone("Asia/Manila").strftime("%B %d, %Y %I:%M %p") %></small>
+          <small class="text-muted"><%= log.timestamp %></small>
         </div>
-        <div class="text-muted small">
-          Viewed by:
-          <% if log.user.present? %>
-            <%= log.user.full_name %>
-          <% else %>
-            Guest (IP: <%= log.ip_address %>)
-          <% end %>
-        </div>
+        <div class="text-muted small">Viewed by: <%= log.user_name %></div>
       </div>
     <% end %>
+
   <% end %>
 <% else %>
   <p class="text-muted fst-italic">No activity logs available yet.</p>

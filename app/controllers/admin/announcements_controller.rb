@@ -1,6 +1,6 @@
 class Admin::AnnouncementsController < AdminController
-  before_action :set_announcement, only: [ :show, :update, :archive, :appointment_details ]
-
+  before_action :set_announcement, only: [ :show, :update, :archive, :appointment_details, :announcement_logs ]
+  before_action :build_logs, only: [ :show, :announcement_logs ]
   # GET /admin/announcements or /admin/announcements.json
   def index
     @q = Announcement.includes(:health_program, :posted_by, :rich_text_description).ransack(params[:q])
@@ -11,10 +11,9 @@ class Admin::AnnouncementsController < AdminController
 
   # GET /admin/announcements/1 or /admin/announcements/1.json
   def show
-    @versions = @announcement.versions.reorder(created_at: :desc)
-    @view_logs = @announcement.views.where.not(created_at: nil).order(created_at: :desc)
     @total_views_count = @announcement.views.count
   end
+
 
   # POST /admin/announcements or /admin/announcements.json
   def create
@@ -51,7 +50,19 @@ class Admin::AnnouncementsController < AdminController
     @capacity_percentage = @announcement.capacity_percentage
   end
 
+  def announcement_logs
+    
+  end
+
   private
+
+  def build_logs
+    versions = @announcement.versions.reorder(created_at: :desc).to_a
+    view_logs = @announcement.views.where.not(created_at: nil).order(created_at: :desc).includes(:user).to_a
+
+    all_logs = (versions + view_logs).sort_by(&:created_at).reverse
+    @logs = all_logs.map { |log| LogPresenter.new(log) }
+  end
 
   def set_announcement
     @announcement = Announcement.find_by_public_uid(params.expect(:id))
