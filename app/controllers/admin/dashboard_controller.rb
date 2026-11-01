@@ -29,5 +29,8 @@ class Admin::DashboardController < AdminController
 
     @line_chart_data = Appointment.joins(:announcement).group("announcements.name").group_by_week(:created_at).count
     @pie_data = HealthProgram.active.left_joins(:announcements).group("health_programs.name").count("announcements.id")
+
+    # Advanced SQL Technique: CTE-computed health program performance metrics
+    @program_performance_stats = HealthProgram.program_performance_summary(ActsAsTenant.current_tenant.id)
   end
 end

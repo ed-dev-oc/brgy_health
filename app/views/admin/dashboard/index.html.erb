@@ -397,3 +397,81 @@
     </div>
   </div>
 </div>
+
+<!-- ==================== ROW 4: HEALTH PROGRAM PERFORMANCE (CTE METRICS) ==================== -->
+<% if @program_performance_stats.present? && @program_performance_stats.any? %>
+  <div class="row g-4 mt-1">
+    <div class="col-12">
+      <div class="sa-card p-3 p-md-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <div>
+            <div class="d-flex align-items-center gap-2">
+              <h6 class="fw-bold mb-0">Health Program Operational Metrics</h6>
+              <span class="badge badge-soft-emerald" style="font-size: 0.7rem;">
+                <i class="bi bi-database me-1"></i>CTE Powered
+              </span>
+            </div>
+            <small class="text-secondary">Multi-tier aggregated analytics computed via Common Table Expressions (CTE)</small>
+          </div>
+          <%= link_to admin_health_programs_path, class: "btn btn-sm btn-light border" do %>
+            View Health Programs <i class="bi bi-arrow-right ms-1"></i>
+          <% end %>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table sa-table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Health Program</th>
+                <th class="text-center">Active Schedules</th>
+                <th class="text-center">Total Bookings</th>
+                <th class="text-center">Completed</th>
+                <th class="text-center">Approved</th>
+                <th class="text-center">Pending</th>
+                <th class="text-center">Cancelled</th>
+                <th class="text-end">Completion Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @program_performance_stats.each do |stat| %>
+                <% rate = stat["completion_rate"].to_f %>
+                <tr>
+                  <td>
+                    <div class="fw-semibold text-dark"><%= stat["program_name"] %></div>
+                    <small class="text-secondary">Program #<%= stat["health_program_id"] %></small>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-light text-dark border px-2 py-1"><%= stat["announcements_count"] %></span>
+                  </td>
+                  <td class="text-center fw-medium"><%= stat["total_appointments"] %></td>
+                  <td class="text-center">
+                    <span class="text-success fw-semibold"><%= stat["completed_appointments"] %></span>
+                  </td>
+                  <td class="text-center">
+                    <span class="text-primary fw-medium"><%= stat["approved_appointments"] %></span>
+                  </td>
+                  <td class="text-center">
+                    <span class="text-warning fw-medium"><%= stat["pending_appointments"] %></span>
+                  </td>
+                  <td class="text-center">
+                    <span class="text-secondary"><%= stat["cancelled_appointments"] %></span>
+                  </td>
+                  <td class="text-end">
+                    <div class="d-inline-flex align-items-center gap-2">
+                      <div class="progress" style="width: 70px; height: 6px;">
+                        <div class="progress-bar <%= rate >= 80 ? 'bg-success' : (rate >= 40 ? 'bg-primary' : 'bg-secondary') %>"
+                             role="progressbar"
+                             style="width: <%= rate %>%"></div>
+                      </div>
+                      <span class="small fw-bold text-dark"><%= rate %>%</span>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -8,6 +8,7 @@ class Appointment < ApplicationRecord
   belongs_to :follow_up, class_name: "Appointment", foreign_key: "follow_up_id", optional: true
   has_many :noticed_events, as: :record, dependent: :destroy, class_name: "Noticed::Event"
   has_many :notifications, through: :noticed_events, class_name: "Noticed::Notification"
+  has_many :appointment_status_logs, dependent: :destroy
 
   has_one :parent_appointment,
              class_name: "Appointment",
@@ -45,6 +46,16 @@ class Appointment < ApplicationRecord
 
   def has_parent_appointment?
     parent_appointment.present?
+  end
+
+  # Advanced SQL Technique: Stored Procedure execution
+  def self.cancel_expired_pending_via_procedure(barangay_id, cutoff_time = Time.current)
+    sanitized = sanitize_sql_array([
+      "CALL cancel_expired_pending_appointments(?, ?)",
+      barangay_id,
+      cutoff_time
+    ])
+    connection.execute(sanitized)
   end
 
   def appointment_reminder_job_wait_until_condition

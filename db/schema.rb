@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_25_093919) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_01_211500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -72,6 +72,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_25_093919) do
     t.index ["health_program_id"], name: "index_announcements_on_health_program_id"
     t.index ["posted_by_id"], name: "index_announcements_on_posted_by_id"
     t.index ["public_uid"], name: "index_announcements_on_public_uid", unique: true
+  end
+
+  create_table "appointment_status_logs", force: :cascade do |t|
+    t.bigint "appointment_id", null: false
+    t.integer "old_status"
+    t.integer "new_status"
+    t.datetime "changed_at", null: false
+    t.string "action_type", default: "UPDATE"
+    t.index ["appointment_id"], name: "index_appointment_status_logs_on_appointment_id"
+    t.index ["changed_at"], name: "index_appointment_status_logs_on_changed_at"
   end
 
   create_table "appointments", force: :cascade do |t|
@@ -286,6 +296,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_25_093919) do
   add_foreign_key "announcements", "barangays"
   add_foreign_key "announcements", "health_programs"
   add_foreign_key "announcements", "users", column: "posted_by_id"
+  add_foreign_key "appointment_status_logs", "appointments", on_delete: :cascade
   add_foreign_key "appointments", "announcements"
   add_foreign_key "appointments", "appointments", column: "follow_up_id"
   add_foreign_key "appointments", "barangays"

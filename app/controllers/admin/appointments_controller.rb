@@ -38,19 +38,30 @@ class Admin::AppointmentsController < AdminController
     end
   end
 
+  # Advanced SQL Technique: Explicit Transaction with Commit / Rollback
   def flag_as_approved
-    if @appointment.update(status: :approved, health_worker: current_user)
-      if @appointment.announcement.appointment_full?
-        @appointment.flag_list.add("waitlisted")
-        @appointment.save
+    success = false
+
+    Appointment.transaction do
+      if @appointment.update(status: :approved, health_worker: current_user)
+        if @appointment.announcement.appointment_full?
+          @appointment.flag_list.add("waitlisted")
+          unless @appointment.save
+            flash.alert = "Appointment was not accepted: #{@appointment.errors.full_messages.to_sentence}"
+            raise ActiveRecord::Rollback
+          end
+        end
+        success = true
+      else
+        flash.alert = "Appointment was not accepted: #{@appointment.errors.full_messages.to_sentence}"
+        raise ActiveRecord::Rollback
       end
+    end
 
+    if success
       flash.notice = "Appointment was successfully accepted."
-
       redirect_back fallback_location: admin_appointments_path
     else
-      flash.alert = "Appointment was not accepted."
-
       redirect_back fallback_location: admin_appointments_path, status: :unprocessable_entity
     end
   end
@@ -63,18 +74,23 @@ class Admin::AppointmentsController < AdminController
     end
   end
 
+  # Advanced SQL Technique: Explicit Multi-Record Transaction with Rollback
   def follow_up_check_up
-    @new_appointment = Appointment.new(follow_up_check_up_params)
-    @new_appointment.barangay = current_tenant
-    @new_appointment.announcement = @appointment.announcement
-    @new_appointment.patient = @appointment.patient
-    @new_appointment.follow_up = @appointment
-    @appointment.flag_list.add("follow_up_check_up")
+    Appointment.transaction do
+      @new_appointment = Appointment.new(follow_up_check_up_params)
+      @new_appointment.barangay = current_tenant
+      @new_appointment.announcement = @appointment.announcement
+      @new_appointment.patient = @appointment.patient
+      @new_appointment.follow_up = @appointment
+      @appointment.flag_list.add("follow_up_check_up")
 
-    if @new_appointment.save && @appointment.save
-      flash.notice = "New follow up was successfully created."
-    else
-      flash.alert = "New follow up was not created."
+      if @new_appointment.save && @appointment.save
+        flash.notice = "New follow up was successfully created."
+      else
+        error_msg = @new_appointment.errors.full_messages.presence || @appointment.errors.full_messages
+        flash.alert = "New follow up was not created: #{error_msg.to_sentence}"
+        raise ActiveRecord::Rollback
+      end
     end
   end
 
