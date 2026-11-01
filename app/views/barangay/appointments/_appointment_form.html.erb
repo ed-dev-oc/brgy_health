@@ -1,17 +1,52 @@
 <%= form_with(model: appointment, url: announcement_appointments_path(announcement.public_uid)) do |form| %>
   <% if appointment.errors.any? %>
-    <div class="text-danger"><%= appointment.errors.full_messages.to_sentence %></div>
+    <div class="alert alert-danger small py-2 px-3 rounded-3 mb-3">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>
+      <%= appointment.errors.full_messages.to_sentence %>
+    </div>
   <% end %>
 
-  <div class="my-2">
-    <%= form.label :scheduled_at, class: "form-label" %>
-    <%= form.datetime_field :scheduled_at, class: "form-control" %>
+  <!-- Clear Date & Time Schedule Window Helper -->
+  <div class="p-3 rounded-3 mb-3 small" style="background: var(--pt-emerald-50); border: 1px solid #a7f3d0;">
+    <div class="fw-bold text-success mb-1">
+      <i class="bi bi-calendar-check me-1"></i>Available Schedule Window:
+    </div>
+    <div>
+      Pick any date between
+      <strong><%= announcement.start_date.strftime("%b %d") %> – <%= announcement.end_date.strftime("%b %d, %Y") %></strong>
+      from <strong><%= announcement.open_time.strftime("%I:%M %p") %> to <%= announcement.close_time.strftime("%I:%M %p") %></strong>.
+    </div>
   </div>
-  <div class="my-2">
-    <%= form.label :reason, class: "form-label" %>
-    <%= form.text_area :reason, rows: 3, class: "form-control" %>
+
+  <% min_dt = announcement.start_date.change(hour: announcement.open_time.hour, min: announcement.open_time.min).strftime("%Y-%m-%dT%H:%M") %>
+  <% max_dt = announcement.end_date.change(hour: announcement.close_time.hour, min: announcement.close_time.min).strftime("%Y-%m-%dT%H:%M") %>
+
+  <div class="mb-3">
+    <%= form.label :scheduled_at, "1. Choose Your Date & Time *", class: "form-label fw-bold small" %>
+    <%= form.datetime_field :scheduled_at,
+        min: min_dt,
+        max: max_dt,
+        value: (appointment.scheduled_at || announcement.start_date.change(hour: announcement.open_time.hour, min: announcement.open_time.min)).strftime("%Y-%m-%dT%H:%M"),
+        class: "form-control form-control-lg",
+        required: true %>
   </div>
-  <div class="my-2">
-    <%= form.submit "Submit", class: "btn btn-primary" %>
+
+  <div class="mb-3">
+    <%= form.label :reason, "2. Reason for Visit (Tap one or type below) *", class: "form-label fw-bold small" %>
+    <div class="d-flex flex-wrap gap-1 mb-2">
+      <% ["General Check-Up", "Vaccination / Booster", "Prenatal Visit", "Blood Pressure Check", "Follow-Up Consultation"].each do |chip| %>
+        <button type="button"
+                class="reason-chip"
+                onclick="const ta = this.closest('form').querySelector('textarea[name*=\'reason\']'); if (ta) { ta.value = '<%= j chip %>'; } this.parentElement.querySelectorAll('.reason-chip').forEach(c => c.classList.remove('active')); this.classList.add('active');">
+          <%= chip %>
+        </button>
+      <% end %>
+    </div>
+    <%= form.text_area :reason, rows: 3, class: "form-control", placeholder: "Briefly describe what you need help with...", required: true %>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+    <%= form.submit "Confirm My Appointment", class: "btn btn-emerald-lg", data: { turbo_submits_with: "Booking..." } %>
   </div>
 <% end %>

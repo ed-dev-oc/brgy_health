@@ -53,12 +53,12 @@ class ProfileController < ApplicationController
   end
 
   def select_layout
-    if current_user&.admin?
+    if current_user&.admin? || current_user&.staff?
       "admin"
     elsif current_user&.super_admin?
       "super_admin"
     else
-      "application"
+      "barangay"
     end
   end
 

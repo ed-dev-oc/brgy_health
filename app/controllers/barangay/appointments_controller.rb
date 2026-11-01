@@ -4,8 +4,26 @@ class Barangay::AppointmentsController < BarangayController
   before_action :set_appointment, only: %i[show cancel_schedule flag_as_reschedule]
 
   def index
-    @q = current_user.appointments.includes(:announcement, :health_worker).ransack(params[:q])
-    @pagy, @appointments = pagy(@q.result(distinct: true).order(created_at: :desc), limit: 5)
+    base_scope = current_user.appointments.includes(:announcement, :health_worker, :taggings)
+
+    @all_visits_count = base_scope.count
+    @upcoming_visits_count = base_scope.where(status: [ :pending, :approved ]).count
+    @completed_visits_count = base_scope.where(status: :completed).count
+    @cancelled_visits_count = base_scope.where(status: [ :cancelled, :rejected ]).count
+
+    filtered_scope = case params[:filter]
+    when "upcoming"
+      base_scope.where(status: [ :pending, :approved ])
+    when "completed"
+      base_scope.where(status: :completed)
+    when "cancelled"
+      base_scope.where(status: [ :cancelled, :rejected ])
+    else
+      base_scope
+    end
+
+    @q = filtered_scope.ransack(params[:q])
+    @pagy, @appointments = pagy(@q.result(distinct: true).order(scheduled_at: :desc, created_at: :desc), limit: 10)
   end
 
   def show

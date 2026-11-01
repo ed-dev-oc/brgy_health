@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Brgy Health" %></title>
+    <title><%= content_for(:title) || "Brgy. #{ActsAsTenant.current_tenant&.name} Health Center" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -10,29 +10,63 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
+  <body class="pub-body pt-body d-flex flex-column min-vh-100">
     <%= render partial: "shared/notification_modal" %>
+    <%= render partial: "issue_reports/modal" %>
     <%= render partial: "shared/web_push" %>
     <%= render(FlashComponent.new(flash: flash)) %>
 
     <%= render partial: "shared/navbar" %>
 
-    <div class="container-fluid">
+    <main class="container-fluid flex-grow-1">
       <%= yield %>
-    </div>
+    </main>
 
     <%= render partial: "shared/footer" %>
+
+    <!-- Sticky Mobile Bottom Navigation Bar (Hidden on Desktop >= 992px) -->
+    <nav class="pt-bottom-nav d-lg-none" aria-label="Mobile Resident Navigation">
+      <%= link_to root_path, class: "pt-tab-btn #{current_page?(root_path) ? 'active' : ''}" do %>
+        <i class="bi bi-house-heart-fill"></i>
+        <span>Home</span>
+      <% end %>
+
+      <%= link_to root_path(anchor: "AnnouncementCarousel"), class: "pt-tab-btn #{controller_name == 'announcements' ? 'active' : ''}" do %>
+        <i class="bi bi-heart-pulse-fill"></i>
+        <span>Services</span>
+      <% end %>
+
+      <% if user_signed_in? %>
+        <%= link_to appointments_path, class: "pt-tab-btn #{controller_name == 'appointments' ? 'active' : ''}" do %>
+          <i class="bi bi-ticket-perforated-fill"></i>
+          <span>My Visits</span>
+        <% end %>
+
+        <%= link_to edit_profile_path(current_user), class: "pt-tab-btn #{controller_name == 'profile' ? 'active' : ''}" do %>
+          <i class="bi bi-person-circle"></i>
+          <span>Profile</span>
+        <% end %>
+      <% else %>
+        <%= link_to new_user_session_path, class: "pt-tab-btn" do %>
+          <i class="bi bi-ticket-perforated-fill"></i>
+          <span>My Visits</span>
+        <% end %>
+
+        <%= link_to new_user_session_path, class: "pt-tab-btn" do %>
+          <i class="bi bi-person-circle"></i>
+          <span>Sign In</span>
+        <% end %>
+      <% end %>
+    </nav>
   </body>
 </html>

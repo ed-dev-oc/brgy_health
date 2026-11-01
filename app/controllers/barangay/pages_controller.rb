@@ -1,8 +1,18 @@
 class Barangay::PagesController < BarangayController
   def home
     @hero_banner = Page.find_by(section: "homepage_hero_banner")
+    @announcements = Announcement.includes(:health_program).active.order(start_date: :asc)
+    @events = Event.active.order(start_date: :asc)
+    @admin_contact = User.admin.first
 
     if user_signed_in?
+      @next_appointment = current_user.appointments
+        .includes(:announcement, :health_worker)
+        .where(status: [ :pending, :approved ])
+        .where("scheduled_at >= ?", Time.current.beginning_of_day)
+        .order(scheduled_at: :asc)
+        .first
+
       @hero_banner&.notifications&.where(recipient: current_user)&.mark_as_read
 
       if current_user.admin?

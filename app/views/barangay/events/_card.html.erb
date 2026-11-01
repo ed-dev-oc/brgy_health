@@ -1,43 +1,29 @@
 <% cache(event) do %>
-  <div class="card" id="<%= dom_id(event, "card") %>">
-    <div class="card-body">
-      <h5 class="card-title text-green-600"><%= event.name %></h5>
+  <div class="pt-card p-3 p-lg-4" id="<%= dom_id(event, "card") %>">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="badge badge-soft-sky">
+        <i class="bi bi-people me-1"></i>For: <%= event.audience.to_s.titleize %>
+      </span>
+      <span class="badge badge-soft-slate">Walk-In</span>
+    </div>
 
-      <div class="card-attributes grid grid-cols-2 gap-2 mt-4">
-        <!-- Date Range -->
-        <div class="flex items-center">
-          <i class="bi bi-calendar-range text-green-600 mr-2"></i>
-          <span class="text-sm">
-            <strong>Schedule:</strong>
-            <span><%= event.start_date.strftime("%Y-%m-%d") %></span> to <span><%= event.end_date.strftime("%Y-%m-%d") %></span>
-          </span>
-        </div>
+    <h6 class="fw-bold mb-2 text-dark"><%= event.name %></h6>
 
-        <!-- Location -->
-        <div class="flex items-center">
-          <i class="bi bi-geo-alt text-green-600 mr-2"></i>
-          <strong>Location:</strong>
-          <span class="text-sm">
-            <span><%= event.location %></span>
-          </span>
-        </div>
-
-        <!-- Audience -->
-        <div class="flex items-center">
-          <i class="bi bi-people text-green-600 mr-2"></i>
-          <strong>For:</strong>
-          <span class="text-sm">
-            <span><%= event.audience.titleize %></span>
-          </span>
-        </div>
-      </div>
-
-      <div class="text-end mt-4">
-        <%= link_to event_path(event.public_uid), class: "btn btn-outline-green-600", data: { turbo: :false } do %>
-          <i class="bi bi-eye mr-2"></i>
-          View Details
+    <div class="small text-secondary mb-3 d-flex flex-column gap-1">
+      <div>
+        <i class="bi bi-calendar-event text-primary me-2"></i>
+        <%= event.start_date.strftime("%b %d, %Y") %>
+        <% if event.start_date.to_date != event.end_date.to_date %>
+          – <%= event.end_date.strftime("%b %d, %Y") %>
         <% end %>
       </div>
+      <div>
+        <i class="bi bi-geo-alt text-success me-2"></i><%= event.location %>
+      </div>
     </div>
+
+    <%= link_to event_path(event.public_uid), class: "btn btn-sm btn-light border w-100 fw-semibold py-2", data: { turbo: false } do %>
+      Read Event Details <i class="bi bi-arrow-right ms-1"></i>
+    <% end %>
   </div>
 <% end %>

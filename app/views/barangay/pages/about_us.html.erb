@@ -1,10 +1,50 @@
-<section class="hero-section py-5 mb-3" style="background-color: #e3f2fd;">
-  <div class="container text-center">
-    <h1><%= @page.title %></h1>
-    <p class="lead"><%= @page.subheadline %></p>
-  </div>
-</section>
+<% content_for :title, "#{@page.title} — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
 
-<div class="container">
-  <%= @page.content %>
+<div class="container py-3 py-lg-4">
+  <div class="p-4 p-lg-5 rounded-4 text-white mb-4 shadow-sm"
+       style="background: linear-gradient(135deg, #065f46 0%, #0d9488 100%);">
+    <span class="badge bg-white bg-opacity-25 text-white mb-2">
+      <i class="bi bi-hospital me-1"></i>Brgy. <%= ActsAsTenant.current_tenant&.name %> Health Center
+    </span>
+    <h2 class="fw-bold mb-1"><%= @page.title %></h2>
+    <% if @page.subheadline.present? %>
+      <p class="mb-0 opacity-90" style="max-width: 720px;"><%= @page.subheadline %></p>
+    <% end %>
+  </div>
+
+  <div class="pt-desktop-split">
+    <div class="pt-card p-4 p-lg-5 mb-3">
+      <div class="rich-text-content text-secondary" style="line-height: 1.75;">
+        <%= @page.content %>
+      </div>
+    </div>
+
+    <aside class="pt-card p-4 pt-sticky-side">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <div class="pt-icon-circle circle-emerald" style="width: 40px; height: 40px; font-size: 1.15rem;">
+          <i class="bi bi-heart-pulse-fill"></i>
+        </div>
+        <div>
+          <h6 class="fw-bold mb-0">Community Health Center</h6>
+          <small class="text-secondary">Brgy. <%= ActsAsTenant.current_tenant&.name %></small>
+        </div>
+      </div>
+      <div class="small text-secondary d-flex flex-column gap-2 mb-4">
+        <div>
+          <i class="bi bi-geo-alt-fill text-success me-2"></i><%= ActsAsTenant.current_tenant&.full_address %>
+        </div>
+        <div>
+          <i class="bi bi-clock-fill text-success me-2"></i>Monday – Friday: 8:00 AM – 5:00 PM
+        </div>
+      </div>
+      <div class="d-grid gap-2">
+        <%= link_to root_path(anchor: "AnnouncementCarousel"), class: "btn btn-emerald-lg" do %>
+          <i class="bi bi-calendar2-plus me-1"></i>Book a Free Check-Up
+        <% end %>
+        <%= link_to contact_us_pages_path, class: "btn btn-light border fw-semibold py-2 rounded-3" do %>
+          <i class="bi bi-geo-alt me-1 text-success"></i>Contact &amp; Location Map
+        <% end %>
+      </div>
+    </aside>
+  </div>
 </div>

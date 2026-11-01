@@ -1,65 +1,55 @@
 <% cache(announcement) do %>
-  <div class="card h-100" id="<%= dom_id(announcement, "card") %>">
-    <div class="card-body">
-      <div class="d-flex flex-column h-100">
-        <div class="flex-grow-1">
-          <h5 class="card-title text-green-600"><%= announcement.name %></h5>
+  <% slots_left = [announcement.max_patients.to_i - announcement.approved_patients_count, 0].max %>
+  <div class="pt-card p-3 p-lg-4 mb-3" id="<%= dom_id(announcement, "card") %>">
+    <div>
+      <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+        <% if announcement.health_program.present? %>
+          <span class="badge badge-soft-emerald text-truncate" style="max-width: 60%;">
+            <%= announcement.health_program.name %>
+          </span>
+        <% else %>
+          <span class="badge badge-soft-slate">Health Service</span>
+        <% end %>
+
+        <% if slots_left > 0 %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i><%= pluralize(slots_left, "Slot") %> Left
+          </span>
+        <% else %>
+          <span class="badge badge-soft-amber">
+            <i class="bi bi-exclamation-circle me-1"></i>Waitlist Open
+          </span>
+        <% end %>
+      </div>
+
+      <h5 class="fw-bold mb-2 text-dark"><%= announcement.name %></h5>
+
+      <div class="p-2 px-3 rounded-3 bg-light small mb-3 d-flex flex-column gap-1">
+        <div>
+          <i class="bi bi-calendar3 text-success me-2"></i>
+          <strong>Dates:</strong>
+          <%= announcement.start_date.strftime("%b %d") %> – <%= announcement.end_date.strftime("%b %d, %Y") %>
         </div>
-
-        <div class="card-attributes grid grid-cols-2 gap-2 mt-4">
-          <!-- Health Program -->
-          <div class="flex items-center">
-            <i class="bi bi-heart-pulse text-green-600 mr-2"></i>
-            <span class="text-sm">
-              <strong>Program:</strong>
-              <span><%= announcement.health_program.name %></span>
-            </span>
-          </div>
-
-          <!-- Date Range -->
-          <div class="flex items-center">
-            <i class="bi bi-calendar-range text-green-600 mr-2"></i>
-            <span class="text-sm">
-              <strong>Schedule:</strong>
-              <span><%= announcement.start_date.strftime("%Y-%m-%d") %></span> to <span><%= announcement.end_date.strftime("%Y-%m-%d") %></span>
-            </span>
-          </div>
-
-          <!-- Time Range -->
-          <div class="flex items-center">
-            <i class="bi bi-clock text-green-600 mr-2"></i>
-            <span class="text-sm">
-              <strong>Time:</strong>
-              <span><%= announcement.open_time.strftime("%I:%M %p") %></span> - <span><%= announcement.open_time.strftime("%I:%M %p") %></span>
-            </span>
-          </div>
-
-          <!-- Location -->
-          <div class="flex items-center">
-            <i class="bi bi-geo-alt text-green-600 mr-2"></i>
-            <strong>Location:</strong>
-            <span class="text-sm">
-              <span><%= announcement.location %></span>
-            </span>
-          </div>
-
-          <!-- Audience -->
-          <div class="flex items-center">
-            <i class="bi bi-people text-green-600 mr-2"></i>
-            <strong>For:</strong>
-            <span class="text-sm">
-              <span><%= announcement.audience.titleize %></span>
-            </span>
-          </div>
+        <div>
+          <i class="bi bi-clock text-success me-2"></i>
+          <strong>Hours:</strong>
+          <%= announcement.open_time.strftime("%I:%M %p") %> – <%= announcement.close_time.strftime("%I:%M %p") %>
         </div>
-
-        <div class="text-end mt-4">
-          <%= link_to announcement_path(announcement.public_uid), class: "btn btn-outline-green-600", data: { turbo: :false } do %>
-            <i class="bi bi-eye mr-2"></i>
-            View Details
-          <% end %>
+        <div>
+          <i class="bi bi-geo-alt text-success me-2"></i>
+          <strong>Where:</strong>
+          <%= announcement.location %>
+        </div>
+        <div>
+          <i class="bi bi-people text-success me-2"></i>
+          <strong>Who:</strong>
+          <%= announcement.audience.to_s.titleize %>
         </div>
       </div>
     </div>
+
+    <%= link_to announcement_path(announcement.public_uid), class: "btn btn-emerald-lg w-100", data: { turbo: false } do %>
+      View Details &amp; Book Slot <i class="bi bi-arrow-right ms-1"></i>
+    <% end %>
   </div>
 <% end %>

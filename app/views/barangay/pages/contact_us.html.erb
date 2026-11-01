@@ -1,34 +1,113 @@
-<section class="hero-section py-5 mb-3" style="background-color: #e3f2fd;">
-  <div class="container text-center">
-    <h1><%= @page.title %></h1>
-    <p class="lead"><%= @page.subheadline %></p>
-  </div>
-</section>
+<% content_for :title, "#{@page.title} — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
 
-<div class="container">
-  <div class="row row-gap-4">
-    <div class="col-12 col-lg-6">
-      <%= @page.content %>
-    </div>
-    <div class="col-lg-6">
-      <h2 style="font-size: 32px;">Send Us a Email</h2>
-      <form method="post" action="mailto:<%= @admin.email %>" enctype="text/plain">
-        <div class="mb-3"><label class="form-label" for="name" style="font-size: 16px;">Full Name</label><input class="form-control form-control" type="text" id="name" name="name" required=""></div>
-        <div class="mb-3"><label class="form-label" for="email" style="font-size: 16px;">Email Address</label><input class="form-control form-control" type="email" id="email" name="email" required=""></div>
-        <div class="mb-3"><label class="form-label" for="name" style="font-size: 16px;">Subject</label><input class="form-control form-control" type="text" id="name" name="subject" required=""></div>
-        <div class="mb-3"><label class="form-label" for="message" style="font-size: 16px;">Message</label>
-          <textarea class="form-control form-control" id="message" name="body" required="" rows="5"></textarea>
+<div class="container py-3 py-lg-4">
+  <div class="p-4 p-lg-5 rounded-4 text-white mb-4 shadow-sm"
+       style="background: linear-gradient(135deg, #065f46 0%, #0d9488 100%);">
+    <span class="badge bg-white bg-opacity-25 text-white mb-2">
+      <i class="bi bi-telephone-outbound-fill me-1"></i>Brgy. <%= ActsAsTenant.current_tenant&.name %> Health Center
+    </span>
+    <h2 class="fw-bold mb-1"><%= @page.title %></h2>
+    <% if @page.subheadline.present? %>
+      <p class="mb-0 opacity-90" style="max-width: 720px;"><%= @page.subheadline %></p>
+    <% end %>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <!-- Left Column: Clinic Information & Direct Contact -->
+    <div class="col-12 col-lg-5 d-flex flex-column gap-3">
+      <div class="pt-card p-4">
+        <h5 class="fw-bold mb-3">
+          <i class="bi bi-hospital text-success me-2"></i>Health Center Directory
+        </h5>
+        <div class="d-flex flex-column gap-3 small mb-3">
+          <div class="d-flex align-items-start gap-3">
+            <span class="pt-icon-circle circle-emerald" style="width: 38px; height: 38px; font-size: 1rem;">
+              <i class="bi bi-geo-alt-fill"></i>
+            </span>
+            <div>
+              <div class="text-secondary fw-semibold">Health Center Address</div>
+              <div class="fw-bold text-dark"><%= ActsAsTenant.current_tenant&.full_address %></div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start gap-3">
+            <span class="pt-icon-circle circle-sky" style="width: 38px; height: 38px; font-size: 1rem;">
+              <i class="bi bi-telephone-fill"></i>
+            </span>
+            <div>
+              <div class="text-secondary fw-semibold">Clinic Hotline</div>
+              <div class="fw-bold text-dark"><%= @admin&.phone_number.presence || "Visit Barangay Hall" %></div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start gap-3">
+            <span class="pt-icon-circle circle-amber" style="width: 38px; height: 38px; font-size: 1rem;">
+              <i class="bi bi-envelope-fill"></i>
+            </span>
+            <div>
+              <div class="text-secondary fw-semibold">Email Address</div>
+              <div class="fw-bold text-dark"><%= @admin&.email.presence || "N/A" %></div>
+            </div>
+          </div>
         </div>
-        <button class="btn btn-primary" type="submit" style="font-size: 16px;">Send Message</button>
-      </form>
-    </div>
-    <div class="col-12">
-      <h2>Location Map</h2>
-      <div style="width: 100%; height: 400px" data-controller="leaflet"
-        data-leaflet-lat-value="<%= @page.latitude %>"
-        data-leaflet-lng-value="<%= @page.longitude %>"
-        data-leaflet-title-value="<%= @page.title %>">
+
+        <% if @page.content.present? %>
+          <div class="border-top pt-3 small text-secondary rich-text-content">
+            <%= @page.content %>
+          </div>
+        <% end %>
       </div>
+    </div>
+
+    <!-- Right Column: Send Us an Email Form -->
+    <div class="col-12 col-lg-7">
+      <div class="pt-card p-4 h-100">
+        <h5 class="fw-bold mb-1">
+          <i class="bi bi-chat-dots-fill text-success me-2"></i>Send Us a Message
+        </h5>
+        <p class="text-secondary small mb-3">Have a question about clinic schedules or medical records? Send an email to our Barangay Health Center team.</p>
+
+        <form method="post" action="mailto:<%= @admin&.email %>" enctype="text/plain">
+          <div class="row g-3">
+            <div class="col-12 col-sm-6">
+              <label class="form-label small fw-semibold" for="name">Full Name *</label>
+              <input class="form-control" type="text" id="name" name="name" placeholder="Juan Dela Cruz" required>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label class="form-label small fw-semibold" for="email">Email Address *</label>
+              <input class="form-control" type="email" id="email" name="email" placeholder="name@example.com" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-semibold" for="subject">Subject *</label>
+              <input class="form-control" type="text" id="subject" name="subject" placeholder="Question about check-up schedule" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-semibold" for="message">Message *</label>
+              <textarea class="form-control" id="message" name="body" rows="4" placeholder="How can our Barangay Health Workers help you?" required></textarea>
+            </div>
+            <div class="col-12 text-end">
+              <button class="btn btn-emerald-lg w-100 pt-btn-adaptive" type="submit">
+                <i class="bi bi-send-fill me-1"></i>Send Message
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Location Map Card -->
+  <div class="pt-card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h5 class="fw-bold mb-0"><i class="bi bi-pin-map-fill text-success me-2"></i>Health Center Location Map</h5>
+        <small class="text-secondary">Brgy. <%= ActsAsTenant.current_tenant&.name %>, <%= ActsAsTenant.current_tenant&.city %></small>
+      </div>
+    </div>
+    <div class="rounded-3 overflow-hidden border" style="width: 100%; height: 380px;" data-controller="leaflet"
+      data-leaflet-lat-value="<%= @page.latitude %>"
+      data-leaflet-lng-value="<%= @page.longitude %>"
+      data-leaflet-title-value="<%= @page.title %>">
     </div>
   </div>
 </div>

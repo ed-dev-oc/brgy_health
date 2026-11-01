@@ -1,106 +1,73 @@
-<div data-controller="splide-loader">
-  <!-- Main Slider -->
-  <div data-splide-loader-target="mainSlides" class="splide" style="padding: 1px !important;">
-    <div class="splide__track">
-      <ul class="splide__list">
-        <% event.images.each do |image| %>
-          <li class="splide__slide">
-            <%= image_tag(image.variant(resize_to_fill: [900, 600])) %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
+<% content_for :title, "#{event.name} — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
+
+<div class="container py-3 py-lg-4">
+  <div class="mb-3">
+    <%= link_to root_path(anchor: "EventCarousel"), class: "btn btn-sm btn-light border fw-semibold" do %>
+      <i class="bi bi-arrow-left me-1"></i>Back to Home
+    <% end %>
   </div>
 
-  <!-- Thumbnail Slider -->
-  <div data-splide-loader-target="thumbnailSlides" class="splide" style="padding-top: 1px !important; padding-bottom: 1px !important;">
-    <div class="splide__track">
-      <ul class="splide__list">
-        <% event.images.each do |image| %>
-          <li class="splide__slide">
-            <%= image_tag(image.variant(resize_to_fill: [900, 600])) %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<div class="my-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <!-- Status Badge -->
-      <div class="mb-4">
-        <span class="badge <%= badge_status_class(event.status) %>">
-          <%= event.status.titleize %>
+  <div class="pt-desktop-split">
+    <!-- LEFT COLUMN: Community Event Details -->
+    <div class="pt-card p-4 mb-3">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+        <span class="badge badge-soft-sky">
+          <i class="bi bi-people me-1"></i>Community Event &middot; <%= event.audience.to_s.titleize %>
         </span>
+        <span class="badge <%= soft_badge_class(event.status) %>"><%= event.status.titleize %></span>
       </div>
 
-      <!-- Title -->
-      <h1 class="display-5 fw-bold mb-4"><%= event.name %></h1>
+      <h3 class="fw-bold mb-3"><%= event.name %></h3>
 
-      <!-- Description (rich text) -->
-      <div class="rich-text-content mb-5">
-        <%= event.description %>
-      </div>
-
-      <!-- Details Card -->
-      <div class="card border-0 shadow-sm mb-5">
-        <div class="card-body">
-          <h5 class="card-title text-green-600 mb-4">Event Details</h5>
-
-          <div class="row">
-            <!-- Date and Time -->
-            <div class="col-md-6 mb-3">
-              <h6 class="text-muted small mb-1">Date</h6>
-              <p class="mb-3">
-                <i class="bi bi-calendar-event me-2"></i>
-                <%= event.start_date.to_date.to_formatted_s(:long) %>
-                <% if event.start_date.to_date != event.end_date.to_date %>
-                  to <%= event.end_date.to_date.to_formatted_s(:long) %>
-                <% end %>
-              </p>
-            </div>
-
-            <!-- Location and Capacity -->
-            <div class="col-md-6 mb-3">
-              <% if event.location.present? %>
-                <h6 class="text-muted small mb-1"><i class="bi bi-geo-alt me-2"></i> Location</h6>
-                <p class="mb-3"><%= event.location %></p>
-              <% end %>
-            </div>
-          </div>
-
-          <!-- Audience -->
-          <% if event.audience.present? %>
-            <h6 class="text-muted small mb-1">Intended For</h6>
-            <div class="d-flex flex-wrap gap-1">
-              <span class="badge bg-green-600"><%= event.audience.titleize %></span>
+      <% if event.images.attached? %>
+        <div class="row g-2 mb-3">
+          <% event.images.first(2).each do |image| %>
+            <div class="<%= event.images.size == 1 ? 'col-12' : 'col-12 col-sm-6' %>">
+              <%= image_tag(image.variant(resize_to_fill: [800, 450]), class: "img-fluid rounded-3 w-100 object-fit-cover border", style: "max-height: 240px;") %>
             </div>
           <% end %>
         </div>
+      <% end %>
+
+      <div class="p-3 rounded-3 bg-light small mb-3 d-flex flex-column gap-1">
+        <div>
+          <i class="bi bi-calendar-event text-success me-2"></i>
+          <strong>Date:</strong>
+          <%= event.start_date.strftime("%A, %B %d, %Y") %>
+          <% if event.start_date.to_date != event.end_date.to_date %>
+            – <%= event.end_date.strftime("%A, %B %d, %Y") %>
+          <% end %>
+        </div>
+        <div>
+          <i class="bi bi-geo-alt text-success me-2"></i>
+          <strong>Venue:</strong> <%= event.location %>
+        </div>
       </div>
 
-      <!-- Additional Information -->
-      <div class="d-flex align-items-center flex-wrap gap-5 mb-4">
-        <% if event.barangay.present? %>
-          <div>
-            <h6 class="text-muted small mb-1">Barangay</h6>
-            <p class="mb-0"><%= event.barangay.name %></p>
-          </div>
-        <% end %>
-
-        <% if event.posted_by.present? %>
-          <div>
-            <h6 class="text-muted small mb-1">Posted By</h6>
-            <p class="mb-0"><%= event.posted_by.full_name %></p>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="d-flex justify-content-center gap-3 mt-5">
-        <%= link_to "View All events", root_path(anchor: :EventCarousel), class: "btn btn-outline-secondary px-5 py-3" %>
+      <h6 class="fw-bold mb-2">Event Details</h6>
+      <div class="text-secondary small rich-text-content mb-0" style="line-height: 1.65;">
+        <%= event.description %>
       </div>
     </div>
+
+    <!-- RIGHT SIDEBAR: Walk-In Community Event Notice -->
+    <aside class="pt-card p-4 pt-sticky-side">
+      <span class="badge badge-soft-emerald mb-2">
+        <i class="bi bi-door-open me-1"></i>Walk-In Community Event
+      </span>
+      <h6 class="fw-bold mb-2">No Reservation Required</h6>
+      <p class="small text-secondary mb-3">
+        This is an open community event in Brgy. <%= ActsAsTenant.current_tenant&.name %>. Simply attend at <strong><%= event.location %></strong> on the scheduled date.
+      </p>
+      <div class="p-3 rounded-3 bg-light small mb-3">
+        <div class="fw-semibold mb-1">Organized By:</div>
+        <div class="text-secondary">
+          <%= event.posted_by&.full_name || "Brgy. #{ActsAsTenant.current_tenant&.name} Health Center" %>
+        </div>
+      </div>
+      <%= link_to root_path(anchor: "EventCarousel"), class: "btn btn-light border w-100 fw-semibold py-2" do %>
+        <i class="bi bi-calendar-event me-1 text-primary"></i>View All Events
+      <% end %>
+    </aside>
   </div>
 </div>

@@ -35,11 +35,17 @@
         </li>
 
         <% if ActsAsTenant.current_tenant.present? %>
+          <li class="nav-item">
+            <%= link_to root_path(anchor: "AnnouncementCarousel"),
+              class: "nav-link pub-nav-link #{controller_name == 'announcements' ? 'active' : ''}" do %>
+              <i class="bi bi-heart-pulse me-1"></i>Health Services
+            <% end %>
+          </li>
           <% if user_signed_in? %>
             <li class="nav-item">
               <%= link_to appointments_path,
-                class: "nav-link pub-nav-link #{navbar_link_status(appointments_path)}" do %>
-                <i class="bi <%= icon_for_state(appointments_path, 'bi-calendar-week-fill', 'bi-calendar-week') %> me-1"></i>Appointments
+                class: "nav-link pub-nav-link #{controller_name == 'appointments' ? 'active' : ''}" do %>
+                <i class="bi <%= controller_name == 'appointments' ? 'bi-ticket-perforated-fill' : 'bi-ticket-perforated' %> me-1"></i>My Visits
               <% end %>
             </li>
           <% end %>

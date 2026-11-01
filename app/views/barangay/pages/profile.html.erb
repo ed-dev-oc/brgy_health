@@ -34,6 +34,15 @@
     </div>
   </div>
 
+  <% if @user.subdivision.nil? || @user.phone_number.blank? %>
+    <div class="p-3 rounded-3 mb-4 d-flex align-items-start gap-2" style="background: var(--pt-amber-50, #fffbeb); border: 1px solid #fde68a;">
+      <i class="bi bi-exclamation-circle-fill text-warning fs-5"></i>
+      <div class="small">
+        <strong>Complete Your Resident Profile:</strong> Please select your <strong>Subdivision / Purok</strong> and add your <strong>Cellphone Number</strong> below so our Barangay Health Workers can coordinate your check-ups and send reminders.
+      </div>
+    </div>
+  <% end %>
+
   <!-- 2-Column Adaptive Desktop Grid for the 4 Profile Forms -->
   <div class="row g-4">
     <!-- Left Column: Avatar Photo & Subdivision / Purok -->
