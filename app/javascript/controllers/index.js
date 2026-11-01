@@ -10,14 +10,14 @@ application.register("admin-testimonial", AdminTestimonialController)
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 
-import GoogleMapApiController from "./google_map_api_controller"
-application.register("google-map-api", GoogleMapApiController)
-
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
 
 import IssueReportController from "./issue_report_controller"
 application.register("issue-report", IssueReportController)
+
+import LeafletController from "./leaflet_controller"
+application.register("leaflet", LeafletController)
 
 import NestedAttributesVisibilityController from "./nested_attributes_visibility_controller"
 application.register("nested-attributes-visibility", NestedAttributesVisibilityController)
