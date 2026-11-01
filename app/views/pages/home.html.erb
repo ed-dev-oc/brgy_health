@@ -1,103 +1,287 @@
-<% if @hero_banner.present? %>
-  <section class="hero-banner" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-    url(<%= url_for(@hero_banner.image) if @hero_banner.image.attached? %>);">
-    <div class="container">
-      <div class="hero-content">
-        <h1 class="display-4 fw-bold mb-4"><%= @hero_banner.title %></h1>
-        <p class="lead mb-4"><%= @hero_banner.subheadline %></p>
-      </div>
-    </div>
-  </section>
-<% end %>
+<% hero_bg_style = if @hero_banner&.image&.attached?
+  "background-image: radial-gradient(circle at top right, rgba(13, 148, 136, 0.35), transparent 50%), linear-gradient(135deg, rgba(7, 28, 21, 0.90) 0%, rgba(15, 23, 42, 0.92) 100%), url(#{url_for(@hero_banner.image)});"
+else
+  ""
+end %>
 
-<% if @barangays.any? %>
-  <section class="registered-barangay py-5">
-    <div class="text-center mb-3">
-      <h2>
-        <i class="bi bi-house-door-fill"></i>
-        Registered Barangay
-      </h2>
-    </div>
+<!-- ==================== HERO SECTION ==================== -->
+<section class="pub-hero" style="<%= hero_bg_style %>">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-12 col-lg-7">
+        <span class="badge rounded-pill px-3 py-2 mb-3 fw-semibold" style="background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3);">
+          <i class="bi bi-patch-check-fill me-1"></i>Official Multi-Tenant Barangay Health Center Platform
+        </span>
+        <h1 class="display-4 fw-bold mb-3" style="letter-spacing: -0.025em; line-height: 1.15;">
+          <%= @hero_banner&.title.presence || "Empowering Barangay Healthcare Across the Philippines" %>
+        </h1>
+        <p class="lead text-light opacity-75 mb-4" style="max-width: 620px;">
+          <%= @hero_banner&.subheadline.presence || "Give your Barangay Health Center its own digital portal. Eliminate dawn queues with online slot booking, automated WebPush/email reminders, and electronic medical visit tracking." %>
+        </p>
 
-    <div id="carouselBarangay" class="carousel slide">
-      <div class="carousel-indicators">
-        <% @barangays.count.times do |index| %>
-          <button type="button" data-bs-target="#carouselBarangayIndicators" data-bs-slide-to="<%= index %>" class="<%= index == 0 ? 'active' : '' %>" aria-label="Slide <%= index %>"></button>
-        <% end %>
-      </div>
-      <div class="carousel-inner">
-        <% @barangays.each_with_index do |barangay, index| %>
-          <div class="carousel-item <%= index == 0 ? 'active' : '' %>">
-            <% if barangay.pages.homepage_hero_banner.first&.image&.attached? %>
-              <%= image_tag(barangay.pages.homepage_hero_banner.first.image.variant(resize_to_fill: [600, 200]), class: "d-block w-100") %>
-            <% else %>
-              <%= image_tag("hero_banner.png", class: "d-block w-100", style: "height: 200px; object-fit: cover;") %>
+        <div class="d-flex flex-wrap gap-3">
+          <% unless user_signed_in? %>
+            <%= link_to new_user_registration_path, class: "btn btn-emerald btn-lg px-4 shadow" do %>
+              <i class="bi bi-building-add me-2"></i>Register Your Barangay
             <% end %>
-            <div class="carousel-caption d-none d-md-block pb-5" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
-              <h5><i class="bi bi-house-door-fill me-1"></i><%= barangay.name %></h5>
-              <%= link_to root_url(subdomain: barangay.slug), class: "link-light link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" do %>
-                <i class="bi bi-geo-alt-fill me-1"></i>
-                <%= barangay.full_address %> (View Page)
-              <% end %>
+          <% else %>
+            <%= link_to administrator_path_helper, class: "btn btn-emerald btn-lg px-4 shadow" do %>
+              <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+            <% end %>
+          <% end %>
+          <a href="#verified-barangays" class="btn btn-outline-light btn-lg px-4">
+            <i class="bi bi-compass me-2"></i>Explore Verified Barangays
+          </a>
+        </div>
+
+        <!-- Platform Stats Strip -->
+        <div class="row g-3 mt-4 pt-4 border-top border-secondary border-opacity-25">
+          <div class="col-4">
+            <div class="fs-3 fw-bold text-white"><%= @verified_barangays_count %></div>
+            <small class="text-secondary">Verified Barangays</small>
+          </div>
+          <div class="col-4">
+            <div class="fs-3 fw-bold text-success"><%= number_with_delimiter(@registered_residents_count) %></div>
+            <small class="text-secondary">Registered Residents</small>
+          </div>
+          <div class="col-4">
+            <div class="fs-3 fw-bold text-info">24/7</div>
+            <small class="text-secondary">Online Slot Booking</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Visual Preview Card -->
+      <div class="col-12 col-lg-5">
+        <div class="p-4 rounded-4 shadow-lg border border-secondary border-opacity-25" style="background: rgba(30, 41, 59, 0.78); backdrop-filter: blur(12px);">
+          <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge bg-success rounded-circle p-1"><i class="bi bi-check"></i></span>
+              <span class="fw-semibold small text-white">Live Subdomain Portal</span>
+            </div>
+            <code class="text-info small"><%= (@barangays.first&.slug || "lao") %>.<%= request.domain %></code>
+          </div>
+          <div class="p-3 rounded-3 mb-3" style="background: rgba(15, 23, 42, 0.85);">
+            <span class="badge bg-success bg-opacity-25 text-success mb-1">Active Health Program</span>
+            <h6 class="fw-bold text-white mb-1">Free Vaccination &amp; Maternal Check-Up</h6>
+            <small class="text-secondary d-block mb-2"><i class="bi bi-geo-alt me-1"></i>Barangay Health Center · 8:00 AM – 5:00 PM</small>
+            <div class="d-flex justify-content-between small text-light mb-1">
+              <span>Available Slots</span>
+              <span class="text-success fw-bold">Real-Time Capacity</span>
+            </div>
+            <div class="progress" style="height: 6px;">
+              <div class="progress-bar bg-success" style="width: 78%;"></div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25);">
+            <i class="bi bi-bell-fill fs-3 text-success"></i>
+            <div class="small">
+              <div class="fw-bold text-white">Automated Appointment Reminders</div>
+              <div class="text-light opacity-75">Sent at 24h, 60m, 30m, and 5m before check-up</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== HOW IT WORKS SECTION ==================== -->
+<section class="py-5 bg-white border-bottom pub-full-bleed">
+  <div class="container py-3">
+    <div class="text-center mb-5">
+      <span class="badge badge-soft-emerald mb-2 px-3 py-1">HOW BRGYHEALTH WORKS</span>
+      <h2 class="fw-bold">Launch Your Barangay Health Portal in 3 Steps</h2>
+      <p class="text-secondary mx-auto mb-0" style="max-width: 580px;">
+        Designed for Barangay Captains, Secretaries, Midwives, and Barangay Health Workers (BHWs) with zero coding required.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-md-4">
+        <div class="pub-card p-4 h-100">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="pub-icon-well"><i class="bi bi-building-add"></i></div>
+            <span class="fs-2 fw-bold text-secondary opacity-25">01</span>
+          </div>
+          <h5 class="fw-bold">Register Your Barangay</h5>
+          <p class="text-secondary small mb-0">
+            Select your Region, Province, City, and Barangay on our registration page and create your Administrator account.
+          </p>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="pub-card p-4 h-100">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="pub-icon-well"><i class="bi bi-shield-check"></i></div>
+            <span class="fs-2 fw-bold text-secondary opacity-25">02</span>
+          </div>
+          <h5 class="fw-bold">Get Verified &amp; Go Live</h5>
+          <p class="text-secondary small mb-0">
+            Once verified by our platform SuperAdmin, your dedicated subdomain (e.g. <code>lao.<%= request.domain %></code>) and default CMS pages go live immediately.
+          </p>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="pub-card p-4 h-100">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="pub-icon-well"><i class="bi bi-calendar2-heart"></i></div>
+            <span class="fs-2 fw-bold text-secondary opacity-25">03</span>
+          </div>
+          <h5 class="fw-bold">Serve Residents Online</h5>
+          <p class="text-secondary small mb-0">
+            Publish health programs, accept online appointments with automatic waitlisting, record clinical consultation notes, and print PDF reports.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VERIFIED BARANGAYS DIRECTORY ==================== -->
+<section id="verified-barangays" class="py-5">
+  <div class="container py-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
+      <div>
+        <span class="badge badge-soft-emerald mb-2 px-3 py-1">ACTIVE COMMUNITY PORTALS</span>
+        <h2 class="fw-bold mb-1">Verified Barangay Health Centers</h2>
+        <p class="text-secondary mb-0">Select your barangay below to view announcements, events, and book an appointment.</p>
+      </div>
+      <% if @barangays.any? %>
+        <div style="min-width: 290px;">
+          <div class="input-group bg-white rounded-3 shadow-sm">
+            <span class="input-group-text bg-white border-end-0 text-secondary"><i class="bi bi-search"></i></span>
+            <input type="text" id="brgySearchInput" class="form-control border-start-0" placeholder="Search barangay, city, or province..." oninput="filterVerifiedBarangays(this.value)">
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @barangays.any? %>
+      <% card_gradients = [
+        "linear-gradient(135deg, #065f46, #0d9488)",
+        "linear-gradient(135deg, #0f766e, #0284c7)",
+        "linear-gradient(135deg, #1e293b, #059669)"
+      ] %>
+      <div class="row g-4" id="brgyGrid">
+        <% @barangays.each_with_index do |barangay, idx| %>
+          <% hero_page = barangay.pages.detect { |p| p.section == "homepage_hero_banner" } %>
+          <% banner_style = if hero_page&.image&.attached?
+            "height: 150px; background: linear-gradient(135deg, rgba(6, 78, 59, 0.82), rgba(15, 23, 42, 0.85)), url(#{url_for(hero_page.image)}) center/cover no-repeat;"
+          else
+            "height: 150px; background: #{card_gradients[idx % card_gradients.size]};"
+          end %>
+          <div class="col-12 col-md-6 col-lg-4 brgy-card-item" data-search="<%= "#{barangay.name} #{barangay.city} #{barangay.province} #{barangay.region}".downcase %>">
+            <div class="pub-card pub-card-hover overflow-hidden h-100 d-flex flex-column">
+              <div class="p-4 text-white d-flex flex-column justify-content-between" style="<%= banner_style %>">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                  <span class="badge bg-white text-success fw-semibold">
+                    <i class="bi bi-patch-check-fill me-1"></i>Verified
+                  </span>
+                  <code class="text-white small opacity-75 text-truncate"><%= barangay.slug %>.<%= request.domain %></code>
+                </div>
+                <h4 class="fw-bold mb-0 text-truncate">Barangay <%= barangay.name %></h4>
+              </div>
+              <div class="p-4 flex-grow-1 d-flex flex-column justify-content-between">
+                <div class="mb-3">
+                  <div class="text-secondary small mb-1">
+                    <i class="bi bi-geo-alt-fill text-success me-1"></i><%= barangay.city %>, <%= barangay.province %>
+                  </div>
+                  <div class="text-secondary small">
+                    <i class="bi bi-map me-1"></i><%= barangay.region %>
+                  </div>
+                </div>
+                <%= link_to root_url(subdomain: barangay.slug), class: "btn btn-outline-emerald w-100" do %>
+                  Visit Barangay Portal <i class="bi bi-arrow-right ms-1"></i>
+                <% end %>
+              </div>
             </div>
           </div>
         <% end %>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselBarangay" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselBarangay" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
-  </section>
-<% end %>
 
-<% if @testimonials.any? %>
-  <section class="testimonial py-5">
-    <div class="text-center mb-3">
-      <h2>
-        <i class="bi bi-chat-left-quote"></i>
-        Testimonials
-      </h2>
-    </div>
-
-    <div id="carouselTestimonial" class="carousel carousel-dark slide">
-      <div class="carousel-indicators">
-        <% @testimonials.count.times do |index| %>
-          <button type="button" data-bs-target="#carouselTestimonialIndicators" data-bs-slide-to="<%= index %>" class="<%= index == 0 ? 'active' : '' %>" aria-label="Slide <%= index %>"></button>
+      <div id="brgyEmptyFilterState" class="pub-card p-5 text-center d-none">
+        <div class="pub-icon-well mx-auto mb-3"><i class="bi bi-search"></i></div>
+        <h5 class="fw-bold mb-1">No matching Barangay found</h5>
+        <p class="text-secondary small mb-0">Try searching a different barangay name, city, or province.</p>
+      </div>
+    <% else %>
+      <div class="pub-card p-5 text-center">
+        <div class="pub-icon-well mx-auto mb-3"><i class="bi bi-building"></i></div>
+        <h5 class="fw-bold mb-1">No Verified Barangays Yet</h5>
+        <p class="text-secondary small mb-3">Be the first to register and verify your Barangay Health Center on the platform.</p>
+        <%= link_to new_user_registration_path, class: "btn btn-emerald" do %>
+          <i class="bi bi-building-add me-1"></i>Register Your Barangay
         <% end %>
       </div>
-      <div class="carousel-inner">
-        <% @testimonials.each_with_index do |testimonial, index| %>
-          <div class="carousel-item <%= index == 0 ? 'active' : '' %>">
-            <div class="d-flex justify-content-center p-5">
-              <div class="card text-center border-0 shadow w-75">
-                <div class="card-body">
-                  <p class="card-text text-wrap"><%= testimonial.data %></p>
-                  <h5 class="card-title d-flex text-start justify-content-center align-items-center gap-2">
-                    <span><%= image_tag(profile_url(testimonial.user), class: "rounded-circle", size: "32x32")  %></span>
-                    <span class="">
-                      <p class="lh-1 small m-0"><span class="text-primary"><%= testimonial.user.full_name %></span><br>
-                        <span class="text-muted"><%= testimonial.user.email %></span></p>
+    <% end %>
+  </div>
+</section>
+
+<!-- ==================== COMMUNITY TESTIMONIALS SECTION ==================== -->
+<% if @testimonials.any? %>
+  <section class="py-5 bg-white border-top pub-full-bleed">
+    <div class="container py-3">
+      <div class="text-center mb-5">
+        <span class="badge badge-soft-emerald mb-2 px-3 py-1">TRUSTED BY HEALTH WORKERS</span>
+        <h2 class="fw-bold mb-1">What Barangay Health Centers Say</h2>
+        <p class="text-secondary mb-0">Feedback from verified Barangay Administrators across the platform.</p>
+      </div>
+
+      <div class="row g-4 justify-content-center">
+        <% @testimonials.first(6).each do |testimonial| %>
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="pub-card p-4 h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="text-warning mb-3">
+                  <% rating_val = (testimonial.rating.presence || 5).to_i.clamp(1, 5) %>
+                  <% rating_val.times do %>
+                    <i class="bi bi-star-fill"></i>
+                  <% end %>
+                  <% (5 - rating_val).times do %>
+                    <i class="bi bi-star text-secondary opacity-25"></i>
+                  <% end %>
+                </div>
+                <p class="fst-italic text-dark mb-4">
+                  "<%= testimonial.data %>"
+                </p>
+              </div>
+              <div class="d-flex align-items-center gap-3 pt-3 border-top">
+                <%= image_tag(profile_url(testimonial.user), class: "rounded-circle object-fit-cover", size: "42x42", alt: testimonial.user.full_name) %>
+                <div class="overflow-hidden">
+                  <div class="fw-bold text-dark text-truncate"><%= testimonial.user.full_name %></div>
+                  <% if testimonial.barangay.present? %>
+                    <span class="badge badge-soft-emerald text-truncate">
+                      <i class="bi bi-building me-1"></i>Brgy. <%= testimonial.barangay.name %>, <%= testimonial.barangay.city %>
                     </span>
-                  </h5>
+                  <% else %>
+                    <span class="badge badge-soft-slate">Verified Barangay Admin</span>
+                  <% end %>
                 </div>
               </div>
             </div>
           </div>
         <% end %>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselTestimonial" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselTestimonial" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
     </div>
   </section>
 <% end %>
+
+<script>
+  function filterVerifiedBarangays(query) {
+    const q = (query || "").toLowerCase().trim();
+    const cards = document.querySelectorAll(".brgy-card-item");
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const match = (card.dataset.search || "").includes(q);
+      card.style.display = match ? "" : "none";
+      if (match) visibleCount++;
+    });
+
+    const emptyState = document.getElementById("brgyEmptyFilterState");
+    if (emptyState) {
+      emptyState.classList.toggle("d-none", visibleCount > 0);
+    }
+  }
+</script>

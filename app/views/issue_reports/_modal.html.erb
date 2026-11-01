@@ -1,13 +1,19 @@
 <div class="modal fade" id="reportIssueModal" tabindex="-1" aria-labelledby="reportIssueModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="reportIssueModalLabel">
-          <i class="bi bi-bug-fill me-2"></i>Report System Issue
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 1rem;">
+      <div class="modal-header border-bottom px-4 py-3 bg-white" style="border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+        <div class="d-flex align-items-center gap-2">
+          <span class="pub-icon-well" style="width: 38px; height: 38px; font-size: 1.05rem;">
+            <i class="bi bi-bug-fill"></i>
+          </span>
+          <div>
+            <h5 class="modal-title fw-bold text-dark mb-0" id="reportIssueModalLabel">Report a System Issue</h5>
+            <small class="text-secondary">Help us improve BrgyHealth by reporting bugs or suggesting features</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body p-4 text-dark">
         <%= turbo_frame_tag :issue_report_frame do %>
           <%= render partial: "issue_reports/form", locals: { issue_report: IssueReport.new } %>
         <% end %>

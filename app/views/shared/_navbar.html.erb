@@ -1,98 +1,139 @@
-<nav class="navbar navbar-expand bg-body-tertiary sticky-top">
-  <div class="container-fluid">
-    <% if controller.class.superclass == SuperAdminController || controller.class.superclass == AdminController || (controller.class == ProfileController && (current_user&.admin? || current_user&.super_admin?)) %>
-      <button class="btn text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
-        <i class="bi bi-list"></i>
-      </button>
-    <% else %>
-      <%= link_to root_path(subdomain: ActsAsTenant.current_tenant&.subdomain), class: "navbar-brand" do %>
-        <%= image_tag("logo_no_background.png", class: "d-inline-block align-text-top", alt: "Logo", height: 30) %>
-
-        <%= navbar_title %>
-      <% end %>
-    <% end %>
-
-    <div class="navbar-nav d-flex flex-row gap-2 align-items-center">
-      <%= link_to root_path(subdomain: ActsAsTenant.current_tenant&.subdomain), 
-        class: "nav-link bg-dark-subtle d-inline-flex align-items-center justify-content-center rounded-circle #{ navbar_link_status(root_path) }",
-        style: "width: 32px; height: 32px;" do %>
-
-        <i class="fs-5 bi <%= icon_for_state(root_path, "bi-house-door-fill", "bi-house-door") %>"></i>
+<nav class="navbar navbar-expand-lg pub-navbar sticky-top">
+  <div class="container">
+    <div class="d-flex align-items-center gap-2">
+      <% if controller.class.superclass == SuperAdminController || controller.class.superclass == AdminController || (controller.class == ProfileController && (current_user&.admin? || current_user&.super_admin?)) %>
+        <button class="btn btn-light border" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">
+          <i class="bi bi-list"></i>
+        </button>
       <% end %>
 
-      <% if ActsAsTenant.current_tenant.present? %>
-        <% if user_signed_in? %>
-          <%= link_to appointments_path, 
-            class: "nav-link bg-dark-subtle d-inline-flex align-items-center justify-content-center rounded-circle #{ navbar_link_status(appointments_path) }",
-            style: "width: 32px; height: 32px;" do %>
+      <%= link_to root_path(subdomain: ActsAsTenant.current_tenant&.subdomain), class: "navbar-brand d-flex align-items-center gap-2 fw-bold m-0" do %>
+        <span class="pub-brand-icon">
+          <i class="bi bi-heart-pulse-fill"></i>
+        </span>
+        <span class="text-dark">
+          <% if ActsAsTenant.current_tenant.present? %>
+            Brgy. <span class="text-success"><%= ActsAsTenant.current_tenant.name %></span>
+          <% else %>
+            Brgy<span class="text-success">Health</span>
+          <% end %>
+        </span>
+      <% end %>
+    </div>
 
-            <i class="bi <%= icon_for_state(appointments_path, "bi-calendar-week-fill", "bi-calendar-week") %>"></i>
+    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#publicNavbar" aria-controls="publicNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="publicNavbar">
+      <ul class="navbar-nav mx-auto gap-1 my-2 my-lg-0">
+        <li class="nav-item">
+          <%= link_to root_path(subdomain: ActsAsTenant.current_tenant&.subdomain),
+            class: "nav-link pub-nav-link #{navbar_link_status(root_path)}" do %>
+            <i class="bi <%= icon_for_state(root_path, 'bi-house-door-fill', 'bi-house-door') %> me-1"></i>Home
+          <% end %>
+        </li>
+
+        <% if ActsAsTenant.current_tenant.present? %>
+          <% if user_signed_in? %>
+            <li class="nav-item">
+              <%= link_to appointments_path,
+                class: "nav-link pub-nav-link #{navbar_link_status(appointments_path)}" do %>
+                <i class="bi <%= icon_for_state(appointments_path, 'bi-calendar-week-fill', 'bi-calendar-week') %> me-1"></i>Appointments
+              <% end %>
+            </li>
+          <% end %>
+          <li class="nav-item">
+            <%= link_to about_us_pages_path,
+              class: "nav-link pub-nav-link #{navbar_link_status(about_us_pages_path)}" do %>
+              <i class="bi bi-info-circle me-1"></i>About Us
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to contact_us_pages_path,
+              class: "nav-link pub-nav-link #{navbar_link_status(contact_us_pages_path)}" do %>
+              <i class="bi bi-geo-alt me-1"></i>Contact Us
+            <% end %>
+          </li>
+        <% else %>
+          <li class="nav-item">
+            <%= link_to main_page_path("about_us"),
+              class: "nav-link pub-nav-link #{navbar_link_status(main_page_path('about_us'))}" do %>
+              <i class="bi bi-info-circle me-1"></i>About Us
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to main_page_path("contact_us"),
+              class: "nav-link pub-nav-link #{navbar_link_status(main_page_path('contact_us'))}" do %>
+              <i class="bi bi-geo-alt me-1"></i>Contact Us
+            <% end %>
+          </li>
+          <li class="nav-item">
+            <%= link_to main_page_path("privacy_policy"),
+              class: "nav-link pub-nav-link #{current_page?(main_page_path('privacy_policy')) || current_page?(main_page_path('terms_of_use')) ? 'active' : ''}" do %>
+              <i class="bi bi-shield-check me-1"></i>Privacy &amp; Terms
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+
+      <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
+        <% unless user_signed_in? %>
+          <%= link_to new_user_session_path, class: "btn btn-light border fw-semibold px-3" do %>
+            <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+          <% end %>
+
+          <%= link_to new_user_registration_path, class: "btn btn-emerald px-3" do %>
+            <% if ActsAsTenant.current_tenant.present? %>
+              <i class="bi bi-person-plus me-1"></i>Resident Sign Up
+            <% else %>
+              <i class="bi bi-building-add me-1"></i>Register Barangay
+            <% end %>
           <% end %>
         <% else %>
-          <%= link_to about_us_pages_path, class: "nav-link bg-dark-subtle rounded #{ navbar_link_status(about_us_pages_path) }" do %>
-            <i class="bi bi-person-circle"></i> About Us
-          <% end %>
+          <span>
+            <%= render partial: "shared/notification_parent" %>
+          </span>
 
-          <%= link_to contact_us_pages_path, class: "nav-link bg-dark-subtle rounded #{ navbar_link_status(contact_us_pages_path) }" do %>
-            <i class="bi bi-envelope-fill"></i> Contact Us
-          <% end %>
-        <% end %>
-      <% else %>
-        <%= link_to main_page_path("about_us"), class: "nav-link bg-dark-subtle rounded #{ navbar_link_status(main_page_path("about_us")) }" do %>
-          <i class="bi bi-person-circle"></i> About Us
-        <% end %>
+          <div class="dropdown">
+            <%= link_to "#", class: "d-flex align-items-center gap-2 text-decoration-none dropdown-toggle p-1 rounded-pill border bg-light",
+              data: { bs_toggle: "dropdown" } do %>
+              <%= image_tag(profile_url(current_user), class: "rounded-circle object-fit-cover", size: "30x30") %>
+              <span class="small fw-semibold text-dark d-none d-sm-inline pe-1"><%= current_user.first_name.presence || "Account" %></span>
+            <% end %>
 
-        <%= link_to main_page_path("contact_us"), class: "nav-link bg-dark-subtle rounded #{ navbar_link_status(main_page_path("contact_us")) }" do %>
-          <i class="bi bi-envelope-fill"></i> Contact Us
-        <% end %>
-      <% end %>
-
-      <%= link_to new_user_session_path, class: "nav-link bg-dark-subtle rounded #{navbar_link_status(new_user_session_path)}" do %>
-        <i class="bi bi-box-arrow-in-right"></i> Sign In
-      <% end unless user_signed_in? %>
-
-      <% if user_signed_in? %>
-        <span>
-          <%= render partial: "shared/notification_parent" %>
-        </span>
-
-        <div class="dropdown">
-          <%= link_to "#", class: "d-flex align-items-center text-decoration-none dropdown-toggle",
-            data: { bs_toggle: "dropdown" } do %>
-
-            <%= image_tag(profile_url(current_user), class: "rounded-circle", size: "32x32")  %>
-          <% end %>
-
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <%= link_to root_path, class: "dropdown-item" do %>
-                <i class="bi bi-house-door"></i>
-                Home
-              <% end unless current_user.patient? %>
-
-              <%= link_to administrator_path_helper, class: "dropdown-item" do %>
-                <i class="bi bi-person-badge"></i>
-                Administrator
-              <% end unless current_user.patient? %>
-            </li>
-            <li>
-              <%= link_to edit_profile_path(current_user), class: "dropdown-item" do %>
-                <i class="bi bi-person-fill"></i>
-                Profile
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2">
+              <li class="px-3 py-2 border-bottom">
+                <div class="fw-bold small text-dark"><%= current_user.full_name %></div>
+                <div class="text-secondary" style="font-size: 0.75rem;"><%= current_user.email %></div>
+              </li>
+              <% unless current_user.patient? %>
+                <li>
+                  <%= link_to root_path, class: "dropdown-item py-2" do %>
+                    <i class="bi bi-house-door me-2 text-secondary"></i>Home
+                  <% end %>
+                </li>
+                <li>
+                  <%= link_to administrator_path_helper, class: "dropdown-item py-2" do %>
+                    <i class="bi bi-speedometer2 me-2 text-success"></i>Administrator Portal
+                  <% end %>
+                </li>
               <% end %>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li>
-              <%= link_to destroy_user_session_path, data: { turbo_method: :DELETE, turbo_confirm: "Are your sure?" }, class: "dropdown-item text-danger" do %>
-                <i class="bi bi-box-arrow-right"></i>
-                Logout
-              <% end %>
-            </li>
-          </ul>
-        </div>
-      <% end %>
+              <li>
+                <%= link_to edit_profile_path(current_user), class: "dropdown-item py-2" do %>
+                  <i class="bi bi-person-gear me-2 text-secondary"></i>My Profile
+                <% end %>
+              </li>
+              <li><hr class="dropdown-divider my-1"></li>
+              <li>
+                <%= link_to destroy_user_session_path, data: { turbo_method: :DELETE, turbo_confirm: "Are you sure you want to sign out?" }, class: "dropdown-item py-2 text-danger fw-medium" do %>
+                  <i class="bi bi-box-arrow-right me-2"></i>Logout
+                <% end %>
+              </li>
+            </ul>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 </nav>

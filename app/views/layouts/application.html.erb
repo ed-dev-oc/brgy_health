@@ -22,13 +22,13 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
+  <body class="pub-body d-flex flex-column min-vh-100">
     <%= render partial: "shared/notification_modal" %>
     <%= render partial: "shared/web_push" %>
     <%= render(FlashComponent.new(flash: flash)) %>
     <%= render partial: "shared/navbar" %>
 
-    <div class="container-fluid">
+    <div class="container-fluid flex-grow-1">
       <%= yield %>
     </div>
 

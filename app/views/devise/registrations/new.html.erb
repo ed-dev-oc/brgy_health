@@ -1,7 +1,5 @@
 <% if ActsAsTenant.current_tenant.present? %>
-
   <%= render partial: "devise/registrations/barangay_form" %>
 <% else %>
-
   <%= render partial: "devise/registrations/main_form" %>
 <% end %>

@@ -1,33 +1,115 @@
-<section class="hero-section py-5 mb-3" style="background-color: #e3f2fd;">
-  <div class="container text-center">
-    <h1><%= @page.title %></h1>
-    <p class="lead"><%= @page.subheadline %></p>
+<section class="pub-page-banner text-center">
+  <div class="container">
+    <span class="badge badge-soft-emerald mb-2 px-3 py-1">GET IN TOUCH</span>
+    <h1 class="fw-bold display-5 mb-2"><%= @page.title %></h1>
+    <% if @page.subheadline.present? %>
+      <p class="lead opacity-75 mx-auto mb-0" style="max-width: 680px;">
+        <%= @page.subheadline %>
+      </p>
+    <% end %>
   </div>
 </section>
 
-<div class="container">
-  <div class="row row-gap-4">
-    <div class="col-12 col-lg-6">
-      <%= @page.content %>
-    </div>
-    <div class="col-lg-6">
-      <h2 style="font-size: 32px;">Send Us a Email</h2>
-      <form method="post" action="mailto:junjunpojr@gmail.com" enctype="text/plain">
-        <div class="mb-3"><label class="form-label" for="name" style="font-size: 16px;">Full Name</label><input class="form-control form-control" type="text" id="name" name="name" required=""></div>
-        <div class="mb-3"><label class="form-label" for="email" style="font-size: 16px;">Email Address</label><input class="form-control form-control" type="email" id="email" name="email" required=""></div>
-        <div class="mb-3"><label class="form-label" for="name" style="font-size: 16px;">Subject</label><input class="form-control form-control" type="text" id="name" name="subject" required=""></div>
-        <div class="mb-3"><label class="form-label" for="message" style="font-size: 16px;">Message</label>
-          <textarea class="form-control form-control" id="message" name="body" required="" rows="5"></textarea>
+<div class="container py-5">
+  <div class="row g-4">
+    <!-- Left Column: CMS Contact Details & Interactive Map -->
+    <div class="col-12 col-lg-5 d-flex flex-column gap-4">
+      <div class="pub-card p-4">
+        <h5 class="fw-bold mb-3">
+          <i class="bi bi-building-check text-success me-2"></i>Direct Contact Channels
+        </h5>
+
+        <% if @page.content.present? %>
+          <div class="text-secondary small mb-3 pb-3 border-bottom">
+            <%= @page.content %>
+          </div>
+        <% end %>
+
+        <div class="d-flex align-items-start gap-3 mb-3">
+          <div class="pub-icon-well" style="width: 42px; height: 42px; font-size: 1.1rem;">
+            <i class="bi bi-geo-alt-fill"></i>
+          </div>
+          <div>
+            <div class="fw-semibold text-dark">Main Office</div>
+            <small class="text-secondary">Bagong Buhay, Ormoc City, Leyte, 6541</small>
+          </div>
         </div>
-        <button class="btn btn-primary" type="submit" style="font-size: 16px;">Send Message</button>
-      </form>
+
+        <div class="d-flex align-items-start gap-3 mb-3">
+          <div class="pub-icon-well" style="width: 42px; height: 42px; font-size: 1.1rem;">
+            <i class="bi bi-envelope-fill"></i>
+          </div>
+          <div>
+            <div class="fw-semibold text-dark">Support Email</div>
+            <small class="text-secondary">junjunpojr@gmail.com</small>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-start gap-3">
+          <div class="pub-icon-well" style="width: 42px; height: 42px; font-size: 1.1rem;">
+            <i class="bi bi-telephone-fill"></i>
+          </div>
+          <div>
+            <div class="fw-semibold text-dark">Phone Hotline</div>
+            <small class="text-secondary">0906-172-0165</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Leaflet Map Card -->
+      <div class="pub-card p-3">
+        <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+          <h6 class="fw-bold mb-0">
+            <i class="bi bi-pin-map-fill text-success me-1"></i>Location Map
+          </h6>
+          <span class="badge badge-soft-slate">Interactive Map</span>
+        </div>
+        <div class="rounded-3 overflow-hidden border"
+          style="width: 100%; height: 280px;"
+          data-controller="leaflet"
+          data-leaflet-lat-value="<%= @page.latitude.presence || 11.0050 %>"
+          data-leaflet-lng-value="<%= @page.longitude.presence || 124.6075 %>"
+          data-leaflet-title-value="<%= @page.title %>">
+        </div>
+      </div>
     </div>
-    <div class="col-12">
-      <h2>Location Map</h2>
-      <div style="width: 100%; height: 400px" data-controller="leaflet"
-        data-leaflet-lat-value="<%= @page.latitude %>"
-        data-leaflet-lng-value="<%= @page.longitude %>"
-        data-leaflet-title-value="<%= @page.title %>">
+
+    <!-- Right Column: Contact Form -->
+    <div class="col-12 col-lg-7">
+      <div class="pub-card p-4 p-md-5 h-100">
+        <h4 class="fw-bold mb-1">Send Us an Email</h4>
+        <p class="text-secondary small mb-4">
+          Need assistance onboarding or verifying your Barangay Health Center? Send us a message or report a technical issue directly.
+        </p>
+
+        <form method="post" action="mailto:junjunpojr@gmail.com" enctype="text/plain">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small" for="contact_name">Full Name *</label>
+              <input class="form-control" type="text" id="contact_name" name="name" placeholder="Juan Dela Cruz" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small" for="contact_email">Email Address *</label>
+              <input class="form-control" type="email" id="contact_email" name="email" placeholder="juan@example.com" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold small" for="contact_subject">Subject *</label>
+              <input class="form-control" type="text" id="contact_subject" name="subject" placeholder="Barangay Onboarding Inquiry" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold small" for="contact_message">Message *</label>
+              <textarea class="form-control" id="contact_message" name="body" rows="6" placeholder="How can we help your barangay?" required></textarea>
+            </div>
+            <div class="col-12 d-flex flex-wrap justify-content-between align-items-center gap-2 pt-2">
+              <button type="button" class="btn btn-light border text-danger fw-medium" data-bs-toggle="modal" data-bs-target="#reportIssueModal">
+                <i class="bi bi-bug me-1"></i>Report a Technical Issue Instead
+              </button>
+              <button class="btn btn-emerald px-4" type="submit">
+                <i class="bi bi-send me-1"></i>Send Message
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
