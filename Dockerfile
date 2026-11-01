@@ -58,6 +58,9 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
+# Build assets with yarn so app/assets/builds is populated before Propshaft initializes
+RUN mkdir -p app/assets/builds && yarn build && yarn build:css
+
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
