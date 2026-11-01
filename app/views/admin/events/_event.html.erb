@@ -1,95 +1,78 @@
 <div class="modal fade" id="<%= dom_id(event, "modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(event, "modal") %>Label" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h1 class="modal-title fs-5" id="<%= dom_id(event, "modal") %>Label">Event Details</h1>
+  <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom px-4 py-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="sa-icon-well well-emerald" style="width: 36px; height: 36px; font-size: 1rem;">
+            <i class="bi bi-calendar-event-fill"></i>
+          </span>
+          <div>
+            <h5 class="modal-title fw-bold mb-0" id="<%= dom_id(event, "modal") %>Label"><%= event.name %></h5>
+            <small class="text-secondary">Event #<%= event.public_uid %></small>
+          </div>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <div class="row">
+      <div class="modal-body p-4 text-start">
+        <div class="row g-4">
           <div class="col-md-7">
-            <div class="mb-3">
-              <h3 class="fw-bold"><%= event.name %></h3>
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-calendar-event me-2"></i>
-                <span><%= event.start_date.to_formatted_s(:long) %> - <%= event.end_date.to_formatted_s(:long) %></span>
-              </div>
-              <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-geo-alt me-2"></i>
-                <span><%= event.location %></span>
-              </div>
-              <div class="d-flex align-items-center mb-3">
-                <i class="bi bi-people me-2"></i>
-                <span><%= event.audience.titleize %></span>
-              </div>
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <span class="badge <%= soft_badge_class(event.status) %>"><%= event.status.titleize %></span>
+              <span class="badge badge-soft-sky"><i class="bi bi-people me-1"></i><%= event.audience.to_s.titleize %></span>
+              <span class="badge badge-soft-slate"><i class="bi bi-geo-alt me-1"></i><%= event.location %></span>
+            </div>
 
-              <div class="mb-3">
-                <span class="badge <%= badge_status_class(event.status)%>">
-                  <%= event.status.titleize %>
-                </span>
+            <div class="p-3 rounded-3 bg-light mb-3 small">
+              <div class="fw-semibold text-dark mb-1">
+                <i class="bi bi-calendar-range text-success me-1"></i>Schedule Window
+              </div>
+              <div class="text-secondary">
+                <%= event.start_date.strftime("%B %d, %Y at %I:%M %p") %> &mdash; <%= event.end_date.strftime("%B %d, %Y at %I:%M %p") %>
               </div>
             </div>
 
-            <div class="card mb-4">
-              <div class="card-body">
-                <h5 class="card-title">Description</h5>
-                <p class="card-text">
-                  <%= event.description %>
-                </p>
+            <div class="sa-card p-3">
+              <h6 class="fw-bold small text-uppercase text-secondary mb-2">Event Description</h6>
+              <div class="text-dark">
+                <%= event.description %>
               </div>
             </div>
           </div>
+
           <div class="col-md-5">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title mb-0">Event Images</h5>
-              </div>
-              <div class="card-body">
-                <!-- Main Image Carousel -->
-                <div id="<%= dom_id(event, "carouselIndicators") %>" class="carousel slide">
-                  <div class="carousel-indicators">
-                    <% event.images.each_with_index do |image, index| %>
-                      <button type="button" data-bs-target="#<%= dom_id(event, "carouselIndicators") %>" data-bs-slide-to="<%= index %>" class="<%= index == 0 ? "active" : "" %>" aria-current="true" aria-label="Slide <%= index %>"></button>
-                    <% end %>
-                  </div>
+            <div class="sa-card p-3">
+              <h6 class="fw-bold small text-uppercase text-secondary mb-3">Event Images (<%= event.images.count %>)</h6>
+              <% if event.images.attached? %>
+                <div id="<%= dom_id(event, "carouselIndicators") %>" class="carousel slide rounded-3 overflow-hidden mb-2">
                   <div class="carousel-inner">
                     <% event.images.each_with_index do |image, index| %>
-                      <div class="carousel-item <%= index == 0 ? "active" : ""%>">
-                        <%= image_tag(image.variant(resize_to_fill: [600, 400]), class: "d-block w-100") %>
+                      <div class="carousel-item <%= index == 0 ? 'active' : '' %>">
+                        <%= image_tag(image.variant(resize_to_fill: [600, 400]), class: "d-block w-100 rounded-3") %>
                       </div>
                     <% end %>
                   </div>
-                  <button class="carousel-control-prev" type="button" data-bs-target="#<%= dom_id(event, "carouselIndicators") %>" data-bs-slide="prev" >
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                  </button>
-                  <button class="carousel-control-next" type="button" data-bs-target="#<%= dom_id(event, "carouselIndicators") %>" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                  </button>
+                  <% if event.images.count > 1 %>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#<%= dom_id(event, 'carouselIndicators') %>" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#<%= dom_id(event, 'carouselIndicators') %>" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  <% end %>
                 </div>
-
-                <!-- Thumbnail Gallery -->
-                <div class="row g-2" id="<%= dom_id(event, "thumbnailGallery") %>">
-                  <div class="col-4 d-flex gap-2">
-                    <% event.images.each do |image, index| %>
-                      <%= image_tag(image.variant(resize_to_fill: [600, 400]), class: "img-thumbnail") %>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
+              <% else %>
+                <div class="p-4 text-center text-secondary small">No images attached.</div>
+              <% end %>
             </div>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          <i class="bi bi-x"></i>
-          Close
-        </button>
-        <a class="btn btn-primary" href="#" data-bs-toggle="modal" data-bs-target="#<%= dom_id(event, "form_modal") %>">
-          <i class="bi bi-pencil"></i>
-          Edit
+      <div class="modal-footer bg-light px-4 py-3">
+        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Close</button>
+        <a class="btn btn-emerald" href="#" data-bs-toggle="modal" data-bs-target="#<%= dom_id(event, 'form_modal') %>">
+          <i class="bi bi-pencil me-1"></i>Edit Event
         </a>
       </div>
     </div>

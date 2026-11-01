@@ -1,9 +1,8 @@
 <%= form_with(model: appointment, url: cancel_schedule_admin_appointment_path(appointment.public_uid)) do |form| %>
   <% if appointment.errors.any? %>
-    <div class="text-danger">
-      <h2><%= pluralize(appointment.errors.count, "error") %> prohibited this appointment from being saved:</h2>
-
-      <ul>
+    <div class="alert alert-danger rounded-3 small mb-3">
+      <div class="fw-bold mb-1"><%= pluralize(appointment.errors.count, "error") %> prohibited this appointment from being saved:</div>
+      <ul class="mb-0 ps-3">
         <% appointment.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -11,11 +10,12 @@
     </div>
   <% end %>
 
-  <div class="my-2">
-    <%= form.label :cancel_reason, class: "form-label fw-bold" %>
-    <%= form.textarea :cancel_reason, rows: 3, class: "form-control", required: true %>
+  <div class="mb-3">
+    <%= form.label :cancel_reason, "Cancellation Reason *", class: "form-label fw-semibold small" %>
+    <%= form.textarea :cancel_reason, rows: 3, class: "form-control", placeholder: "Provide the reason for cancelling this appointment...", required: true %>
   </div>
-  <div class="my-2">
-    <%= form.submit "Cancel Appointment", class: "btn btn-danger", data: { turbo_confirm: "Are you sure?", turbo_submits_with: "Submitting..." } %>
+  <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Close</button>
+    <%= form.submit "Confirm Cancellation", class: "btn btn-danger px-4", data: { turbo_confirm: "Are you sure you want to cancel this appointment?", turbo_submits_with: "Cancelling..." } %>
   </div>
 <% end %>

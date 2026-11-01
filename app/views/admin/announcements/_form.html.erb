@@ -1,9 +1,11 @@
-<%= form_with(model: announcement, url: announcement.new_record? ? admin_announcements_path : admin_announcement_path(announcement.public_uid), html: { multipart: true } ) do |form| %>
+<%= form_with(model: announcement, url: announcement.new_record? ? admin_announcements_path : admin_announcement_path(announcement.public_uid), html: { multipart: true }) do |form| %>
   <% if announcement.errors.any? %>
-    <div class="text-danger">
-      <h2><%= pluralize(announcement.errors.count, "error") %> prohibited this announcement from being saved:</h2>
-
-      <ul>
+    <div class="alert alert-danger rounded-3 mb-4">
+      <div class="fw-bold mb-1">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        <%= pluralize(announcement.errors.count, "error") %> prohibited this announcement from being saved:
+      </div>
+      <ul class="mb-0 small">
         <% announcement.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -11,96 +13,100 @@
     </div>
   <% end %>
 
-  <div>
-    <div class="my-2">
-      <%= form.label :images, class: "form-label fw-bold" %>
-      <%= form.file_field :images, multiple: true, class: "form-control" %>
+  <div class="row g-3">
+    <div class="col-md-8">
+      <%= form.label :name, "Announcement / Service Title *", class: "form-label fw-semibold small" %>
+      <%= form.text_field :name, required: true, class: "form-control", placeholder: "e.g. Free Childhood Immunization & Check-Up" %>
     </div>
-    <div class="mb-3">
-      <%= form.label :name, "Title", class: "form-label fw-bold" %>
-      <%= form.text_field :name, required: true, class: "form-control" %>
+
+    <div class="col-md-4">
+      <%= form.label :status, "Publication Status *", class: "form-label fw-semibold small" %>
+      <%= form.select :status,
+        options_for_select(Announcement.statuses.map { |key, _value| [key.titleize, key] }, announcement.status),
+        { prompt: "Select a status" },
+        { class: "form-select", required: true } %>
     </div>
-    <div class="my-2">
-      <%= form.label :start_date, "Start and End Date Time", class: "form-label fw-bold" %>
+
+    <div class="col-md-6">
+      <%= form.label :start_date, "Schedule Start & End Date *", class: "form-label fw-semibold small" %>
       <div class="input-group">
-        <span class="input-group-text">Schedule</span>
         <%= form.datetime_field :start_date, class: "form-control", required: true %>
         <%= form.datetime_field :end_date, class: "form-control", required: true %>
       </div>
     </div>
-    <div class="my-2">
-      <%= form.label :open_time, "Start and End Time", class: "form-label fw-bold" %>
+
+    <div class="col-md-6">
+      <%= form.label :open_time, "Daily Operating Hours *", class: "form-label fw-semibold small" %>
       <div class="input-group">
-        <span class="input-group-text">Time</span>
-        <%= form.time_field :open_time, required: true, class: "form-control", required: true %>
-        <%= form.time_field :close_time, required: true, class: "form-control", required: true %>
+        <%= form.time_field :open_time, required: true, class: "form-control" %>
+        <span class="input-group-text bg-light text-secondary">to</span>
+        <%= form.time_field :close_time, required: true, class: "form-control" %>
       </div>
     </div>
-    <div class="mb-3">
-      <%= form.label :location, class: "form-label fw-bold" %>
-      <%= form.text_field :location, required: true, class: "form-control" %>
-    </div>
-    <div class="mb-3">
-      <%= form.label :audience, class: "form-label fw-bold" %>
-      <%= form.text_field :audience, placeholder: "All Residents", required: true, class: "form-control" %>
-    </div>
-    <div class="mb-3">
-      <%= form.label :max_patients, class: "form-label fw-bold" %>
-      <%= form.number_field :max_patients, required: true, class: "form-control" %>
-    </div>
-    <div class="mb-3">
-      <%= form.label :status, class: "form-label fw-bold" %>
-      <%= form.select :status, 
-        options_for_select(Announcement.statuses.map { |key, value| [key.titleize, key] }, announcement.status ), 
-        { prompt: "Select a status" }, 
-        { class: "form-select", required: true }
-      %>
-    </div>
-    <div class="mb-3">
-      <%= form.label :description, class: "form-label fw-bold" %>
-      <%= form.rich_text_area :description, class: "overflow-auto", required: true %>
+
+    <div class="col-md-5">
+      <%= form.label :location, "Clinic / Venue Location *", class: "form-label fw-semibold small" %>
+      <%= form.text_field :location, required: true, class: "form-control", placeholder: "Barangay Health Center" %>
     </div>
 
-    <div class="mb-3" data-controller="nested-attributes-visibility">
-      <%= form.label :health_program_id, "Health Program", class: "form-label fw-bold" %>
+    <div class="col-md-4">
+      <%= form.label :audience, "Target Audience *", class: "form-label fw-semibold small" %>
+      <%= form.text_field :audience, placeholder: "All Residents, Senior Citizens...", required: true, class: "form-control" %>
+    </div>
 
-      <div class="input-group mb-3" data-nested-attributes-visibility-target="selectInputContainer">
+    <div class="col-md-3">
+      <%= form.label :max_patients, "Max Patient Slots *", class: "form-label fw-semibold small" %>
+      <%= form.number_field :max_patients, min: 1, required: true, class: "form-control", placeholder: "100" %>
+    </div>
+
+    <div class="col-md-6" data-controller="nested-attributes-visibility">
+      <%= form.label :health_program_id, "Linked Health Program *", class: "form-label fw-semibold small" %>
+      <div class="input-group" data-nested-attributes-visibility-target="selectInputContainer">
         <%= form.collection_select :health_program_id, HealthProgram.all, :id, :name, { include_blank: "Select existing program" }, class: "form-select", required: true %>
-        <button type="button" class="btn btn-outline-green-600" data-action="click->nested-attributes-visibility#openForm">
-          <i class="bi bi-plus"></i>
-          Add New
+        <button type="button" class="btn btn-outline-emerald" data-action="click->nested-attributes-visibility#openForm">
+          <i class="bi bi-plus-lg me-1"></i>New Program
         </button>
       </div>
 
-      <div class="d-none card rounded-0" data-nested-attributes-visibility-target="nestedFormContainer">
-        <div class="card-body">
-          <div class="text-end">
-            <button type="button" class="btn btn-outline-danger" data-action="click->nested-attributes-visibility#closeForm">
-              <i class="bi bi-x"></i>
-              Cancel
+      <div class="d-none card border rounded-3 mt-2" data-nested-attributes-visibility-target="nestedFormContainer">
+        <div class="card-body p-3 bg-light">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="fw-bold small text-dark">Create New Health Program</span>
+            <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" data-action="click->nested-attributes-visibility#closeForm">
+              <i class="bi bi-x"></i> Cancel
             </button>
           </div>
           <%= form.fields_for :health_program do |hp_fields| %>
-            <div class="mb-3">
-              <%= hp_fields.label :name, "New Program Name", class: "form-label fw-bold" %>
-              <%= hp_fields.text_field :name, class: "form-control", required: true %>
+            <div class="mb-2">
+              <%= hp_fields.label :name, "Program Name *", class: "form-label small fw-semibold mb-1" %>
+              <%= hp_fields.text_field :name, class: "form-control form-control-sm", required: true %>
             </div>
-            <div class="mb-3">
-              <%= hp_fields.label :description, "New Program Description", class: "form-label fw-bold" %>
-              <%= hp_fields.text_area :description, class: "form-control", required: true %>
+            <div class="mb-2">
+              <%= hp_fields.label :description, "Program Description *", class: "form-label small fw-semibold mb-1" %>
+              <%= hp_fields.text_area :description, rows: 2, class: "form-control form-control-sm", required: true %>
             </div>
-
-            <div class="mb-3">
-              <%= hp_fields.label :status, "New Program Status", class: "form-label fw-bold" %>
-              <%= hp_fields.select :status, options_for_select(HealthProgram.statuses.keys.map { |s| [s.titleize, s] }), { prompt: "Select status" }, class: "form-select", required: true %>
+            <div>
+              <%= hp_fields.label :status, "Status *", class: "form-label small fw-semibold mb-1" %>
+              <%= hp_fields.select :status, options_for_select(HealthProgram.statuses.keys.map { |s| [s.titleize, s] }), { prompt: "Select status" }, class: "form-select form-select-sm", required: true %>
             </div>
           <% end %>
         </div>
       </div>
     </div>
 
-    <div class="mb-3">
-      <%= form.submit class: "btn btn-green-600", data: { turbo_submits_with: "Submitting...", turbo_confirm: "Are you sure?"} %>
+    <div class="col-md-6">
+      <%= form.label :images, "Banner / Gallery Images #{announcement.new_record? ? '*' : ''}", class: "form-label fw-semibold small" %>
+      <%= form.file_field :images, multiple: true, class: "form-control" %>
+    </div>
+
+    <div class="col-12">
+      <%= form.label :description, "Service Details & Preparation Instructions *", class: "form-label fw-semibold small" %>
+      <%= form.rich_text_area :description, class: "overflow-auto", required: true %>
+    </div>
+
+    <div class="col-12 d-flex justify-content-end gap-2 pt-3 border-top">
+      <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+      <%= form.submit(announcement.new_record? ? "Publish Announcement" : "Save Changes", class: "btn btn-emerald px-4", data: { turbo_submits_with: "Saving...", turbo_confirm: "Save this announcement?" }) %>
     </div>
   </div>
 <% end %>

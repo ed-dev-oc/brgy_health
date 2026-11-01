@@ -1,13 +1,18 @@
 <%= form_with(model: testimonial, url: testimonial.new_record? ? admin_testimonials_path : admin_testimonial_path(testimonial)) do |form| %>
-  <div class="my-2">
-    <%= form.label :data, "Testimonial Message", class: "form-label fw-bold" %>
-    <%= form.text_area :data, rows: 4, class: "form-control", required: true %>
+  <div class="alert alert-light border small text-secondary py-2 px-3 mb-3">
+    <i class="bi bi-info-circle text-success me-1"></i>
+    Submitting a testimonial is <strong>optional</strong>. You can share or update your feedback anytime from the sidebar.
   </div>
-  <div class="my-2">
-    <%= form.label :rating, class: "form-label fw-bold" %>
-    <%= form.select :rating, Testimonial::RATING.map { |r| [r, r] }, { prompt: "Select a rating" }, { class: "form-select", required: true } %>
+  <div class="mb-3">
+    <%= form.label :rating, "Overall Platform Rating *", class: "form-label fw-semibold small" %>
+    <%= form.select :rating, Testimonial::RATING.map { |r| ["#{r} #{r == 1 ? 'Star' : 'Stars'}", r] }, { prompt: "Select a rating (1 to 5 stars)" }, { class: "form-select", required: true } %>
   </div>
-  <div class="mt-3">
-    <%= form.submit class: "btn btn-success", data: { turbo_submits_with: "Submitting...", turbo_confirm: "Are you sure?" } %>
+  <div class="mb-3">
+    <%= form.label :data, "Your Experience with BrgyHealth *", class: "form-label fw-semibold small" %>
+    <%= form.text_area :data, rows: 4, class: "form-control", placeholder: "How has BrgyHealth helped your Barangay Health Center and residents?", required: true %>
+  </div>
+  <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Maybe Later</button>
+    <%= form.submit(testimonial.new_record? ? "Submit Testimonial" : "Update Testimonial", class: "btn btn-emerald", data: { turbo_submits_with: "Saving...", turbo_confirm: "Are you sure?" }) %>
   </div>
 <% end %>

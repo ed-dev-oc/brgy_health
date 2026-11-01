@@ -1,9 +1,8 @@
 <%= form_with(model: appointment, url: flag_as_reschedule_admin_appointment_path(appointment.public_uid)) do |form| %>
   <% if appointment.errors.any? %>
-    <div class="text-danger">
-      <h2><%= pluralize(appointment.errors.count, "error") %> prohibited this appointment from being saved:</h2>
-
-      <ul>
+    <div class="alert alert-danger rounded-3 small mb-3">
+      <div class="fw-bold mb-1"><%= pluralize(appointment.errors.count, "error") %> prohibited this appointment from being saved:</div>
+      <ul class="mb-0 ps-3">
         <% appointment.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -11,15 +10,16 @@
     </div>
   <% end %>
 
-  <div class="my-2">
-    <%= form.label :scheduled_at, class: "form-label fw-bold" %>
+  <div class="mb-3">
+    <%= form.label :scheduled_at, "New Scheduled Date & Time *", class: "form-label fw-semibold small" %>
     <%= form.datetime_field :scheduled_at, class: "form-control", required: true %>
   </div>
-  <div class="my-2">
-    <%= form.label :reschedule_reason, class: "form-label fw-bold" %>
-    <%= form.textarea :reschedule_reason, rows: 3, class: "form-control", required: true %>
+  <div class="mb-3">
+    <%= form.label :reschedule_reason, "Reason for Rescheduling *", class: "form-label fw-semibold small" %>
+    <%= form.textarea :reschedule_reason, rows: 3, class: "form-control", placeholder: "Explain why the schedule is being adjusted...", required: true %>
   </div>
-  <div class="my-2">
-    <%= form.submit "Reschedule Appointment", class: "btn btn-green-600", data: { turbo_confirm: "Are you sure?", turbo_submits_with: "Submitting..." } %>
+  <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Close</button>
+    <%= form.submit "Reschedule Appointment", class: "btn btn-emerald px-4", data: { turbo_confirm: "Confirm rescheduling this appointment?", turbo_submits_with: "Saving..." } %>
   </div>
 <% end %>

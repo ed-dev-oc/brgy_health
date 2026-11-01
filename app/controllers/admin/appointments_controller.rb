@@ -10,7 +10,11 @@ class Admin::AppointmentsController < AdminController
     :announcement_capacity ]
 
   def index
-    @q = Appointment.includes(:announcement, :patient).ransack(params[:q])
+    scope = Appointment.includes(:announcement, :patient, :health_worker, :taggings)
+    scope = scope.where(scheduled_at: Time.current.all_day) if params[:today] == "true"
+    scope = scope.tagged_with(params[:flag], on: :flags) if params[:flag].present?
+
+    @q = scope.ransack(params[:q])
     @pagy, @appointments = pagy(@q.result(distinct: true).order(created_at: :desc))
   end
 

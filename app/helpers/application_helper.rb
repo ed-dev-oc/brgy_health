@@ -120,4 +120,43 @@ module ApplicationHelper
       controller_name.titleize
     end
   end
+
+  def admin_breadcrumb_title
+    return content_for(:breadcrumb) if content_for?(:breadcrumb)
+
+    case controller_name
+    when "dashboard"
+      "Clinic Dashboard"
+    when "appointments"
+      action_name == "show" && @appointment ? "Appointments / ##{@appointment.public_uid}" : "Patient Appointments"
+    when "announcements"
+      if action_name == "show" && @announcement
+        "Announcements / #{@announcement.name}"
+      elsif action_name == "appointment_details" && @announcement
+        "Announcements / #{@announcement.name} / Slot Capacity"
+      else
+        "Service Announcements"
+      end
+    when "health_programs"
+      action_name == "show" && @admin_health_program ? "Health Programs / #{@admin_health_program.name}" : "Health Programs Catalog"
+    when "events"
+      "Community Health Events"
+    when "users"
+      if action_name == "show" && @user
+        "Users / #{@user.full_name}"
+      elsif action_name == "medical_records" && @user
+        "Medical Records / #{@user.full_name}"
+      elsif action_name == "edit" && @user
+        "Edit User / #{@user.full_name}"
+      else
+        "Residents & Staff Directory"
+      end
+    when "cms"
+      "Barangay Portal CMS"
+    when "profile"
+      "My Account Profile"
+    else
+      controller_name.titleize
+    end
+  end
 end

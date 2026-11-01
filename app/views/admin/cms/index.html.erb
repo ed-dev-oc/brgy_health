@@ -1,19 +1,105 @@
-<div class="d-flex gap-3 flex-wrap">
-  <% @pages.each do |page| %>
-    <div id="<%= dom_id(page) %>" class="card" style="width: 18rem;">
-      <%= image_tag(page.image_attachment ? page.image : "https://placehold.co/600x400?text=Image+Not+Applicable", class: "card-img-top", alt: "Page Image") %>
+<% content_for :title, "Barangay Portal CMS — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
+<% hero_page = @pages.detect { |p| p.section == "homepage_hero_banner" } %>
+<% other_pages = @pages.reject { |p| p.section == "homepage_hero_banner" } %>
 
-      <div class="card-body h-100">
-        <h5 class="card-title"><%= page.section.titleize %></h5>
-        <p class="card-text"><strong>Title:</strong> <%= page.title %></p>
-        <p class="card-text"><strong>Subheadline:</strong> <%= page.subheadline %></p>
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h3 class="fw-bold mb-1">Barangay Portal CMS</h3>
+    <p class="text-secondary small mb-0">
+      Customize the public Hero Banner, About Us, and Contact Map for <code><%= ActsAsTenant.current_tenant&.slug %>.<%= request.domain %></code>.
+    </p>
+  </div>
+
+  <div>
+    <%= link_to root_path, class: "btn btn-outline-emerald btn-sm", target: "_blank" do %>
+      <i class="bi bi-box-arrow-up-right me-1"></i>Preview Resident Portal
+    <% end %>
+  </div>
+</div>
+
+<!-- Featured Hero Banner Card -->
+<% if hero_page.present? %>
+  <div id="<%= dom_id(hero_page) %>" class="sa-card overflow-hidden mb-4">
+    <div class="row g-0 align-items-stretch">
+      <div class="col-12 col-lg-5 bg-dark position-relative" style="min-height: 220px;">
+        <% if hero_page.image_attachment.present? %>
+          <%= image_tag(hero_page.image, class: "w-100 h-100 object-fit-cover", alt: hero_page.title) %>
+        <% else %>
+          <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white p-4" style="background: linear-gradient(135deg, #064e3b, #0f172a);">
+            <i class="bi bi-image fs-1 opacity-50 mb-2"></i>
+            <span class="small opacity-75">Default Healthcare Hero Banner</span>
+          </div>
+        <% end %>
       </div>
-      <div class="card-footer">
-        <%= render partial: "admin/cms/form_modal", locals: { page: page } %>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#<%= dom_id(page, "modal") %>">
-          Edit
-        </button>
-        <%= link_to "View Page", barangay_view_page_helper(page.section), class: "btn btn-primary" %>
+      <div class="col-12 col-lg-7 p-4 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge badge-soft-emerald"><i class="bi bi-stars me-1"></i>Homepage Hero Banner</span>
+            <small class="text-secondary">Updated <%= hero_page.updated_at.strftime("%b %d, %Y") %></small>
+          </div>
+          <h4 class="fw-bold text-dark mb-2"><%= hero_page.title %></h4>
+          <p class="text-secondary mb-3"><%= hero_page.subheadline %></p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 pt-3 border-top">
+          <%= render partial: "admin/cms/form_modal", locals: { page: hero_page } %>
+          <button type="button" class="btn btn-emerald btn-sm" data-bs-toggle="modal" data-bs-target="#<%= dom_id(hero_page, 'modal') %>">
+            <i class="bi bi-pencil-square me-1"></i>Edit Hero Banner
+          </button>
+          <%= link_to barangay_view_page_helper(hero_page.section), class: "btn btn-light border btn-sm", target: "_blank" do %>
+            <i class="bi bi-eye me-1"></i>View Live Homepage
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Secondary CMS Section Cards (About Us & Contact Us) -->
+<div class="row g-4">
+  <% other_pages.each do |page| %>
+    <div id="<%= dom_id(page) %>" class="col-12 col-md-6">
+      <div class="sa-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="d-flex align-items-center gap-2">
+              <div class="sa-icon-well <%= page.contact_us? ? 'well-sky' : 'well-emerald' %>">
+                <i class="bi <%= page.contact_us? ? 'bi-geo-alt-fill' : 'bi-info-circle-fill' %>"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold text-dark mb-0"><%= page.section.titleize %></h5>
+                <small class="text-secondary">Updated <%= page.updated_at.strftime("%b %d, %Y") %></small>
+              </div>
+            </div>
+            <% if page.contact_us? && page.latitude.present? && page.longitude.present? %>
+              <span class="badge badge-soft-sky">
+                <i class="bi bi-pin-map me-1"></i><%= page.latitude %>, <%= page.longitude %>
+              </span>
+            <% end %>
+          </div>
+
+          <div class="p-3 rounded-3 bg-light mb-3">
+            <div class="fw-bold text-dark mb-1"><%= page.title %></div>
+            <div class="text-secondary small"><%= page.subheadline %></div>
+          </div>
+
+          <% if page.content.present? %>
+            <div class="text-secondary small mb-3">
+              <%= truncate(page.content.to_plain_text, length: 160) %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+          <%= render partial: "admin/cms/form_modal", locals: { page: page } %>
+          <%= link_to barangay_view_page_helper(page.section), class: "btn btn-sm btn-light border", target: "_blank" do %>
+            <i class="bi bi-box-arrow-up-right me-1"></i>View Live Page
+          <% end %>
+          <button type="button" class="btn btn-sm btn-emerald" data-bs-toggle="modal" data-bs-target="#<%= dom_id(page, 'modal') %>">
+            <i class="bi bi-pencil me-1"></i>Edit <%= page.section.titleize %>
+          </button>
+        </div>
       </div>
     </div>
   <% end %>

@@ -27,7 +27,7 @@ class Announcement < ApplicationRecord
   validate :images_presence, on: :create
 
   def self.ransackable_attributes(auth_object = nil)
-    [ "audience", "barangay_id", "close_time", "created_at", "end_date", "id", "location", "max_patients", "name", "open_time", "posted_by_id", "public_uid", "start_date", "status", "updated_at" ]
+    [ "audience", "barangay_id", "close_time", "created_at", "end_date", "health_program_id", "id", "location", "max_patients", "name", "open_time", "posted_by_id", "public_uid", "start_date", "status", "updated_at" ]
   end
 
   def self.ransackable_associations(auth_object = nil)

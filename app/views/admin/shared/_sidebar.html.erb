@@ -1,78 +1,113 @@
-<div style="min-height: calc(100vh - 56px); max-height: calc(100vh - 56px); top: 56px;" class="sticky-top">
-  <div class="collapse show collapse-horizontal h-100" id="collapseWidthExample">
-    <div class="d-flex flex-column p-3 text-bg-dark h-100" style="width: 290px;">
-      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-        <%= image_tag("logo_no_background.png", class: "d-inline-block align-text-top me-2", alt: "Logo", height: 40) %>
-        <span class="fs-4"><%= current_user.role.titleize %> Panel</span>
-      </a>
+<% pending_count = @sidebar_pending_appointments_count || Appointment.pending.count %>
+<aside class="sa-sidebar" id="adminSidebar">
+  <!-- Tenant Brand Header -->
+  <div class="sa-brand">
+    <div class="d-flex align-items-center justify-content-between">
+      <%= link_to admin_dashboard_index_path, class: "d-flex align-items-center gap-2 text-white text-decoration-none overflow-hidden" do %>
+        <span class="sa-brand-icon">
+          <i class="bi bi-heart-pulse-fill"></i>
+        </span>
+        <div class="overflow-hidden">
+          <div class="fw-bold lh-1 text-truncate">Brgy. <%= ActsAsTenant.current_tenant&.name %></div>
+          <small class="text-secondary" style="font-size: 0.72rem;">Health Center Portal</small>
+        </div>
+      <% end %>
+      <span class="badge badge-soft-emerald" style="font-size: 0.68rem;"><%= current_user.role.titleize %></span>
+    </div>
 
-      <hr>
-
-      <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item">
-          <%= link_to admin_dashboard_index_path, class: "nav-link text-white #{ navbar_link_status(admin_dashboard_index_path) }" do %>
-            <i class="bi bi-speedometer2"></i>
-            Dashboard
-          <% end %>
-          <%= link_to admin_announcements_path, class: "nav-link text-white #{ navbar_link_status(admin_announcements_path) }" do %>
-            <i class="bi bi-megaphone"></i>
-            Announcements
-          <% end %>
-          <%= link_to admin_health_programs_path, class: "nav-link text-white #{ navbar_link_status(admin_health_programs_path) }" do %>
-            <i class="bi bi-heart-pulse"></i>
-            Health Programs
-          <% end %>
-          <%= link_to admin_appointments_path, class: "nav-link text-white #{ navbar_link_status(admin_appointments_path) }" do %>
-            <i class="bi bi-calendar"></i>
-            Appointments
-          <% end %>
-          <%= link_to admin_events_path, class: "nav-link text-white #{ navbar_link_status(admin_events_path) }" do %>
-            <i class="bi bi-calendar-event"></i>
-            Events
-          <% end %>
-          <%= link_to admin_cms_path, class: "nav-link text-white #{ navbar_link_status(admin_cms_path) }" do %>
-            <i class="bi bi-layout-text-window"></i>
-            CMS
-          <% end %>
-          <a href="#" class="nav-link text-white" aria-current="page">
-            <i class="bi bi-grid-3x3-gap"></i>
-            Subdivisions
-          </a>
-          <%= link_to admin_users_path, class: "nav-link text-white #{ navbar_link_status(admin_users_path) }" do %>
-            <i class="bi bi-people"></i>
-            Users
-          <% end %>
-
-        </li>
-      </ul>
-
-      <hr>
-
-      <div class="dropdown">
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          <%= image_tag(profile_url(current_user), class: "rounded-circle me-2", size: "32x32")  %>
-
-          <strong><%= current_user.full_name %></strong>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-          <li>
-            <%= link_to edit_profile_path(current_user), class: "dropdown-item d-flex align-items-center gap-2" do %>
-              <i class="bi bi-person"></i>
-              <span>Profile</span>
-            <% end %>
-          </li>
-
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-          <li>
-            <%= link_to destroy_user_session_path, data: { turbo_method: :DELETE, turbo_confirm: "Are your sure?" }, class: "dropdown-item" do %>
-              <i class="bi bi-box-arrow-right"></i>
-              Sign Out
-            <% end %>
-          </li>
-        </ul>
-      </div>
+    <div class="mt-2 pt-2 border-top border-secondary border-opacity-25 d-flex align-items-center justify-content-between small">
+      <code class="text-info text-truncate" style="font-size: 0.72rem;"><%= ActsAsTenant.current_tenant&.slug %>.<%= request.domain %></code>
+      <%= link_to root_path, class: "text-secondary text-decoration-none", title: "Open Resident Portal", style: "font-size: 0.72rem;" do %>
+        Live Site <i class="bi bi-box-arrow-up-right ms-1"></i>
+      <% end %>
     </div>
   </div>
-</div>
+
+  <!-- Navigation Links -->
+  <div class="flex-grow-1 overflow-y-auto py-2">
+    <div class="sa-nav-section-label">Clinical Operations</div>
+
+    <%= link_to admin_dashboard_index_path, class: "sa-nav-link #{sa_nav_active('admin/dashboard')}" do %>
+      <span><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</span>
+    <% end %>
+
+    <%= link_to admin_appointments_path, class: "sa-nav-link #{sa_nav_active('admin/appointments')}" do %>
+      <span><i class="bi bi-calendar2-check-fill me-2"></i>Appointments</span>
+      <% if pending_count.to_i > 0 %>
+        <span class="badge rounded-pill bg-warning text-dark"><%= pending_count %></span>
+      <% end %>
+    <% end %>
+
+    <%= link_to admin_announcements_path, class: "sa-nav-link #{sa_nav_active('admin/announcements')}" do %>
+      <span><i class="bi bi-megaphone-fill me-2"></i>Announcements</span>
+    <% end %>
+
+    <%= link_to admin_health_programs_path, class: "sa-nav-link #{sa_nav_active('admin/health_programs')}" do %>
+      <span><i class="bi bi-heart-pulse-fill me-2"></i>Health Programs</span>
+    <% end %>
+
+    <%= link_to admin_events_path, class: "sa-nav-link #{sa_nav_active('admin/events')}" do %>
+      <span><i class="bi bi-calendar-event-fill me-2"></i>Community Events</span>
+    <% end %>
+
+    <div class="sa-nav-section-label">Barangay Administration</div>
+
+    <%= link_to admin_users_path, class: "sa-nav-link #{sa_nav_active('admin/users')}" do %>
+      <span><i class="bi bi-people-fill me-2"></i>Residents &amp; Staff</span>
+    <% end %>
+
+    <%= link_to admin_cms_path, class: "sa-nav-link #{sa_nav_active('admin/cms')}" do %>
+      <span><i class="bi bi-window-stack me-2"></i>Barangay CMS</span>
+    <% end %>
+
+    <%= link_to edit_profile_path(current_user), class: "sa-nav-link #{controller_name == 'profile' ? 'active' : ''}" do %>
+      <span><i class="bi bi-person-gear me-2"></i>My Profile</span>
+    <% end %>
+
+    <% if current_user.admin? %>
+      <a href="#" class="sa-nav-link" data-bs-toggle="modal" data-bs-target="#adminTestimonialModal">
+        <span><i class="bi bi-chat-heart-fill me-2"></i>Platform Testimonial</span>
+      </a>
+    <% end %>
+
+    <a href="#" class="sa-nav-link" data-bs-toggle="modal" data-bs-target="#reportIssueModal">
+      <span><i class="bi bi-bug-fill me-2"></i>Report System Issue</span>
+    </a>
+  </div>
+
+  <!-- Sticky User Footer -->
+  <div class="p-3 border-top border-secondary border-opacity-25">
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center justify-content-between text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="d-flex align-items-center gap-2 overflow-hidden">
+          <%= image_tag(profile_url(current_user), class: "rounded-circle object-fit-cover flex-shrink-0", size: "34x34") %>
+          <div class="overflow-hidden">
+            <div class="fw-semibold small text-truncate"><%= current_user.full_name %></div>
+            <div class="text-secondary text-truncate" style="font-size: 0.72rem;"><%= current_user.email %></div>
+          </div>
+        </div>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-dark shadow border-secondary w-100 mb-1">
+        <li>
+          <%= link_to edit_profile_path(current_user), class: "dropdown-item d-flex align-items-center gap-2 py-2" do %>
+            <i class="bi bi-person-gear"></i>
+            <span>Account Profile</span>
+          <% end %>
+        </li>
+        <li>
+          <%= link_to root_path, class: "dropdown-item d-flex align-items-center gap-2 py-2" do %>
+            <i class="bi bi-house-door"></i>
+            <span>Resident Portal</span>
+          <% end %>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <%= link_to destroy_user_session_path, data: { turbo_method: :DELETE, turbo_confirm: "Are you sure you want to sign out?" }, class: "dropdown-item text-danger d-flex align-items-center gap-2 py-2" do %>
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Sign Out</span>
+          <% end %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</aside>

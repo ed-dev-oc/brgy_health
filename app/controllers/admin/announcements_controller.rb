@@ -4,7 +4,7 @@ class Admin::AnnouncementsController < AdminController
   # GET /admin/announcements or /admin/announcements.json
   def index
     @q = Announcement.includes(:health_program, :posted_by, :rich_text_description).ransack(params[:q])
-    @pagy, @announcements = pagy(@q.result(distinct: true))
+    @pagy, @announcements = pagy(@q.result(distinct: true).order(created_at: :desc))
     @announcement = Announcement.new
     @announcement.build_health_program
   end

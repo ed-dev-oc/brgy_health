@@ -1,30 +1,35 @@
-<%= search_form_for @q, url: admin_users_path, method: :get, html: { class: "d-flex flex-wrap justify-content-between gap-2" } do |f| %>
-  <div class="d-flex align-items-center">
-    <div class="input-group" style="min-width: 280px;">
-      <span class="input-group-text bg-white border-end-0">
-        <i class="bi bi-search"></i>
-      </span>
-      <%= f.search_field :email_or_first_name_or_last_name_cont,
-          class: "form-control border-start-0",
-          placeholder: "Search Name" %>
+<%= search_form_for @q, url: admin_users_path, method: :get, html: { class: "d-flex flex-wrap justify-content-end gap-2" } do |f| %>
+  <%= hidden_field_tag :role, params[:role] if params[:role].present? %>
+
+  <div class="input-group input-group-sm flex-grow-1" style="min-width: 220px;">
+    <span class="input-group-text bg-white border-end-0 text-secondary">
+      <i class="bi bi-search"></i>
+    </span>
+    <%= f.search_field :email_or_first_name_or_last_name_cont,
+        class: "form-control border-start-0",
+        placeholder: "Search name or email..." %>
+  </div>
+
+  <div class="dropdown">
+    <button class="btn btn-sm btn-light border dropdown-toggle" type="button" id="filtersDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+      <i class="bi bi-sliders me-1"></i>Filters
+    </button>
+    <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 rounded-3" aria-labelledby="filtersDropdown" style="min-width: 260px;">
+      <h6 class="fw-bold small text-uppercase text-secondary mb-3">Filter Users</h6>
+      <div class="mb-2">
+        <%= label_tag :status, "Account Status", class: "form-label small fw-semibold mb-1" %>
+        <%= select_tag :status, options_for_select([["All Statuses", ""], ["Active", "active"], ["Inactive", "inactive"]], params[:status]), class: "form-select form-select-sm" %>
+      </div>
+      <div class="mb-3">
+        <%= label_tag :role, "Role", class: "form-label small fw-semibold mb-1" %>
+        <%= select_tag :role, options_for_select([["All Roles", ""], ["Patient / Resident", "patient"], ["Health Staff", "staff"], ["Barangay Admin", "admin"]], params[:role]), class: "form-select form-select-sm" %>
+      </div>
+      <div class="d-flex gap-2 pt-2 border-top">
+        <%= link_to "Reset", admin_users_path, class: "btn btn-sm btn-light border w-50" %>
+        <%= submit_tag "Apply", class: "btn btn-sm btn-emerald w-50" %>
+      </div>
     </div>
   </div>
 
-  <div class="dropdown d-flex align-items-center gap-2">
-    <button class="btn btn-outline-green-600 dropdown-toggle" type="button" id="filtersDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 150px;">
-      <i class="bi bi-filter me-1"></i> Filters
-    </button>
-    <div class="dropdown-menu p-3 shadow" aria-labelledby="filtersDropdown" style="min-width: 250px;">
-      <div class="mb-3">
-        <%= label_tag :status, "Status", class: "form-label" %>
-        <%= select_tag :status, options_for_select([['All Statuses', ''], ['Active', 'active'], ['Inactive', 'inactive']], params[:status]), class: "form-select" %>
-      </div>
-      <div class="mb-3">
-        <%= label_tag :role, "Role", class: "form-label" %>
-        <%= select_tag :role, options_for_select([['All Roles', ''], ['Admin', 'admin'], ['Staff', 'staff'], ['Patient', 'patient']], params[:role]), class: "form-select" %>
-      </div>
-      <%= submit_tag "Apply Filters", class: "btn btn-green-600 w-100" %>
-    </div>
-    <%= submit_tag "Search", class: "btn btn-green-600", style: "min-width: 150px;" %>
-  </div>
+  <%= submit_tag "Search", class: "btn btn-sm btn-emerald" %>
 <% end %>

@@ -1,83 +1,154 @@
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold mb-0">Medical Records</h2>
-    <%= link_to "← Back to User", admin_user_path(@user.public_uid), class: "btn btn-outline-secondary" %>
+<% content_for :title, "Medical Records (EHR) — #{@user.full_name}" %>
+<% completed_count = @appointments.count { |a| a.status == "completed" } %>
+<% follow_up_count = @appointments.count { |a| a.follow_up_id.present? || a.flag_list.include?("follow_up_check_up") } %>
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <span class="badge badge-soft-emerald"><i class="bi bi-journal-medical me-1"></i>Electronic Health Record</span>
+      <span class="text-secondary small">Patient ID #<%= @user.public_uid %></span>
+    </div>
+    <h3 class="fw-bold mb-0"><%= @user.full_name %> &mdash; Longitudinal Clinical Chart</h3>
   </div>
 
-  <div class="card mb-4">
-    <div class="card-body d-flex align-items-center">
-      <div class="me-4">
-        <%= display_profile_image(@user) %>
-      </div>
-      <div class="flex-grow-1">
-        <div class="mb-2">
-          <% if @user.flag_list.any? %>
+  <div class="d-flex flex-wrap gap-2">
+    <%= link_to admin_user_path(@user.public_uid), class: "btn btn-light border btn-sm" do %>
+      <i class="bi bi-arrow-left me-1"></i>Back to User Profile
+    <% end %>
+    <%= link_to admin_users_path(role: "patient"), class: "btn btn-light border btn-sm" do %>
+      <i class="bi bi-people me-1"></i>Patients Directory
+    <% end %>
+  </div>
+</div>
+
+<!-- Patient Clinical Summary Banner -->
+<div class="sa-card p-4 mb-4">
+  <div class="row g-4 align-items-center">
+    <div class="col-12 col-lg-7">
+      <div class="d-flex align-items-center gap-3">
+        <%= image_tag(profile_url(@user), class: "rounded-circle object-fit-cover border", size: "72x72") %>
+        <div>
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+            <h4 class="fw-bold text-dark mb-0"><%= @user.full_name %></h4>
             <% @user.flag_list.each do |flag| %>
-              <span class="badge bg-<%= flag == "active" ? "success" : "secondary" %> text-uppercase me-1">
-                <%= flag %>
-              </span>
+              <span class="badge <%= soft_badge_class(flag) %>"><%= flag.titleize %></span>
             <% end %>
-          <% end %>
+          </div>
+          <div class="d-flex flex-wrap gap-3 small text-secondary">
+            <span><i class="bi bi-envelope text-success me-1"></i><%= @user.email.presence || "Not provided" %></span>
+            <span><i class="bi bi-telephone text-success me-1"></i><%= @user.phone_number.presence || "Not provided" %></span>
+            <span><i class="bi bi-geo-alt text-success me-1"></i><%= @user.subdivision&.name || "Purok not specified" %></span>
+          </div>
         </div>
-        <h3 class="mb-1"><%= [@user.first_name, @user.middle_name, @user.last_name, @user.suffix].compact.join(' ') %></h3>
-        <p class="mb-1"><strong>Email:</strong> <%= @user.email.presence || "Not provided" %></p>
-        <p class="mb-1"><strong>Phone:</strong> <%= @user.phone_number.presence || "Not provided" %></p>
-        <p class="mb-1"><strong>Patient ID:</strong> <%= @user.public_uid %></p>
-        <p class="mb-0"><strong>Role:</strong> <%= @user.role.titleize %></p>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+      <div class="row g-2 text-center">
+        <div class="col-4">
+          <div class="p-2 rounded-3 bg-light border">
+            <div class="fs-4 fw-bold text-dark"><%= @appointments.size %></div>
+            <small class="text-secondary" style="font-size: 0.72rem;">Total Visits</small>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="p-2 rounded-3 bg-light border">
+            <div class="fs-4 fw-bold text-success"><%= completed_count %></div>
+            <small class="text-secondary" style="font-size: 0.72rem;">Completed</small>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="p-2 rounded-3 bg-light border">
+            <div class="fs-4 fw-bold text-primary"><%= follow_up_count %></div>
+            <small class="text-secondary" style="font-size: 0.72rem;">Follow-Ups</small>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+</div>
 
-  <%# Appointment History Table %>
-  <div class="card">
-    <div class="card-header fw-bold">
-      Appointment History
-    </div>
-    <div class="card-body">
-      <% if @appointments.any? %>
-        <div class="table-responsive">
-          <table class="table table-bordered align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>#</th>
-                <th>Date & Time</th>
-                <th>Health Worker</th>
-                <th>Reason</th>
-                <th>Notes</th>
-                <th>Status</th>
-                <th>Follow-Up</th>
-                <th>Flags</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @appointments.each do |appt| %>
-                <tr>
-                  <td><%= appt.id %></td>
-                  <td><%= appt.scheduled_at.strftime("%B %d, %Y %I:%M %p") %></td>
-                  <td><%= appt.health_worker&.full_name || "N/A" %></td>
-                  <td><%= appt.reason.presence || "Not specified" %></td>
-                  <td><%= appt.notes.presence || "—" %></td>
-                  <td>
-                    <span class="badge bg-<%= appt.status == "completed" ? "success" : "warning" %>">
-                      <%= appt.status.titleize %>
-                    </span>
-                  </td>
-                  <td>
-                    <%= appt.follow_up_id ? "Yes (##{appt.follow_up_id})" : "No" %>
-                  </td>
-                  <td>
-                    <%= appt.flag_list.any? ? appt.flag_list.join(", ") : "—" %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      <% else %>
-        <div class="alert alert-secondary text-center">
-          No medical records found for this patient.
-        </div>
-      <% end %>
-    </div>
+<!-- Longitudinal Consultation History Table -->
+<div class="sa-card overflow-hidden">
+  <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+    <h6 class="fw-bold mb-0">
+      <i class="bi bi-clipboard2-pulse-fill text-success me-2"></i>Consultation &amp; Visit History
+    </h6>
+    <span class="badge badge-soft-slate"><%= @appointments.size %> Records</span>
   </div>
+
+  <% if @appointments.any? %>
+    <div class="table-responsive">
+      <table class="table sa-table mb-0">
+        <thead>
+          <tr>
+            <th>Visit UID</th>
+            <th>Date &amp; Time</th>
+            <th>Service / Program</th>
+            <th>Attending Staff</th>
+            <th>Chief Complaint / Reason</th>
+            <th>Clinical Notes</th>
+            <th>Status &amp; Flags</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @appointments.each do |appt| %>
+            <tr>
+              <td>
+                <%= link_to "##{appt.public_uid}", admin_appointment_path(appt.public_uid), class: "fw-bold text-success text-decoration-none" %>
+                <% if appt.follow_up.present? %>
+                  <small class="d-block text-secondary">Follow-up of #<%= appt.follow_up.public_uid %></small>
+                <% end %>
+              </td>
+              <td>
+                <div class="small fw-semibold text-dark"><%= appt.scheduled_at.strftime("%b %d, %Y") %></div>
+                <small class="text-secondary"><%= appt.scheduled_at.strftime("%I:%M %p") %></small>
+              </td>
+              <td>
+                <div class="fw-medium text-dark text-truncate" style="max-width: 170px;">
+                  <%= appt.announcement&.name || "Clinic Visit" %>
+                </div>
+              </td>
+              <td class="small text-secondary">
+                <%= appt.health_worker&.full_name || "Unassigned" %>
+              </td>
+              <td style="max-width: 200px;">
+                <span class="small text-dark"><%= appt.reason.presence || "Not specified" %></span>
+              </td>
+              <td style="max-width: 240px;">
+                <% if appt.notes.present? %>
+                  <span class="small text-dark"><%= appt.notes %></span>
+                <% else %>
+                  <span class="small text-secondary">&mdash;</span>
+                <% end %>
+              </td>
+              <td>
+                <div class="d-flex flex-wrap gap-1">
+                  <span class="badge <%= soft_badge_class(appt.status) %>"><%= appt.status.titleize %></span>
+                  <% appt.flag_list.each do |flag| %>
+                    <span class="badge <%= soft_badge_class(flag) %>"><%= flag.humanize %></span>
+                  <% end %>
+                </div>
+              </td>
+              <td class="text-end">
+                <%= link_to admin_appointment_path(appt.public_uid), class: "btn btn-sm btn-light border" do %>
+                  <i class="bi bi-eye me-1"></i>Open
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="p-5 text-center">
+      <div class="sa-icon-well well-slate mx-auto mb-3">
+        <i class="bi bi-journal-x"></i>
+      </div>
+      <h5 class="fw-bold mb-1">No Medical Records Found</h5>
+      <p class="text-secondary small mb-0">This patient has not completed any clinic appointments yet.</p>
+    </div>
+  <% end %>
 </div>

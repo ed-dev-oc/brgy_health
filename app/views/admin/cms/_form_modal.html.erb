@@ -1,48 +1,60 @@
 <div class="modal fade" id="<%= dom_id(page, "modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(page, "modal") %>Label" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="<%= dom_id(page, "modal") %>Label">Edit <%= page.section.titleize %></h1>
+  <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom px-4 py-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="sa-icon-well well-emerald" style="width: 36px; height: 36px; font-size: 1rem;">
+            <i class="bi bi-window-stack"></i>
+          </span>
+          <div>
+            <h5 class="modal-title fw-bold mb-0" id="<%= dom_id(page, "modal") %>Label">Edit <%= page.section.titleize %></h5>
+            <small class="text-secondary">Brgy. <%= ActsAsTenant.current_tenant&.name %> Portal CMS</small>
+          </div>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body p-4 text-start">
         <%= form_with(model: page, url: admin_cm_path(page), html: { multipart: true }) do |form| %>
-          <div class="my-2">
-            <%= form.label :title, class: "form-label fw-bold" %>
-            <%= form.text_field :title, class: "form-control", required: true %>
-          </div>
-          <div class="my-2">
-            <%= form.label :subheadline, class: "form-label fw-bold" %>
-            <%= form.textarea :subheadline, rows: 3, class: "form-control", required: true %>
-          </div>
-
-          <% unless page.homepage_hero_banner? %>
-            <div class="my-2">
-              <%= form.label :content, class: "form-label fw-bold" %>
-              <%= form.rich_text_area :content, class: "form-control", required: true %>
+          <div class="row g-3">
+            <div class="col-12">
+              <%= form.label :title, "Page Headline / Title *", class: "form-label fw-semibold small" %>
+              <%= form.text_field :title, class: "form-control", required: true %>
             </div>
-          <% end %>
 
-          <% if page.homepage_hero_banner? %>
-            <div class="my-2">
-              <%= form.label :image, class: "form-label fw-bold" %>
-              <%= form.file_field :image, class: "form-control" %>
+            <div class="col-12">
+              <%= form.label :subheadline, "Subheadline *", class: "form-label fw-semibold small" %>
+              <%= form.textarea :subheadline, rows: 2, class: "form-control", required: true %>
             </div>
-          <% end %>
 
-          <% if page.contact_us? %>
-            <div class="my-2">
-              <%= form.label :latitude, "Latitude and Longitude", class: "form-label fw-bold" %>
-              <div class="input-group">
-                <span class="input-group-text">Map Location</span>
-                <%= form.number_field :latitude, step: 0.01, class: "form-control", placeholder: "Latitude", required: true %>
-                <%= form.number_field :longitude, step: 0.01, class: "form-control", placeholder: "Longitude", required: true %>
+            <% unless page.homepage_hero_banner? %>
+              <div class="col-12">
+                <%= form.label :content, "Page Body Content *", class: "form-label fw-semibold small" %>
+                <%= form.rich_text_area :content, class: "form-control", required: true %>
               </div>
-            </div>
-          <% end %>
+            <% end %>
 
-          <div class="mt-3">
-            <%= form.submit "Save Changes", class: "btn btn-primary", data: { turbo_submits_with: "Saving...", turbo_confirm: "Are you sure?" } %>
+            <% if page.homepage_hero_banner? %>
+              <div class="col-12">
+                <%= form.label :image, "Hero Background Image", class: "form-label fw-semibold small" %>
+                <%= form.file_field :image, class: "form-control" %>
+              </div>
+            <% end %>
+
+            <% if page.contact_us? %>
+              <div class="col-12">
+                <%= form.label :latitude, "Interactive Map Coordinates (Latitude & Longitude) *", class: "form-label fw-semibold small" %>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-pin-map text-success me-1"></i>Lat / Lng</span>
+                  <%= form.number_field :latitude, step: :any, class: "form-control", placeholder: "Latitude (e.g. 11.0050)", required: true %>
+                  <%= form.number_field :longitude, step: :any, class: "form-control", placeholder: "Longitude (e.g. 124.6075)", required: true %>
+                </div>
+              </div>
+            <% end %>
+
+            <div class="col-12 d-flex justify-content-end gap-2 pt-3 border-top">
+              <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+              <%= form.submit "Save Changes", class: "btn btn-emerald px-4", data: { turbo_submits_with: "Saving...", turbo_confirm: "Save updates to this page?" } %>
+            </div>
           </div>
         <% end %>
       </div>

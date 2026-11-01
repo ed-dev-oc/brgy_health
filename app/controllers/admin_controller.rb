@@ -3,6 +3,7 @@ class AdminController < ApplicationController
   before_action :authenticate_user!
   before_action :authenticate_user_role
   before_action :generate_testimonial
+  before_action :set_admin_sidebar_counts
 
   private
 
@@ -11,6 +12,14 @@ class AdminController < ApplicationController
   end
 
   def generate_testimonial
-    @testimonial = Testimonial.new if current_user.role == "admin" && current_user.testimonial.nil?
+    if current_user.role == "admin"
+      @testimonial = current_user.testimonial.nil? ? Testimonial.new : nil
+      @sidebar_testimonial = current_user.testimonial || Testimonial.new
+    end
+  end
+
+  def set_admin_sidebar_counts
+    @sidebar_pending_appointments_count = Appointment.pending.count
+    @sidebar_today_appointments_count = Appointment.where(scheduled_at: Time.current.all_day, status: [ :approved, :completed ]).count
   end
 end

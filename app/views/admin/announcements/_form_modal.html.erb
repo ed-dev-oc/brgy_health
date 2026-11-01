@@ -1,11 +1,21 @@
 <div class="modal fade" id="<%= dom_id(announcement, "form_modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(announcement, "form_modal") %>Label" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="<%= dom_id(announcement, "form_modal") %>Label"><%= announcement.new_record? ? "New Announcement" : announcement.name %></h1>
+  <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom px-4 py-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="sa-icon-well well-emerald" style="width: 36px; height: 36px; font-size: 1rem;">
+            <i class="bi bi-megaphone-fill"></i>
+          </span>
+          <div>
+            <h5 class="modal-title fw-bold mb-0" id="<%= dom_id(announcement, "form_modal") %>Label">
+              <%= announcement.new_record? ? "New Service Announcement" : "Edit Announcement: #{announcement.name}" %>
+            </h5>
+            <small class="text-secondary">Configure schedule window, slot capacity, and linked health program</small>
+          </div>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body p-4 text-start">
         <%= turbo_frame_tag dom_id(announcement, "form") do %>
           <%= render partial: "admin/announcements/form", locals: { announcement: announcement } %>
         <% end %>

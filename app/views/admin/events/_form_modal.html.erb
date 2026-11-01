@@ -1,11 +1,21 @@
 <div class="modal fade" id="<%= dom_id(event, "form_modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(event, "form_modal") %>Label" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="<%= dom_id(event, "form_modal") %>Label"><%= event.new_record? ? "New Event" : event.name %></h1>
+  <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom px-4 py-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="sa-icon-well well-emerald" style="width: 36px; height: 36px; font-size: 1rem;">
+            <i class="bi bi-calendar-event-fill"></i>
+          </span>
+          <div>
+            <h5 class="modal-title fw-bold mb-0" id="<%= dom_id(event, "form_modal") %>Label">
+              <%= event.new_record? ? "New Community Health Event" : "Edit Event: #{event.name}" %>
+            </h5>
+            <small class="text-secondary">Brgy. <%= ActsAsTenant.current_tenant&.name %> Health Center</small>
+          </div>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body p-4 text-start">
         <%= turbo_frame_tag dom_id(event, "form") do %>
           <%= render partial: "admin/events/form", locals: { event: event } %>
         <% end %>

@@ -3,7 +3,7 @@ class Admin::EventsController < AdminController
 
   def index
     @q = Event.includes(:posted_by, :rich_text_description, :images_attachments).ransack(params[:q])
-    @pagy, @events = pagy(@q.result(distinct: true))
+    @pagy, @events = pagy(@q.result(distinct: true).order(start_date: :desc))
 
     @event = Event.new
   end

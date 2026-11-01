@@ -1,18 +1,25 @@
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">Update Profile Picture</h5>
-    <%= form_with model: @user, url: profile_path(@user.id), local: true, html: { multipart: true } do |form| %>
-      <div class="mb-3">
-        <%= form.label :profile, class: "form-label" %>
-        <%= form.file_field :profile, class: "form-control" %>
-      </div>
-
-        <div class="mb-3">
-          <p>Current profile:</p>
-          <%= display_profile_image(@user) %>
-        </div>
-
-      <%= form.submit "Update Profile", class: "btn btn-primary" %>
-    <% end %>
+<div class="sa-card p-4">
+  <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+    <span class="sa-icon-well well-emerald" style="width: 36px; height: 36px; font-size: 1rem;">
+      <i class="bi bi-camera-fill"></i>
+    </span>
+    <div>
+      <h6 class="fw-bold text-dark mb-0">Profile Photo</h6>
+      <small class="text-secondary">Upload a clear profile picture or avatar</small>
+    </div>
   </div>
+
+  <%= form_with model: @user, url: profile_path(@user.id), local: true, html: { multipart: true } do |form| %>
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <%= image_tag(profile_url(@user), class: "rounded-circle object-fit-cover border", size: "72x72") %>
+      <div class="flex-grow-1">
+        <%= form.label :profile, "Choose Image File", class: "form-label fw-semibold small mb-1" %>
+        <%= form.file_field :profile, class: "form-control form-control-sm", accept: "image/*" %>
+      </div>
+    </div>
+
+    <div class="d-grid">
+      <%= form.submit "Update Profile Photo", class: "btn btn-emerald btn-sm" %>
+    </div>
+  <% end %>
 </div>

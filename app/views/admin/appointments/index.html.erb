@@ -1,9 +1,73 @@
-<% content_for :title, "Appointments" %>
+<% content_for :title, "Patient Appointments — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
 
-<%= render partial: "admin/appointments/search_form" %>
-
-<div class="card my-2 rounded-0">
-  <div class="card-body">
-    <%= render partial: "admin/appointments/list_appointment_table" %>
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h3 class="fw-bold mb-1">Patient Appointments &amp; Clinical Queue</h3>
+    <p class="text-secondary small mb-0">
+      Review patient slot requests, manage today's clinic queue, and record consultation notes.
+    </p>
   </div>
+
+  <div class="d-flex gap-2">
+    <%= link_to admin_appointments_path(today: "true"), class: "btn btn-light border btn-sm fw-semibold" do %>
+      <i class="bi bi-calendar-day text-success me-1"></i>Today's Queue
+    <% end %>
+    <%= link_to admin_announcements_path, class: "btn btn-emerald btn-sm" do %>
+      <i class="bi bi-megaphone me-1"></i>Manage Schedules
+    <% end %>
+  </div>
+</div>
+
+<!-- Filter Tabs & Search Bar -->
+<div class="sa-card p-3 mb-4">
+  <% current_status = params.dig(:q, :status_eq).to_s %>
+  <% is_today = params[:today] == "true" %>
+  <% current_flag = params[:flag].to_s %>
+
+  <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3">
+    <ul class="nav sa-filter-pills bg-light p-1 rounded-3">
+      <li class="nav-item">
+        <%= link_to "All Bookings", admin_appointments_path,
+          class: "nav-link #{current_status.blank? && !is_today && current_flag.blank? ? 'active' : ''}" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to admin_appointments_path(q: { status_eq: 0 }),
+          class: "nav-link #{current_status == '0' ? 'active' : ''}" do %>
+          Pending Approval
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to admin_appointments_path(today: "true"),
+          class: "nav-link #{is_today ? 'active' : ''}" do %>
+          <i class="bi bi-calendar-check me-1"></i>Scheduled Today
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Approved", admin_appointments_path(q: { status_eq: 1 }),
+          class: "nav-link #{current_status == '1' ? 'active' : ''}" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Waitlisted", admin_appointments_path(flag: "waitlisted"),
+          class: "nav-link #{current_flag == 'waitlisted' ? 'active' : ''}" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Completed", admin_appointments_path(q: { status_eq: 2 }),
+          class: "nav-link #{current_status == '2' ? 'active' : ''}" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Cancelled", admin_appointments_path(q: { status_eq: 4 }),
+          class: "nav-link #{current_status == '4' ? 'active' : ''}" %>
+      </li>
+    </ul>
+
+    <div class="flex-grow-1" style="max-width: 540px;">
+      <%= render partial: "admin/appointments/search_form" %>
+    </div>
+  </div>
+</div>
+
+<!-- Appointments Table Card -->
+<div class="sa-card overflow-hidden">
+  <%= render partial: "admin/appointments/list_appointment_table" %>
 </div>

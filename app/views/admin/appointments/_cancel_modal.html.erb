@@ -1,11 +1,19 @@
 <div class="modal fade" id="<%= dom_id(@appointment, "cancel_schedule_modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(@appointment, "cancel_schedule_modal") %>Label" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="<%= dom_id(@appointment, "cancel_schedule_modal") %>Label">Cancel Appointment</h1>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom px-4 py-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="sa-icon-well well-rose" style="width: 36px; height: 36px; font-size: 1rem;">
+            <i class="bi bi-x-octagon"></i>
+          </span>
+          <div>
+            <h5 class="modal-title fw-bold mb-0" id="<%= dom_id(@appointment, "cancel_schedule_modal") %>Label">Cancel Appointment</h5>
+            <small class="text-secondary">Booking #<%= @appointment.public_uid %></small>
+          </div>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body p-4">
         <%= turbo_frame_tag dom_id(@appointment, "cancel_schedule_form") do %>
           <%= render partial: "admin/appointments/cancel_form", locals: { appointment: @appointment } %>
         <% end %>
