@@ -27,7 +27,6 @@ development:
   primary:
     <<: *default
     database: brgy_health_development
-    url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *default
     database: brgy_health_development_cache

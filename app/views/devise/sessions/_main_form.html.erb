@@ -22,7 +22,7 @@
   </div>
 <% end %>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "needs-validation", novalidate: true }) do |f| %>
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "needs-validation", novalidate: true, data: { turbo: false } }) do |f| %>
   <div class="mb-3">
     <%= f.label :email, "Email Address", class: "form-label fw-semibold small" %>
     <div class="input-group">

@@ -31,6 +31,8 @@ class NewAppointmentNotifier < ApplicationNotifier
     end
 
     def message
+      return "New appointment" unless record&.patient && record&.announcement
+
       "New appointment: #{record.patient.full_name} on #{record.announcement.name} at #{record.scheduled_at.to_formatted_s(:long)}."
     end
 
@@ -39,6 +41,8 @@ class NewAppointmentNotifier < ApplicationNotifier
     end
 
     def url
+      return "#" unless record&.public_uid
+
       admin_appointment_path(record.public_uid)
     end
   end

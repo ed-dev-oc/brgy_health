@@ -9,6 +9,17 @@
 #   end
 placeholder_image_path = Rails.root.join("app/assets/images/placeholder_image.jpeg")
 
+super_admin = User.find_or_initialize_by(email: "super_admin@test.com")
+super_admin.assign_attributes(
+  first_name: "Super",
+  last_name: "Admin",
+  phone_number: "09090002154",
+  password: "admin123",
+  password_confirmation: "admin123",
+  role: :super_admin
+)
+super_admin.save!
+
 lao_barangay = Barangay.create!(
   name: "Lao",
   region: "Region VIII (Eastern Visayas)",
