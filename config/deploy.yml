@@ -19,7 +19,11 @@ servers:
 # Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
 proxy:
   ssl: false
-  host: barangayhealth.online
+  hosts:
+    - "barangayhealth.online" # Root domain
+    - "*.barangayhealth.online" # Wildcard subdomains for your multi-tenant setup
+  app_port: 3000 # Your Rails/Puma container port
+  forward_headers: true # Crucial: Tells Kamal proxy to forward X-Forwarded-* headers (like original IP and proto from Cloudflare)
 
 # Credentials for your image host.
 registry:
