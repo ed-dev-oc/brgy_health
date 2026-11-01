@@ -18,25 +18,28 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-
+  host: <%= ENV.fetch("DB_HOST", "127.0.0.1") %>
+  port: <%= ENV.fetch("DB_PORT", 5432) %>
+  username: <%= ENV.fetch("DB_USERNAME", "postgres") %>
+  password: <%= ENV.fetch("DB_PASSWORD", "") %>
 
 development:
   primary:
     <<: *default
     database: brgy_health_development
-  cache: 
+    url: <%= ENV["DATABASE_URL"] %>
+  cache:
     <<: *default
     database: brgy_health_development_cache
     migrations_paths: db/cache_migrate
-  cable: 
+  cable:
     <<: *default
     database: brgy_health_development_cable
     migrations_paths: db/cable_migrate
-  queue: 
+  queue:
     <<: *default
     database: brgy_health_development_queue
     migrations_paths: db/queue_migrate
-
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -98,7 +101,7 @@ production:
     database: brgy_health_production
     username: brgy_health
     # password: <%= ENV["BRGY_HEALTH_DATABASE_PASSWORD"] %>
-    url: <%= Rails.application.credentials.dig(:database, :url) %>
+    url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *primary_production
     database: brgy_health_production_cache

@@ -111,3 +111,5 @@ gem "groupdate", "~> 6.7"
 gem "scenic", "~> 1.8"
 
 gem "grover", "~> 1.2"
+
+gem "dotenv-rails", "~> 3.1"
