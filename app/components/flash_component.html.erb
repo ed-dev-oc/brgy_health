@@ -1,10 +1,27 @@
-<%= helpers.turbo_frame_tag :flash do %>
-  <% @flash.each do |type, message| %>
-    <div data-controller="flash" data-action="click->flash#close_message" style="z-index: 1060;" class="<%= css_class(type) %>">
-      <div class="d-flex my-1 gap-2">
-        <i class="bi <%= icon(type) %>"></i>
-        <p class="m-0"><%= message %></p>
+<turbo-frame id="flash">
+  <div class="flash-toast-stack">
+    <% @flash.each do |type, message| %>
+      <% next if message.blank? %>
+      <div data-controller="flash" class="<%= css_class(type) %>" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="flash-icon-badge">
+          <i class="bi <%= icon(type) %>"></i>
+        </div>
+
+        <div class="flash-content">
+          <div class="flash-title"><%= title(type) %></div>
+          <p class="flash-message m-0"><%= message %></p>
+        </div>
+
+        <button type="button"
+                class="flash-close-btn"
+                data-action="click->flash#close_message"
+                aria-label="Close notification"
+                title="Dismiss">
+          <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="flash-progress-bar"></div>
       </div>
-    </div>
-  <% end %>
-<% end %>
+    <% end %>
+  </div>
+</turbo-frame>
