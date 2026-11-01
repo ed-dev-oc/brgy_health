@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brgy. Lao Health Center — Admin Portal Pages Prototype</title>
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --ad-emerald-600: #059669;
+      --ad-emerald-500: #10b981;
+      --ad-emerald-50: #ecfdf5;
+      --ad-teal-600: #0d9488;
+      --ad-slate-900: #0f172a;
+      --ad-slate-800: #1e293b;
+      --ad-slate-500: #64748b;
+      --ad-slate-200: #e2e8f0;
+      --ad-slate-100: #f1f5f9;
+      --ad-amber-500: #f59e0b;
+      --ad-amber-50: #fffbeb;
+      --ad-rose-600: #e11d48;
+      --ad-rose-50: #fff1f2;
+      --ad-sky-600: #0284c7;
+      --ad-sky-50: #f0f9ff;
+      --ad-purple-600: #7c3aed;
+      --ad-purple-50: #f5f3ff;
+      --ad-sidebar-width: 276px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--ad-slate-100);
+      color: var(--ad-slate-900);
+      overflow-x: hidden;
+    }
+
+    .ad-wrapper { display: flex; min-height: 100vh; width: 100%; }
+
+    .ad-sidebar {
+      width: var(--ad-sidebar-width);
+      background: linear-gradient(180deg, #0b192c 0%, #071e22 100%);
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: margin-left 0.25s ease-in-out;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 1030;
+    }
+    .ad-sidebar.collapsed { margin-left: calc(-1 * var(--ad-sidebar-width)); }
+    .ad-brand { padding: 1.2rem 1.25rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+    .ad-brand-icon {
+      width: 40px; height: 40px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--ad-emerald-500), var(--ad-teal-600));
+      display: inline-flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.25rem;
+    }
+    .ad-tenant-box {
+      margin: 0.85rem 0.85rem 0.25rem; padding: 0.65rem 0.85rem;
+      border-radius: 0.6rem; background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+    .ad-nav-section-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #64748b; padding: 0.9rem 1.25rem 0.35rem;
+    }
+    .ad-nav-link {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.62rem 1rem; margin: 0.15rem 0.75rem; border-radius: 0.5rem;
+      color: #cbd5e1; text-decoration: none; font-size: 0.88rem; font-weight: 500;
+      cursor: pointer; transition: all 0.15s ease;
+    }
+    .ad-nav-link:hover { background-color: rgba(255, 255, 255, 0.06); color: #ffffff; }
+    .ad-nav-link.active {
+      background: rgba(16, 185, 129, 0.16); color: #34d399; font-weight: 600;
+      box-shadow: inset 3px 0 0 var(--ad-emerald-500);
+    }
+    .ad-nav-link i { font-size: 1.05rem; width: 24px; margin-right: 0.5rem; }
+
+    .ad-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .ad-topbar {
+      height: 64px; background-color: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px); border-bottom: 1px solid var(--ad-slate-200);
+      padding: 0 1.5rem; position: sticky; top: 0; z-index: 1020;
+    }
+
+    .ad-card {
+      background: #ffffff; border: 1px solid var(--ad-slate-200);
+      border-radius: 0.85rem; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    }
+    .ad-icon-well {
+      width: 44px; height: 44px; border-radius: 11px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; flex-shrink: 0;
+    }
+    .well-emerald { background-color: var(--ad-emerald-50); color: var(--ad-emerald-600); }
+    .well-amber   { background-color: var(--ad-amber-50);   color: #d97706; }
+    .well-rose    { background-color: var(--ad-rose-50);    color: var(--ad-rose-600); }
+    .well-sky     { background-color: var(--ad-sky-50);     color: var(--ad-sky-600); }
+    .well-purple  { background-color: var(--ad-purple-50);  color: var(--ad-purple-600); }
+    .well-slate   { background-color: #f1f5f9;              color: #334155; }
+
+    .badge-soft-emerald { background-color: var(--ad-emerald-50); color: var(--ad-emerald-600); border: 1px solid #a7f3d0; }
+    .badge-soft-amber   { background-color: var(--ad-amber-50);   color: #b45309; border: 1px solid #fde68a; }
+    .badge-soft-rose    { background-color: var(--ad-rose-50);    color: var(--ad-rose-600); border: 1px solid #fecdd3; }
+    .badge-soft-sky     { background-color: var(--ad-sky-50);     color: var(--ad-sky-600); border: 1px solid #bae6fd; }
+    .badge-soft-purple  { background-color: var(--ad-purple-50);  color: var(--ad-purple-600); border: 1px solid #ddd6fe; }
+    .badge-soft-slate   { background-color: #f8fafc;              color: #475569; border: 1px solid #e2e8f0; }
+
+    .btn, .badge, .ad-nav-link {
+      white-space: nowrap;
+    }
+    .ad-table td:last-child, .ad-table th:last-child {
+      white-space: nowrap;
+    }
+    .btn-emerald { background-color: var(--ad-emerald-600); border-color: var(--ad-emerald-600); color: #fff; font-weight: 500; }
+    .btn-emerald:hover { background-color: #047857; border-color: #047857; color: #fff; }
+    .btn-outline-emerald { border-color: var(--ad-emerald-600); color: var(--ad-emerald-600); font-weight: 500; }
+    .btn-outline-emerald:hover { background-color: var(--ad-emerald-600); color: #fff; }
+
+    .ad-table th {
+      font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--ad-slate-500);
+      background-color: #f8fafc; border-bottom: 1px solid var(--ad-slate-200);
+      padding: 0.8rem 1rem;
+    }
+    .ad-table td {
+      padding: 0.88rem 1rem; vertical-align: middle;
+      border-bottom: 1px solid #f1f5f9; font-size: 0.875rem;
+    }
+
+    .ad-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 0.82rem; flex-shrink: 0;
+    }
+
+    .ad-filter-pills {
+      display: flex;
+      flex-wrap: nowrap !important;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      max-width: 100%;
+    }
+    .ad-filter-pills .nav-item {
+      flex: 0 0 auto;
+    }
+    .ad-filter-pills .nav-link {
+      font-size: 0.81rem; font-weight: 600; color: var(--ad-slate-500);
+      padding: 0.42rem 0.85rem; border-radius: 0.5rem; border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .ad-filter-pills .nav-link.active {
+      background-color: #ffffff; color: var(--ad-slate-900);
+      border-color: var(--ad-slate-200); box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .page-section { display: none; }
+    .page-section.active { display: block; animation: fadeIn 0.18s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+<div class="ad-wrapper">
+  <!-- ==================== CLINICAL SIDEBAR ==================== -->
+  <aside id="adSidebar" class="ad-sidebar">
+    <div class="ad-brand d-flex align-items-center gap-2">
+      <a href="admin_dashboard_prototype.html" class="d-flex align-items-center text-decoration-none text-white gap-2">
+        <span class="ad-brand-icon"><i class="bi bi-hospital-fill"></i></span>
+        <div>
+          <div class="fw-bold lh-1" style="font-size: 1.02rem;">BrgyHealth</div>
+          <small class="fw-semibold" style="font-size: 0.68rem; color: #34d399;">HEALTH CENTER PORTAL</small>
+        </div>
+      </a>
+    </div>
+
+    <div class="ad-tenant-box">
+      <div class="d-flex align-items-center justify-content-between">
+        <span class="fw-bold text-white" style="font-size: 0.86rem;"><i class="bi bi-geo-alt-fill text-success me-1"></i>Brgy. Lao</span>
+        <span class="badge bg-success" style="font-size: 0.65rem;">Verified</span>
+      </div>
+      <div class="text-secondary mt-1" style="font-size: 0.73rem;">lao.lvh.me:3000 · Ormoc City</div>
+    </div>
+
+    <div class="flex-grow-1 overflow-y-auto py-1">
+      <div class="ad-nav-section-label">Clinical Operations</div>
+
+      <a href="admin_dashboard_prototype.html" class="ad-nav-link">
+        <span><i class="bi bi-grid-1x2-fill"></i> Dashboard</span>
+      </a>
+
+      <a onclick="switchPage('appointments', 'Appointments & Consultations')" id="nav-appointments" class="ad-nav-link active">
+        <span><i class="bi bi-calendar2-check-fill"></i> Appointments</span>
+        <span class="badge rounded-pill bg-warning text-dark">4</span>
+      </a>
+
+      <a onclick="switchPage('announcements', 'Service Announcements')" id="nav-announcements" class="ad-nav-link">
+        <span><i class="bi bi-megaphone-fill"></i> Announcements</span>
+      </a>
+
+      <a onclick="switchPage('programs', 'Health Programs Catalog')" id="nav-programs" class="ad-nav-link">
+        <span><i class="bi bi-heart-pulse-fill"></i> Health Programs</span>
+      </a>
+
+      <a onclick="switchPage('events', 'Community Health Events')" id="nav-events" class="ad-nav-link">
+        <span><i class="bi bi-calendar-event-fill"></i> Community Events</span>
+      </a>
+
+      <div class="ad-nav-section-label">Barangay Administration</div>
+
+      <a onclick="switchPage('users', 'Residents & Health Staff')" id="nav-users" class="ad-nav-link">
+        <span><i class="bi bi-people-fill"></i> Residents &amp; Staff</span>
+      </a>
+
+      <a onclick="switchPage('cms', 'Barangay Portal CMS')" id="nav-cms" class="ad-nav-link">
+        <span><i class="bi bi-window-stack"></i> Barangay CMS</span>
+      </a>
+
+      <a onclick="switchPage('profile', 'Edit Admin Profile')" id="nav-profile" class="ad-nav-link">
+        <span><i class="bi bi-person-gear"></i> My Profile</span>
+      </a>
+
+      <a onclick="showToast('Opening Platform Testimonial Modal...')" class="ad-nav-link">
+        <span><i class="bi bi-chat-heart-fill"></i> Platform Feedback</span>
+      </a>
+    </div>
+
+    <div class="p-3 border-top" style="border-color: rgba(255,255,255,0.08) !important; cursor: pointer;" onclick="switchPage('profile', 'Edit Admin Profile')">
+      <div class="d-flex align-items-center gap-2">
+        <div class="ad-avatar" style="background: linear-gradient(135deg, #10b981, #0d9488); color: white;">LA</div>
+        <div class="overflow-hidden">
+          <div class="fw-semibold text-truncate" style="font-size: 0.85rem;">Lao Admin</div>
+          <div class="text-secondary text-truncate" style="font-size: 0.72rem;">Barangay Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <div class="ad-main">
+    <header class="ad-topbar d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3">
+        <button onclick="document.getElementById('adSidebar').classList.toggle('collapsed')" class="btn btn-sm btn-light border">
+          <i class="bi bi-layout-sidebar-inset fs-6"></i>
+        </button>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0" style="font-size: 0.85rem;">
+            <li class="breadcrumb-item text-muted">Brgy. Lao</li>
+            <li class="breadcrumb-item active fw-semibold text-dark" id="topbarBreadcrumb">Appointments &amp; Consultations</li>
+          </ol>
+        </nav>
+      </div>
+
+      <!-- Quick Prototype Page Switcher -->
+      <div class="d-none d-xl-flex align-items-center gap-1 bg-light p-1 rounded-3 border">
+        <small class="text-muted px-2 fw-semibold">Preview:</small>
+        <button class="btn btn-sm btn-white bg-white border-0 fw-medium" onclick="switchPage('appointments', 'Appointments & Consultations')">Appointments</button>
+        <button class="btn btn-sm btn-white bg-white border-0 fw-medium" onclick="switchPage('announcements', 'Service Announcements')">Announcements</button>
+        <button class="btn btn-sm btn-white bg-white border-0 fw-medium" onclick="switchPage('programs', 'Health Programs Catalog')">Programs</button>
+        <button class="btn btn-sm btn-white bg-white border-0 fw-medium" onclick="switchPage('events', 'Community Health Events')">Events</button>
+        <button class="btn btn-sm btn-white bg-white border-0 fw-medium" onclick="switchPage('users', 'Residents & Health Staff')">Users &amp; EHR</button>
+        <button class="btn btn-sm btn-white bg-white border-0 fw-medium" onclick="switchPage('cms', 'Barangay Portal CMS')">CMS</button>
+        <button class="btn btn-sm btn-white bg-white border-0 fw-medium" onclick="switchPage('profile', 'Edit Admin Profile')">Profile</button>
+      </div>
+    </header>
+
+    <main class="container-fluid p-3 p-md-4">
+
+      <!-- =====================================================================
+           PAGE 1: APPOINTMENTS INDEX
+           ===================================================================== -->
+      <section id="page-appointments" class="page-section active">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4 gap-3">
+          <div>
+            <h3 class="fw-bold mb-1">Patient Appointments &amp; Consultations</h3>
+            <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+              Approve incoming bookings, record clinical consultation notes, and schedule follow-up check-ups.
+            </p>
+          </div>
+          <!-- Segmented Status Filter Tabs -->
+          <ul class="nav ad-filter-pills bg-white p-1 rounded-3 border flex-wrap">
+            <li class="nav-item"><a class="nav-link active" href="#">All <span class="badge badge-soft-slate ms-1">42</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Pending <span class="badge badge-soft-amber ms-1">4</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Today <span class="badge badge-soft-emerald ms-1">18</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Approved</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Waitlisted <span class="badge badge-soft-purple ms-1">2</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Completed</a></li>
+          </ul>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="ad-card p-3 mb-4">
+          <div class="row g-2 align-items-center">
+            <div class="col-12 col-md-4">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0 text-secondary"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control border-start-0" placeholder="Search patient name, #UID, or reason...">
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <select class="form-select">
+                <option value="">All Service Announcements</option>
+                <option>Free Vaccination Drive</option>
+                <option>Maternal &amp; Prenatal Checkup</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-3">
+              <input type="date" class="form-control" value="2026-11-01">
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+              <button class="btn btn-emerald flex-grow-1"><i class="bi bi-funnel me-1"></i>Filter</button>
+              <button class="btn btn-light border"><i class="bi bi-arrow-counterclockwise"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Appointments Table -->
+        <div class="ad-card overflow-hidden">
+          <div class="table-responsive">
+            <table class="table ad-table mb-0">
+              <thead>
+                <tr>
+                  <th>Booking UID</th>
+                  <th>Patient &amp; Purok</th>
+                  <th>Service Announcement &amp; Reason</th>
+                  <th>Scheduled Date</th>
+                  <th>Status &amp; Flags</th>
+                  <th>Health Worker</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code class="fw-semibold text-dark">#982104</code></td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="ad-avatar well-sky">LP</div>
+                      <div>
+                        <div class="fw-semibold">Lao Patient</div>
+                        <small class="text-secondary">Purok One · 09093332154</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="fw-medium">Free Vaccination Drive</div>
+                    <small class="text-secondary">Reason: Vaccination Drive Follow Up</small>
+                  </td>
+                  <td>
+                    <div class="fw-medium">Nov 02, 2026</div>
+                    <small class="text-secondary">08:00 AM</small>
+                  </td>
+                  <td>
+                    <span class="badge badge-soft-amber">Pending</span>
+                    <span class="badge badge-soft-sky ms-1"><i class="bi bi-arrow-repeat me-1"></i>Follow-Up</span>
+                  </td>
+                  <td><small class="text-secondary">Unassigned</small></td>
+                  <td class="text-end">
+                    <div class="d-inline-flex gap-1">
+                      <button class="btn btn-sm btn-emerald" onclick="showToast('Approved Appointment #982104! (79/100 capacity)')">
+                        <i class="bi bi-check-lg"></i> Approve
+                      </button>
+                      <button class="btn btn-sm btn-outline-emerald" onclick="switchPage('appointment-show', 'Appointments / #982104')">
+                        <i class="bi bi-eye me-1"></i>Consult
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><code class="fw-semibold text-dark">#841920</code></td>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="ad-avatar well-emerald">EG</div>
+                      <div>
+                        <div class="fw-semibold">Elena Gomez</div>
+                        <small class="text-secondary">Purok Two · 09178881234</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="fw-medium">Maternal &amp; Prenatal Checkup</div>
+                    <small class="text-secondary">Reason: 2nd Trimester Ultrasound</small>
+                  </td>
+                  <td>
+                    <div class="fw-medium">Nov 01, 2026</div>
+                    <small class="text-secondary">09:30 AM</small>
+                  </td>
+                  <td>
+                    <span class="badge badge-soft-sky">Approved</span>
+                    <span class="badge badge-soft-purple ms-1">Waitlisted</span>
+                  </td>
+                  <td><span class="fw-medium small">Maria Lopez Reyes</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-emerald" onclick="switchPage('appointment-show', 'Appointments / #841920')">
+                      <i class="bi bi-journal-medical me-1"></i>Consult
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           PAGE 1B: APPOINTMENT CLINICAL SHOW VIEW
+           ===================================================================== -->
+      <section id="page-appointment-show" class="page-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <button class="btn btn-sm btn-light border" onclick="switchPage('appointments', 'Appointments & Consultations')">
+            <i class="bi bi-arrow-left me-1"></i>Back to Appointments
+          </button>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-emerald" data-bs-toggle="modal" data-bs-target="#completeConsultationModal">
+              <i class="bi bi-check2-circle me-1"></i>Complete &amp; Enter Clinical Notes
+            </button>
+            <button class="btn btn-sm btn-outline-emerald" data-bs-toggle="modal" data-bs-target="#followUpModal">
+              <i class="bi bi-calendar-plus me-1"></i>Schedule Follow-Up
+            </button>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-12 col-lg-8">
+            <!-- Header Card -->
+            <div class="ad-card p-4 mb-4">
+              <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 border-bottom pb-3 mb-3">
+                <div>
+                  <div class="d-flex align-items-center gap-2">
+                    <h4 class="fw-bold mb-0">Appointment #982104</h4>
+                    <span class="badge badge-soft-sky">Approved</span>
+                    <span class="badge badge-soft-purple">Follow-Up Visit</span>
+                  </div>
+                  <small class="text-secondary">Scheduled for <strong>November 02, 2026 at 08:00 AM</strong></small>
+                </div>
+                <span class="badge badge-soft-emerald"><i class="bi bi-megaphone me-1"></i>Free Vaccination Drive (78/100 slots)</span>
+              </div>
+
+              <div class="row g-3" style="font-size: 0.9rem;">
+                <div class="col-sm-6">
+                  <div class="text-secondary small">Chief Complaint / Reason for Visit</div>
+                  <div class="fw-semibold mt-1">Vaccination Drive — 2nd Booster Dose</div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="text-secondary small">Attending Health Worker</div>
+                  <div class="fw-semibold mt-1">Maria Lopez Reyes (BHW Staff)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Clinical Consultation Notes Card -->
+            <div class="ad-card p-4 mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold mb-0"><i class="bi bi-journal-medical text-success me-2"></i>Clinical Consultation Notes</h6>
+                <button class="btn btn-sm btn-light border" data-bs-toggle="modal" data-bs-target="#completeConsultationModal">
+                  <i class="bi bi-pencil me-1"></i>Update Notes
+                </button>
+              </div>
+              <div class="p-3 rounded-3 bg-light border" style="font-size: 0.9rem;">
+                Patient vitals checked: BP 118/76 mmHg, Temp 36.6°C. Administered 0.5mL booster dose in left deltoid. Observed for 15 minutes post-vaccination with no adverse reaction. Advised paracetamol PRN for mild soreness.
+              </div>
+            </div>
+
+            <!-- Real Follow-Up Chain & Booking Timeline (Replaces Fake 2023 Activity Log!) -->
+            <div class="ad-card p-4">
+              <h6 class="fw-bold mb-3"><i class="bi bi-diagram-3 text-primary me-2"></i>Follow-Up Chain &amp; Visit Timeline</h6>
+              <div class="border-start border-2 border-success ps-3 py-1 mb-3">
+                <div class="d-flex justify-content-between">
+                  <span class="fw-semibold">Previous Linked Visit: Appointment #771209</span>
+                  <small class="text-secondary">Oct 15, 2026</small>
+                </div>
+                <p class="small text-secondary mb-1">Initial Dose Administered · Attended by Lao Admin</p>
+                <a href="#" class="small text-success fw-medium text-decoration-none">View Previous Consultation &rarr;</a>
+              </div>
+              <div class="border-start border-2 border-secondary ps-3 py-1">
+                <div class="d-flex justify-content-between">
+                  <span class="fw-semibold">Current Booking Created</span>
+                  <small class="text-secondary">Nov 01, 2026 · 08:15 AM</small>
+                </div>
+                <p class="small text-secondary mb-0">Booked online &amp; approved by Maria Lopez Reyes</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Sidebar: Patient Info & Direct EHR Link -->
+          <div class="col-12 col-lg-4">
+            <div class="ad-card p-4 mb-4">
+              <h6 class="fw-bold mb-3 border-bottom pb-2">Patient Information</h6>
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="ad-avatar well-sky" style="width: 52px; height: 52px; font-size: 1.1rem;">LP</div>
+                <div>
+                  <h6 class="fw-bold mb-0">Lao Patient</h6>
+                  <small class="text-secondary">UID #204918 · Purok One</small>
+                </div>
+              </div>
+              <p class="small mb-2"><strong>Email:</strong> lao_patient@test.com</p>
+              <p class="small mb-3"><strong>Phone:</strong> 0909-333-2154</p>
+              <div class="d-grid gap-2">
+                <button class="btn btn-sm btn-emerald" onclick="switchPage('ehr', 'Patients / Lao Patient / Medical Records')">
+                  <i class="bi bi-file-earmark-medical me-1"></i>Open Patient Medical Chart (EHR)
+                </button>
+                <button class="btn btn-sm btn-light border" onclick="switchPage('users', 'Residents & Health Staff')">
+                  <i class="bi bi-person me-1"></i>View Resident Profile
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           PAGE 2: SERVICE ANNOUNCEMENTS INDEX & SLOT CAPACITY
+           ===================================================================== -->
+      <section id="page-announcements" class="page-section">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+          <div>
+            <h3 class="fw-bold mb-1">Service Announcements &amp; Schedules</h3>
+            <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+              Publish health center service windows, configure patient slot capacities, and export attendance PDF reports.
+            </p>
+          </div>
+          <button class="btn btn-emerald" onclick="showToast('Opening New Announcement Modal...')">
+            <i class="bi bi-plus-lg me-1"></i>New Announcement
+          </button>
+        </div>
+
+        <div class="ad-card overflow-hidden">
+          <div class="table-responsive">
+            <table class="table ad-table mb-0">
+              <thead>
+                <tr>
+                  <th>Announcement &amp; Program</th>
+                  <th>Schedule Window &amp; Hours</th>
+                  <th>Booked Capacity</th>
+                  <th>Audience</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="fw-bold text-dark">Free Vaccination Drive</div>
+                    <span class="badge badge-soft-emerald mt-1"><i class="bi bi-heart-pulse me-1"></i>Free Vaccination Program</span>
+                  </td>
+                  <td>
+                    <div class="fw-medium">Nov 02 – Nov 08, 2026</div>
+                    <small class="text-secondary"><i class="bi bi-clock me-1"></i>8:00 AM – 5:00 PM · Brgy. Hall</small>
+                  </td>
+                  <td style="min-width: 170px;">
+                    <div class="d-flex justify-content-between small mb-1">
+                      <span class="fw-semibold">78 / 100</span>
+                      <span class="text-secondary">78%</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                      <div class="progress-bar bg-success" style="width: 78%;"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge badge-soft-slate">All Residents</span></td>
+                  <td><span class="badge badge-soft-emerald">Approved</span></td>
+                  <td class="text-end">
+                    <div class="d-inline-flex gap-1">
+                      <button class="btn btn-sm btn-outline-emerald" onclick="switchPage('announcement-slots', 'Announcements / Free Vaccination Drive / Slots')">
+                        <i class="bi bi-people me-1"></i>Slots
+                      </button>
+                      <button class="btn btn-sm btn-light border" onclick="showToast('Downloading A4 Landscape PDF Report...')" title="Download PDF Report">
+                        <i class="bi bi-file-earmark-pdf text-danger"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           PAGE 2B: ANNOUNCEMENT SLOT CAPACITY DETAILS
+           ===================================================================== -->
+      <section id="page-announcement-slots" class="page-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <button class="btn btn-sm btn-light border" onclick="switchPage('announcements', 'Service Announcements')">
+            <i class="bi bi-arrow-left me-1"></i>Back to Announcements
+          </button>
+          <button class="btn btn-sm btn-emerald" onclick="showToast('Exporting A4 Landscape PDF Report...')">
+            <i class="bi bi-file-earmark-pdf me-1"></i>Export Attendance PDF
+          </button>
+        </div>
+
+        <div class="ad-card p-4 mb-4">
+          <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+              <span class="badge badge-soft-emerald mb-2">Free Vaccination Program</span>
+              <h4 class="fw-bold mb-1">Free Vaccination Drive — Slot &amp; Capacity Manager</h4>
+              <p class="text-secondary small mb-0"><i class="bi bi-geo-alt me-1"></i>Barangay Hall · Nov 02 – Nov 08, 2026 (8:00 AM – 5:00 PM)</p>
+            </div>
+            <div class="col-lg-5">
+              <div class="p-3 rounded-3 bg-light border">
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="fw-semibold small">Capacity Fill Rate</span>
+                  <span class="badge badge-soft-emerald">22 Slots Remaining</span>
+                </div>
+                <div class="progress my-2" style="height: 10px;">
+                  <div class="progress-bar bg-success" style="width: 78%;"></div>
+                </div>
+                <small class="text-secondary">78 Approved Bookings out of 100 Max Patients</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-xl-3"><div class="ad-card p-3"><small class="text-secondary fw-semibold">TODAY'S ARRIVALS</small><div class="fs-4 fw-bold text-dark">18</div></div></div>
+          <div class="col-6 col-xl-3"><div class="ad-card p-3"><small class="text-secondary fw-semibold">AVAILABLE CAPACITY</small><div class="fs-4 fw-bold text-success">22% (22 slots)</div></div></div>
+          <div class="col-6 col-xl-3"><div class="ad-card p-3"><small class="text-secondary fw-semibold">PENDING APPROVAL</small><div class="fs-4 fw-bold text-warning">4</div></div></div>
+          <div class="col-6 col-xl-3"><div class="ad-card p-3"><small class="text-secondary fw-semibold">CANCELLED / REJECTED</small><div class="fs-4 fw-bold text-danger">3</div></div></div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           PAGE 3: HEALTH PROGRAMS CATALOG
+           ===================================================================== -->
+      <section id="page-programs" class="page-section">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+          <div>
+            <h3 class="fw-bold mb-1">Health Programs Catalog</h3>
+            <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+              Manage core barangay healthcare programs and link them to scheduled service announcements.
+            </p>
+          </div>
+          <button class="btn btn-emerald" onclick="showToast('Opening New Health Program Modal...')">
+            <i class="bi bi-plus-lg me-1"></i>New Health Program
+          </button>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-12 col-md-6 col-xl-4">
+            <div class="ad-card p-4 h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div class="ad-icon-well well-emerald"><i class="bi bi-shield-plus"></i></div>
+                  <span class="badge badge-soft-emerald">Active Program</span>
+                </div>
+                <h5 class="fw-bold mb-2">Free Vaccination Drive</h5>
+                <p class="text-secondary small mb-3">
+                  Routine immunization and booster shots for infants, children, adultos, and senior citizens in Barangay Lao.
+                </p>
+              </div>
+              <div class="pt-3 border-top d-flex justify-content-between align-items-center">
+                <span class="badge badge-soft-slate"><i class="bi bi-megaphone me-1"></i>5 Announcements</span>
+                <div class="d-flex gap-1">
+                  <button class="btn btn-sm btn-light border">Edit</button>
+                  <button class="btn btn-sm btn-outline-emerald" onclick="switchPage('announcements', 'Service Announcements')">View Schedules</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-4">
+            <div class="ad-card p-4 h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                  <div class="ad-icon-well well-sky"><i class="bi bi-heart-pulse"></i></div>
+                  <span class="badge badge-soft-emerald">Active Program</span>
+                </div>
+                <h5 class="fw-bold mb-2">Maternal &amp; Prenatal Care</h5>
+                <p class="text-secondary small mb-3">
+                  Monthly prenatal check-ups, iron/folic supplementation, and midwife consultations for expectant mothers.
+                </p>
+              </div>
+              <div class="pt-3 border-top d-flex justify-content-between align-items-center">
+                <span class="badge badge-soft-slate"><i class="bi bi-megaphone me-1"></i>3 Announcements</span>
+                <div class="d-flex gap-1">
+                  <button class="btn btn-sm btn-light border">Edit</button>
+                  <button class="btn btn-sm btn-outline-emerald" onclick="switchPage('announcements', 'Service Announcements')">View Schedules</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           PAGE 4: COMMUNITY HEALTH EVENTS
+           ===================================================================== -->
+      <section id="page-events" class="page-section">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+          <div>
+            <h3 class="fw-bold mb-1">Community Health Events</h3>
+            <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+              Broadcast barangay-wide seminars, dengue clean-up drives, and targeted demographic wellness events.
+            </p>
+          </div>
+          <button class="btn btn-emerald" onclick="showToast('Opening New Community Event Modal...')">
+            <i class="bi bi-plus-lg me-1"></i>New Event
+          </button>
+        </div>
+
+        <div class="ad-card overflow-hidden">
+          <div class="table-responsive">
+            <table class="table ad-table mb-0">
+              <thead>
+                <tr>
+                  <th>Event Title &amp; UID</th>
+                  <th>Location</th>
+                  <th>Schedule</th>
+                  <th>Target Demographics</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="fw-bold">Senior Citizens Wellness &amp; Nutrition Seminar</div>
+                    <small class="text-secondary">#EVT-49102 · Posted by Lao Admin</small>
+                  </td>
+                  <td><i class="bi bi-geo-alt text-success me-1"></i>Brgy. Lao Covered Court</td>
+                  <td>
+                    <div class="fw-medium">Nov 05, 2026</div>
+                    <small class="text-secondary">8:00 AM – 12:00 PM</small>
+                  </td>
+                  <td>
+                    <span class="badge badge-soft-sky">Senior Citizens</span>
+                    <span class="badge badge-soft-slate">PWDs</span>
+                  </td>
+                  <td><span class="badge badge-soft-emerald">Upcoming</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-light border">Edit</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           PAGE 5: RESIDENTS, HEALTH STAFF & PATIENT EHR
+           ===================================================================== -->
+      <section id="page-users" class="page-section">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+          <div>
+            <h3 class="fw-bold mb-1">Residents &amp; Health Staff Directory</h3>
+            <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+              Manage Barangay Health Workers (Staff), view registered residents by Purok/Zone, and access Patient Medical Charts (EHR).
+            </p>
+          </div>
+          <div class="d-flex gap-2">
+            <ul class="nav ad-filter-pills bg-white p-1 rounded-3 border">
+              <li class="nav-item"><a class="nav-link active" href="#">All (142)</a></li>
+              <li class="nav-item"><a class="nav-link" href="#">Patients (136)</a></li>
+              <li class="nav-item"><a class="nav-link" href="#">Health Staff (5)</a></li>
+            </ul>
+            <button class="btn btn-emerald" onclick="showToast('Opening New Staff Account Modal...')">
+              <i class="bi bi-person-plus me-1"></i>New Staff
+            </button>
+          </div>
+        </div>
+
+        <div class="ad-card overflow-hidden">
+          <div class="table-responsive">
+            <table class="table ad-table mb-0">
+              <thead>
+                <tr>
+                  <th>Resident / Staff Member</th>
+                  <th>Contact Info</th>
+                  <th>Purok / Subdivision</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th class="text-end">Clinical &amp; Admin Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="ad-avatar well-sky">LP</div>
+                      <div>
+                        <div class="fw-semibold">Lao Patient <span class="text-secondary fw-normal small">#204918</span></div>
+                        <small class="text-secondary">Registered May 2025</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div>lao_patient@test.com</div>
+                    <small class="text-secondary">0909-333-2154</small>
+                  </td>
+                  <td><span class="badge badge-soft-slate">Purok One</span></td>
+                  <td><span class="badge badge-soft-sky">Patient</span></td>
+                  <td><span class="badge badge-soft-emerald">Active</span></td>
+                  <td class="text-end">
+                    <div class="d-inline-flex gap-1">
+                      <button class="btn btn-sm btn-emerald" onclick="switchPage('ehr', 'Patients / Lao Patient / Medical Records')">
+                        <i class="bi bi-journal-medical me-1"></i>Medical Records (EHR)
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="ad-avatar well-emerald">MR</div>
+                      <div>
+                        <div class="fw-semibold">Maria Lopez Reyes <span class="text-secondary fw-normal small">#104829</span></div>
+                        <small class="text-secondary">Barangay Health Worker</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div>maria.reyes@example.com</div>
+                    <small class="text-secondary">0918-123-4567</small>
+                  </td>
+                  <td><span class="badge badge-soft-slate">Purok One</span></td>
+                  <td><span class="badge badge-soft-emerald">Staff</span></td>
+                  <td><span class="badge badge-soft-emerald">Active</span></td>
+                  <td class="text-end">
+                    <div class="d-inline-flex gap-1">
+                      <button class="btn btn-sm btn-light border" onclick="showToast('Toggled Staff Active/Inactive status')">Toggle Status</button>
+                      <button class="btn btn-sm btn-light border">Edit</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           PAGE 5B: PATIENT MEDICAL RECORDS (ELECTRONIC HEALTH RECORD / EHR)
+           ===================================================================== -->
+      <section id="page-ehr" class="page-section">
+        <div class="mb-3">
+          <button class="btn btn-sm btn-light border" onclick="switchPage('users', 'Residents & Health Staff')">
+            <i class="bi bi-arrow-left me-1"></i>Back to Residents Directory
+          </button>
+        </div>
+
+        <!-- Patient EHR Banner -->
+        <div class="ad-card p-4 mb-4" style="border-left: 5px solid var(--ad-emerald-600);">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div class="d-flex align-items-center gap-3">
+              <div class="ad-avatar well-emerald" style="width: 60px; height: 60px; font-size: 1.3rem;">LP</div>
+              <div>
+                <div class="d-flex align-items-center gap-2">
+                  <h4 class="fw-bold mb-0">Lao Patient</h4>
+                  <span class="badge badge-soft-emerald">Active Resident</span>
+                  <span class="badge badge-soft-slate">Patient ID #204918</span>
+                </div>
+                <div class="text-secondary mt-1" style="font-size: 0.88rem;">
+                  <i class="bi bi-geo-alt me-1"></i>Purok One, Brgy. Lao · <i class="bi bi-telephone ms-2 me-1"></i>0909-333-2154 · <i class="bi bi-envelope ms-2 me-1"></i>lao_patient@test.com
+                </div>
+              </div>
+            </div>
+            <div class="d-flex gap-3 text-center">
+              <div class="px-3 py-2 rounded-3 bg-light border">
+                <div class="fs-5 fw-bold text-success">4</div>
+                <small class="text-secondary" style="font-size: 0.72rem;">COMPLETED VISITS</small>
+              </div>
+              <div class="px-3 py-2 rounded-3 bg-light border">
+                <div class="fs-5 fw-bold text-primary">1</div>
+                <small class="text-secondary" style="font-size: 0.72rem;">FOLLOW-UP SCHEDULED</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Longitudinal Consultation History Table -->
+        <div class="ad-card overflow-hidden">
+          <div class="p-3 px-4 border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="fw-bold mb-0"><i class="bi bi-journal-medical text-success me-2"></i>Longitudinal Consultation &amp; Appointment History</h6>
+            <span class="badge badge-soft-slate">Ordered by Most Recent</span>
+          </div>
+          <div class="table-responsive">
+            <table class="table ad-table mb-0">
+              <thead>
+                <tr>
+                  <th>Visit UID</th>
+                  <th>Consultation Date</th>
+                  <th>Health Worker</th>
+                  <th>Chief Complaint / Reason</th>
+                  <th>Clinical Consultation Notes</th>
+                  <th>Follow-Up</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <a href="#" onclick="switchPage('appointment-show', 'Appointments / #982104'); return false;" class="fw-bold text-success text-decoration-none">#982104</a>
+                  </td>
+                  <td>Nov 02, 2026<br><small class="text-secondary">08:00 AM</small></td>
+                  <td>Maria Lopez Reyes</td>
+                  <td>Vaccination Drive Follow Up</td>
+                  <td style="max-width: 300px;">BP 118/76 mmHg, Temp 36.6°C. Administered 0.5mL booster dose in left deltoid.</td>
+                  <td><span class="badge badge-soft-sky">From #771209</span></td>
+                  <td><span class="badge badge-soft-emerald">Completed</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <a href="#" onclick="switchPage('appointment-show', 'Appointments / #771209'); return false;" class="fw-bold text-success text-decoration-none">#771209</a>
+                  </td>
+                  <td>Oct 15, 2026<br><small class="text-secondary">08:00 AM</small></td>
+                  <td>Lao Admin</td>
+                  <td>Vaccination Drive (1st Dose)</td>
+                  <td style="max-width: 300px;">Initial vaccination dose completed without complication. Scheduled booster follow-up.</td>
+                  <td><span class="badge badge-soft-slate">Initial Visit</span></td>
+                  <td><span class="badge badge-soft-emerald">Completed</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           PAGE 6: BARANGAY PORTAL CMS
+           ===================================================================== -->
+      <section id="page-cms" class="page-section">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+          <div>
+            <h3 class="fw-bold mb-1">Barangay Portal Content Management</h3>
+            <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+              Customize the public Hero Banner, About Us page, and interactive Leaflet map coordinates for <code>lao.lvh.me</code>.
+            </p>
+          </div>
+          <a href="#" onclick="showToast('Opening http://lao.lvh.me:3000 in new tab...'); return false;" class="btn btn-light border">
+            <i class="bi bi-box-arrow-up-right me-1"></i>Preview Resident Portal
+          </a>
+        </div>
+
+        <div class="ad-card p-4 mb-4">
+          <div class="row g-4 align-items-center">
+            <div class="col-lg-5">
+              <div class="rounded-3 d-flex align-items-center justify-content-center text-white" style="height: 190px; background: linear-gradient(135deg, #065f46, #0284c7);">
+                <div class="text-center">
+                  <i class="bi bi-image fs-1 d-block mb-1"></i>
+                  <span class="badge bg-white text-dark">Brgy. Lao Hero Banner</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-7">
+              <span class="badge badge-soft-emerald mb-2">Homepage Hero Banner</span>
+              <h4 class="fw-bold mb-2">Welcome to Barangay Lao Health Center</h4>
+              <p class="text-secondary mb-3">Book consultations, check vaccination schedules, and stay informed on Purok health initiatives.</p>
+              <button class="btn btn-emerald" onclick="showToast('Opening CMS Editor Modal...')"><i class="bi bi-pencil-square me-1"></i>Edit Hero Banner</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="ad-card p-4 h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="d-flex justify-content-between mb-3">
+                  <div class="ad-icon-well well-emerald"><i class="bi bi-info-circle"></i></div>
+                  <span class="badge badge-soft-slate">Route: <code>/pages/about_us</code></span>
+                </div>
+                <h5 class="fw-bold">About Barangay Lao Health Center</h5>
+                <p class="text-secondary small">Dedicated to delivering accessible primary healthcare to all families across our Puroks.</p>
+              </div>
+              <div class="pt-3 border-top d-flex justify-content-end gap-2">
+                <button class="btn btn-sm btn-light border">View Live</button>
+                <button class="btn btn-sm btn-emerald">Edit Content</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="ad-card p-4 h-100 d-flex flex-column justify-content-between">
+              <div>
+                <div class="d-flex justify-content-between mb-3">
+                  <div class="ad-icon-well well-sky"><i class="bi bi-geo-alt"></i></div>
+                  <span class="badge badge-soft-sky"><i class="bi bi-pin-map me-1"></i>11.0064, 124.6075</span>
+                </div>
+                <h5 class="fw-bold">Contact Us &amp; Health Center Map</h5>
+                <p class="text-secondary small">Includes interactive Leaflet map pin for Barangay Lao Health Center and emergency hotlines.</p>
+              </div>
+              <div class="pt-3 border-top d-flex justify-content-end gap-2">
+                <button class="btn btn-sm btn-light border">View Live</button>
+                <button class="btn btn-sm btn-emerald">Edit Map &amp; Details</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
+           PAGE 7: ADMIN PROFILE UPDATE (`barangay/pages/profile.html.erb`)
+           ===================================================================== -->
+      <section id="page-profile" class="page-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h3 class="fw-bold mb-1">Edit Admin Profile</h3>
+            <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+              Manage your profile picture, personal information, Purok/Subdivision assignment, and login credentials.
+            </p>
+          </div>
+          <span class="badge badge-soft-emerald px-3 py-2"><i class="bi bi-patch-check-fill me-1"></i>Verified Barangay Admin</span>
+        </div>
+
+        <div class="row g-4">
+          <!-- Left Identity & Profile Photo Card (`_profile_form.html.erb`) -->
+          <div class="col-12 col-lg-4">
+            <div class="ad-card p-4 text-center">
+              <div class="rounded-circle text-white fw-bold d-inline-flex align-items-center justify-content-center mb-3 shadow-sm" style="width: 80px; height: 80px; font-size: 1.6rem; background: linear-gradient(135deg, #10b981, #0d9488);">
+                LA
+              </div>
+              <h5 class="fw-bold mb-1">Lao Admin</h5>
+              <div class="text-secondary small mb-2">admin@lao.lvh.me</div>
+              <span class="badge badge-soft-sky mb-3">Barangay Lao Administrator</span>
+
+              <div class="border-top pt-3 text-start">
+                <label class="form-label small fw-semibold"><i class="bi bi-camera me-1 text-success"></i>Update Profile Picture</label>
+                <input type="file" class="form-control form-control-sm mb-3" accept="image/*">
+                <button class="btn btn-sm btn-emerald w-100" onclick="showToast('Profile picture updated successfully.')">
+                  <i class="bi bi-upload me-1"></i>Update Profile Photo
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Forms Column -->
+          <div class="col-12 col-lg-8">
+            <!-- Personal Information Form (`_personal_information_form.html.erb`) -->
+            <div class="ad-card p-4 mb-4">
+              <h6 class="fw-bold mb-3"><i class="bi bi-person-lines-fill text-success me-2"></i>1. Update Personal Information</h6>
+              <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">First Name</label>
+                  <input type="text" class="form-control" value="Lao">
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Middle Name</label>
+                  <input type="text" class="form-control" value="">
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Last Name</label>
+                  <input type="text" class="form-control" value="Admin">
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label small fw-semibold">Suffix</label>
+                  <input type="text" class="form-control" placeholder="Jr., Sr., III">
+                </div>
+                <div class="col-12">
+                  <label class="form-label small fw-semibold">Phone Number</label>
+                  <input type="tel" class="form-control" value="09091112154">
+                </div>
+              </div>
+              <div class="text-end">
+                <button class="btn btn-emerald" onclick="showToast('Personal information updated successfully.')">Update Personal Info</button>
+              </div>
+            </div>
+
+            <!-- Subdivision Form (`_address_form.html.erb`) -->
+            <div class="ad-card p-4 mb-4">
+              <h6 class="fw-bold mb-3"><i class="bi bi-geo-alt-fill text-success me-2"></i>2. Update Subdivision (Purok)</h6>
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold">Select Existing Subdivision</label>
+                  <select class="form-select">
+                    <option selected>Purok One</option>
+                    <option>Purok Two</option>
+                    <option>Purok Three</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold">Or Enter New Subdivision</label>
+                  <input type="text" class="form-control" placeholder="e.g. Purok Cinco">
+                </div>
+              </div>
+              <div class="text-end">
+                <button class="btn btn-emerald" onclick="showToast('Subdivision updated successfully.')">Update Subdivision</button>
+              </div>
+            </div>
+
+            <!-- Credentials Form (`_credentials_form.html.erb`) -->
+            <div class="ad-card p-4">
+              <h6 class="fw-bold mb-3"><i class="bi bi-shield-lock-fill text-success me-2"></i>3. Update Credentials</h6>
+              <div class="row g-3 mb-3">
+                <div class="col-12">
+                  <label class="form-label small fw-semibold">Email Address</label>
+                  <input type="email" class="form-control" value="admin@lao.lvh.me">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold">New Password</label>
+                  <input type="password" class="form-control" placeholder="Leave blank if unchanged">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-semibold">Password Confirmation</label>
+                  <input type="password" class="form-control" placeholder="Confirm new password">
+                </div>
+              </div>
+              <div class="text-end">
+                <button class="btn btn-outline-emerald" onclick="showToast('Credentials updated successfully.')">Update Credentials</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ==================== MODAL: COMPLETE CONSULTATION & ENTER NOTES ==================== -->
+<div class="modal fade" id="completeConsultationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 0.9rem;">
+      <div class="modal-header border-bottom px-4 py-3">
+        <h5 class="modal-title fw-bold mb-0"><i class="bi bi-journal-check text-success me-2"></i>Complete Consultation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="text-secondary small mb-3">
+          Entering clinical notes automatically transitions Appointment <strong>#982104</strong> to <code>completed</code> and adds this entry to the patient's longitudinal medical chart.
+        </p>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Clinical Consultation Notes &amp; Findings</label>
+          <textarea class="form-control" rows="4" placeholder="Record vitals, diagnosis, administered vaccines/medications, and instructions...">Patient vitals checked: BP 118/76 mmHg, Temp 36.6°C. Administered 0.5mL booster dose in left deltoid.</textarea>
+        </div>
+      </div>
+      <div class="modal-footer bg-light px-4 py-3">
+        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-emerald" data-bs-dismiss="modal" onclick="showToast('Consultation marked as Completed and saved to Patient EHR!')">
+          Save Notes &amp; Complete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: SCHEDULE FOLLOW-UP CHECK-UP ==================== -->
+<div class="modal fade" id="followUpModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 0.9rem;">
+      <div class="modal-header border-bottom px-4 py-3">
+        <h5 class="modal-title fw-bold mb-0"><i class="bi bi-calendar-plus text-primary me-2"></i>Schedule Follow-Up Check-Up</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Follow-Up Date &amp; Time</label>
+          <input type="datetime-local" class="form-control" value="2026-11-09T09:00">
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Follow-Up Reason / Instructions</label>
+          <textarea class="form-control" rows="3" placeholder="Specify reason for follow-up visit...">Post-vaccination checkup &amp; vitals monitoring</textarea>
+        </div>
+      </div>
+      <div class="modal-footer bg-light px-4 py-3">
+        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-emerald" data-bs-dismiss="modal" onclick="showToast('Follow-Up Appointment created and linked to #982104!')">
+          Schedule Follow-Up
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="liveToast" class="toast align-items-center text-bg-dark border-0 shadow-lg" role="alert">
+    <div class="d-flex">
+      <div class="toast-body d-flex align-items-center gap-2">
+        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+        <span id="toastMessage">Action completed.</span>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function switchPage(pageKey, breadcrumbText) {
+    document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+    const target = document.getElementById('page-' + pageKey);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.ad-sidebar .ad-nav-link').forEach(el => el.classList.remove('active'));
+    const navMap = {
+      'appointments': 'nav-appointments',
+      'appointment-show': 'nav-appointments',
+      'announcements': 'nav-announcements',
+      'announcement-slots': 'nav-announcements',
+      'programs': 'nav-programs',
+      'events': 'nav-events',
+      'users': 'nav-users',
+      'ehr': 'nav-users',
+      'cms': 'nav-cms',
+      'profile': 'nav-profile'
+    };
+    const navEl = document.getElementById(navMap[pageKey]);
+    if (navEl) navEl.classList.add('active');
+
+    document.getElementById('topbarBreadcrumb').textContent = breadcrumbText;
+  }
+
+  function showToast(msg) {
+    document.getElementById('toastMessage').textContent = msg;
+    bootstrap.Toast.getOrCreateInstance(document.getElementById('liveToast'), { delay: 3200 }).show();
+  }
+</script>
+</body>
+</html>

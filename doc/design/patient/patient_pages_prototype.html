@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brgy. Lao — Patient & Resident Mobile-First Portal Prototype</title>
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pt-emerald-700: #047857;
+      --pt-emerald-600: #059669;
+      --pt-emerald-500: #10b981;
+      --pt-emerald-50: #ecfdf5;
+      --pt-teal-600: #0d9488;
+      --pt-slate-900: #0f172a;
+      --pt-slate-700: #334155;
+      --pt-slate-500: #64748b;
+      --pt-slate-200: #e2e8f0;
+      --pt-slate-100: #f1f5f9;
+      --pt-amber-500: #f59e0b;
+      --pt-amber-50: #fffbeb;
+      --pt-sky-600: #0284c7;
+      --pt-sky-50: #f0f9ff;
+      --pt-rose-600: #e11d48;
+      --pt-rose-50: #fff1f2;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #e2e8f0;
+      color: var(--pt-slate-900);
+      margin: 0;
+    }
+
+    /* Viewport Simulator Wrapper (Allows testing Mobile Phone vs Full Desktop!) */
+    #viewportSimulator {
+      background-color: #f8fafc;
+      min-height: calc(100dvh - 44px);
+      padding-bottom: 84px; /* Space for fixed bottom tab bar */
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s ease;
+    }
+
+    #viewportSimulator > main {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+
+    /* Desktop Phone Frame Simulator (when previewing Mobile Mode on a larger screen) */
+    @media (min-width: 576px) {
+      body.mobile-preview-mode #viewportSimulator {
+        max-width: 412px;
+        height: calc(100dvh - 76px);
+        max-height: 844px;
+        min-height: 620px;
+        margin: 14px auto;
+        padding-bottom: 0;
+        border-radius: 36px;
+        border: 10px solid #0f172a;
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
+        position: relative;
+        overflow: hidden;
+      }
+
+      body.mobile-preview-mode #viewportSimulator > main {
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      body.mobile-preview-mode .pt-bottom-nav {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        right: auto;
+        flex-shrink: 0;
+        margin-top: auto;
+        width: 100%;
+      }
+    }
+
+    /* Real Mobile Viewport (< 576px): Full-bleed screen with fixed docked bottom bar */
+    @media (max-width: 575.98px) {
+      body.mobile-preview-mode #viewportSimulator {
+        max-width: 100%;
+        margin: 0;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        min-height: calc(100dvh - 44px);
+        padding-bottom: 84px;
+      }
+
+      .pt-bottom-nav {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+      }
+    }
+
+    /* Sticky Top Header */
+    .pt-top-navbar {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--pt-slate-200);
+      padding: 0.65rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 1020;
+      flex-shrink: 0;
+    }
+
+    .pt-brand-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--pt-emerald-500), var(--pt-teal-600));
+      display: inline-flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    /* Desktop Navigation Links in Top Header (Hidden on Mobile, Visible on Desktop) */
+    .pt-desktop-nav {
+      display: none;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .pt-desktop-link {
+      border: none;
+      background: transparent;
+      color: var(--pt-slate-700);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 0.6rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .pt-desktop-link:hover {
+      background-color: var(--pt-slate-100);
+      color: var(--pt-emerald-700);
+    }
+    .pt-desktop-link.active {
+      background-color: var(--pt-emerald-50);
+      color: var(--pt-emerald-600);
+      font-weight: 700;
+    }
+
+    /* Desktop Full Mode (>= 768px when NOT in Mobile Phone simulator):
+       Hide bottom footer nav (.pt-bottom-nav) & show top desktop nav (.pt-desktop-nav)! */
+    @media (min-width: 768px) {
+      body:not(.mobile-preview-mode) #viewportSimulator {
+        padding-bottom: 2rem;
+      }
+
+      body:not(.mobile-preview-mode) .pt-bottom-nav {
+        display: none !important;
+      }
+
+      body:not(.mobile-preview-mode) .pt-desktop-nav {
+        display: flex;
+      }
+    }
+    .pt-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      min-height: 66px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      background: #ffffff;
+      border-top: 1px solid var(--pt-slate-200);
+      box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.06);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1030;
+    }
+
+    .pt-tab-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--pt-slate-500);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.35rem 0;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      transition: color 0.15s ease;
+    }
+    .pt-tab-btn i { font-size: 1.3rem; line-height: 1.1; margin-bottom: 2px; }
+    .pt-tab-btn.active { color: var(--pt-emerald-600); font-weight: 700; }
+
+    /* Cards & Touch Targets */
+    .pt-card {
+      background: #ffffff;
+      border: 1px solid var(--pt-slate-200);
+      border-radius: 1rem;
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.03);
+    }
+
+    .pt-action-tile {
+      background: #ffffff;
+      border: 1.5px solid var(--pt-slate-200);
+      border-radius: 1rem;
+      padding: 1rem 0.75rem;
+      text-align: center;
+      text-decoration: none;
+      color: var(--pt-slate-900);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      min-height: 104px;
+    }
+    .pt-action-tile:hover, .pt-action-tile:active {
+      border-color: var(--pt-emerald-500);
+      background-color: var(--pt-emerald-50);
+      transform: translateY(-2px);
+      color: var(--pt-emerald-700);
+    }
+
+    .pt-icon-circle {
+      width: 46px; height: 46px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.35rem;
+    }
+    .circle-emerald { background: var(--pt-emerald-50); color: var(--pt-emerald-600); }
+    .circle-sky     { background: var(--pt-sky-50);     color: var(--pt-sky-600); }
+    .circle-amber   { background: var(--pt-amber-50);   color: #d97706; }
+    .circle-rose    { background: var(--pt-rose-50);    color: var(--pt-rose-600); }
+
+    .badge-soft-emerald { background-color: var(--pt-emerald-50); color: var(--pt-emerald-600); border: 1px solid #a7f3d0; }
+    .badge-soft-amber   { background-color: var(--pt-amber-50);   color: #b45309; border: 1px solid #fde68a; }
+    .badge-soft-sky     { background-color: var(--pt-sky-50);     color: var(--pt-sky-600); border: 1px solid #bae6fd; }
+    .badge-soft-rose    { background-color: var(--pt-rose-50);    color: var(--pt-rose-600); border: 1px solid #fecdd3; }
+    .badge-soft-slate   { background-color: #f1f5f9;              color: #475569; border: 1px solid #e2e8f0; }
+
+    /* Large Non-Tech Buttons (48px+ height) */
+    .btn, .badge, .reason-chip, .pt-tab-btn {
+      white-space: nowrap;
+    }
+
+    /* Mobile: 2x2 Filter Button Grid for Visits (All, Upcoming, Completed, Cancelled) */
+    .pt-filter-scroll {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+    .pt-filter-scroll > .btn {
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    /* Desktop View: Smoothly transitions into a clean horizontal row of pill buttons */
+    @media (min-width: 576px) {
+      body:not(.mobile-preview-mode) .pt-filter-scroll {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      body:not(.mobile-preview-mode) .pt-filter-scroll > .btn {
+        width: auto;
+      }
+    }
+    .btn-emerald-lg {
+      background-color: var(--pt-emerald-600);
+      border-color: var(--pt-emerald-600);
+      color: #ffffff;
+      font-weight: 700;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.75rem;
+      font-size: 0.98rem;
+    }
+    .btn-emerald-lg:hover {
+      background-color: var(--pt-emerald-700);
+      color: #ffffff;
+    }
+
+    /* Quick Reason Chips in Booking Modal */
+    .reason-chip {
+      border: 1px solid var(--pt-slate-200);
+      background: #f8fafc;
+      color: var(--pt-slate-700);
+      border-radius: 2rem;
+      padding: 0.4rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .reason-chip:hover, .reason-chip.active {
+      background: var(--pt-emerald-50);
+      border-color: var(--pt-emerald-600);
+      color: var(--pt-emerald-700);
+      font-weight: 600;
+    }
+
+    /* 3-Step Visual Status Tracker on Clinic Pass */
+    .step-tracker {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+    }
+    .step-tracker::before {
+      content: "";
+      position: absolute;
+      top: 16px;
+      left: 12%;
+      right: 12%;
+      height: 3px;
+      background: var(--pt-slate-200);
+      z-index: 1;
+    }
+    .step-item {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      flex: 1;
+    }
+    .step-dot {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid var(--pt-slate-200);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.85rem; color: var(--pt-slate-500);
+      margin-bottom: 4px;
+    }
+    .step-item.done .step-dot {
+      background: var(--pt-emerald-600);
+      border-color: var(--pt-emerald-600);
+      color: #ffffff;
+    }
+    .step-item.current .step-dot {
+      background: var(--pt-sky-600);
+      border-color: var(--pt-sky-600);
+      color: #ffffff;
+      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2);
+    }
+
+    .patient-screen { display: none; }
+    .patient-screen.active { display: block; animation: fadeIn 0.18s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* =========================================================================
+       ADAPTIVE DESKTOP LAYOUT ENGINE (>= 992px when NOT in Mobile Phone Frame)
+       Prevents "stretched mobile" look on desktop by switching to multi-column
+       dashboard grids, sticky right sidebars, and inline-sized action buttons.
+       ========================================================================= */
+    .pt-only-desktop { display: none; }
+
+    @media (min-width: 992px) {
+      body:not(.mobile-preview-mode) #viewportSimulator > main {
+        max-width: 1200px;
+        padding-top: 1.75rem !important;
+        padding-bottom: 2.5rem !important;
+      }
+
+      body:not(.mobile-preview-mode) .pt-only-desktop {
+        display: block;
+      }
+      body:not(.mobile-preview-mode) .pt-only-mobile {
+        display: none !important;
+      }
+
+      /* 2-Column Asymmetric Dashboard Split (Main 8 cols + Sticky Sidebar 4 cols) */
+      body:not(.mobile-preview-mode) .pt-desktop-dashboard {
+        display: grid;
+        grid-template-columns: minmax(0, 1.85fr) minmax(320px, 1fr);
+        gap: 1.5rem;
+        align-items: start;
+      }
+
+      /* 2-Column Content Split (7 cols Left + 5 cols Right) */
+      body:not(.mobile-preview-mode) .pt-desktop-split {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(320px, 1fr);
+        gap: 1.5rem;
+        align-items: start;
+      }
+
+      /* Profile Split (4 cols Left Profile Card + 8 cols Right Forms) */
+      body:not(.mobile-preview-mode) .pt-desktop-profile-split {
+        display: grid;
+        grid-template-columns: 340px minmax(0, 1fr);
+        gap: 1.5rem;
+        align-items: start;
+      }
+
+      /* 2-Column Card Grid for Services & Visits on Desktop */
+      body:not(.mobile-preview-mode) .pt-desktop-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+      }
+      body:not(.mobile-preview-mode) .pt-desktop-grid-2 > .pt-card {
+        margin-bottom: 0 !important;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      /* 4-Box Info Grid becomes 4-across on Desktop */
+      body:not(.mobile-preview-mode) .pt-info-4grid > .col-6 {
+        width: 25%;
+      }
+
+      /* Hero Banner becomes horizontal split on Desktop */
+      body:not(.mobile-preview-mode) .pt-hero-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        padding: 2rem 2.25rem !important;
+      }
+      body:not(.mobile-preview-mode) .pt-hero-banner .pt-hero-cta {
+        width: auto !important;
+        padding: 0.85rem 1.75rem !important;
+        flex-shrink: 0;
+      }
+
+      /* Prevent full-width stretched form buttons on Desktop */
+      body:not(.mobile-preview-mode) .pt-btn-adaptive {
+        width: auto !important;
+        padding-left: 1.75rem !important;
+        padding-right: 1.75rem !important;
+      }
+
+      body:not(.mobile-preview-mode) .pt-sticky-side {
+        position: sticky;
+        top: 82px;
+      }
+    }
+  </style>
+</head>
+<body class="mobile-preview-mode">
+
+<!-- ==================== PROTOTYPE CONTROLLER BAR ==================== -->
+<div class="bg-dark text-white py-2 px-3 sticky-top" style="z-index: 1050;">
+  <div class="container-fluid d-flex flex-wrap align-items-center justify-content-between gap-2" style="font-size: 0.8rem;">
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge bg-success">Patient / Resident UX Prototype</span>
+      <div class="btn-group btn-group-sm" role="group">
+        <button type="button" id="btnMobileMode" class="btn btn-warning fw-bold text-dark" onclick="setViewportMode('mobile')">
+          <i class="bi bi-phone-fill me-1"></i>Mobile Phone (390px)
+        </button>
+        <button type="button" id="btnDesktopMode" class="btn btn-outline-light" onclick="setViewportMode('desktop')">
+          <i class="bi bi-laptop me-1"></i>Full Desktop / Tablet
+        </button>
+      </div>
+    </div>
+
+    <div class="d-flex flex-wrap gap-1">
+      <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="switchScreen('home')">1. Home</button>
+      <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="switchScreen('service-detail')">2. Book Service</button>
+      <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="switchScreen('my-visits')">3. My Visits</button>
+      <button class="btn btn-sm btn-success py-0 px-2 fw-semibold" onclick="switchScreen('clinic-pass')">4. Clinic Pass (#982104)</button>
+      <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="switchScreen('event-detail')">5. Event Details</button>
+      <button class="btn btn-sm btn-outline-light py-0 px-2" onclick="switchScreen('profile')">6. Profile &amp; Purok</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== VIEWPORT SIMULATOR CONTAINER ==================== -->
+<div id="viewportSimulator">
+
+  <!-- Top Header Bar -->
+  <header class="pt-top-navbar">
+    <div class="container-fluid px-1 d-flex align-items-center justify-content-between">
+      <a href="#" onclick="switchScreen('home'); return false;" class="d-flex align-items-center text-decoration-none text-dark gap-2">
+        <span class="pt-brand-icon"><i class="bi bi-heart-pulse-fill"></i></span>
+        <div>
+          <div class="fw-bold lh-1" style="font-size: 0.98rem;">Brgy. Lao</div>
+          <small class="text-success fw-semibold" style="font-size: 0.72rem;">HEALTH CENTER</small>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links (Only shown on Desktop / Tablet >= 768px when bottom bar is hidden) -->
+      <nav class="pt-desktop-nav" aria-label="Main Desktop Navigation">
+        <button class="pt-desktop-link active" id="dnav-home" onclick="switchScreen('home')">
+          <i class="bi bi-house-heart-fill"></i> Home
+        </button>
+        <button class="pt-desktop-link" id="dnav-service-detail" onclick="switchScreen('service-detail')">
+          <i class="bi bi-heart-pulse-fill"></i> Health Services
+        </button>
+        <button class="pt-desktop-link" id="dnav-my-visits" onclick="switchScreen('my-visits')">
+          <i class="bi bi-ticket-perforated-fill"></i> My Visits
+        </button>
+        <button class="pt-desktop-link" id="dnav-profile" onclick="switchScreen('profile')">
+          <i class="bi bi-person-circle"></i> My Profile
+        </button>
+      </nav>
+
+      <div class="d-flex align-items-center gap-2">
+        <!-- Notification Bell with Unread Badge -->
+        <button class="btn btn-light border rounded-pill px-3 py-1 position-relative d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#patientNotifModal">
+          <i class="bi bi-bell-fill text-success"></i>
+          <span class="small fw-semibold">Alerts</span>
+          <span class="badge rounded-pill bg-danger ms-1" style="font-size: 0.65rem;">2</span>
+        </button>
+
+        <!-- Profile Avatar -->
+        <button class="btn p-0 border-0" onclick="switchScreen('profile')" title="My Profile">
+          <div class="rounded-circle bg-success text-white fw-bold d-inline-flex align-items-center justify-content-center" style="width: 36px; height: 36px; font-size: 0.82rem;">
+            LP
+          </div>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container py-3 px-3">
+
+    <!-- =====================================================================
+         SCREEN 1: RESIDENT HOME (`barangay/pages/home.html.erb`)
+         ===================================================================== -->
+    <section id="screen-home" class="patient-screen active">
+
+      <!-- Friendly Personalized Welcome Banner (Horizontal Split on Desktop, Stacked on Mobile) -->
+      <div class="p-4 rounded-4 text-white mb-4 shadow-sm pt-hero-banner" style="background: linear-gradient(135deg, #065f46 0%, #0d9488 100%);">
+        <div>
+          <span class="badge bg-white bg-opacity-25 text-white mb-2">
+            <i class="bi bi-geo-alt-fill me-1"></i>Purok One · Brgy. Lao, Ormoc City
+          </span>
+          <h3 class="fw-bold mb-1">Magandang Araw, Lao Patient!</h3>
+          <p class="small opacity-90 mb-3 mb-lg-0" style="max-width: 620px;">
+            Book free health check-ups, vaccination slots, and view community health events from your phone or computer.
+          </p>
+        </div>
+        <button class="btn btn-light text-success fw-bold w-100 py-2 rounded-3 shadow-sm pt-hero-cta" onclick="switchScreen('service-detail')">
+          <i class="bi bi-calendar-plus-fill me-1"></i>Book a Free Check-Up Now
+        </button>
+      </div>
+
+      <!-- Adaptive Dashboard Container: 2 Columns on Desktop (Main Left + Sticky Sidebar Right), Stacked on Mobile -->
+      <div class="pt-desktop-dashboard">
+
+        <!-- LEFT MAIN COLUMN (Quick Actions + 2-Col Health Services Grid on Desktop) -->
+        <div>
+          <!-- Mobile-Only Next Clinic Visit Position (Right below Hero on Mobile) -->
+          <div class="pt-card p-3 mb-4 pt-only-mobile" style="border-left: 5px solid var(--pt-sky-600); background: #f8fbff;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge badge-soft-sky fw-bold"><i class="bi bi-bell-fill me-1"></i>YOUR NEXT CLINIC VISIT</span>
+              <small class="text-secondary fw-semibold">Tomorrow</small>
+            </div>
+            <h6 class="fw-bold mb-1">Free Vaccination Drive (Booster)</h6>
+            <div class="small text-secondary mb-3">
+              <div><i class="bi bi-calendar-event text-primary me-1"></i><strong>Monday, Nov 02, 2026 at 8:00 AM</strong></div>
+              <div><i class="bi bi-geo-alt text-success me-1"></i>Barangay Lao Hall</div>
+            </div>
+            <button class="btn btn-sm btn-primary w-100 fw-semibold rounded-3 py-2" onclick="switchScreen('clinic-pass')">
+              <i class="bi bi-ticket-perforated me-1"></i>Open My Clinic Pass (#982104)
+            </button>
+          </div>
+
+          <!-- 4 Large Touch-Friendly Quick Action Tiles -->
+          <h6 class="fw-bold text-uppercase text-secondary small mb-2" style="letter-spacing: 0.04em;">What would you like to do?</h6>
+          <div class="row g-2 mb-4">
+            <div class="col-6 col-md-3">
+              <div class="pt-action-tile" onclick="switchScreen('service-detail')">
+                <div class="pt-icon-circle circle-emerald"><i class="bi bi-calendar2-plus-fill"></i></div>
+                <div class="fw-bold" style="font-size: 0.88rem;">Book Check-Up</div>
+                <small class="text-secondary" style="font-size: 0.72rem; line-height: 1.1;">View open slots</small>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="pt-action-tile" onclick="switchScreen('my-visits')">
+                <div class="pt-icon-circle circle-sky"><i class="bi bi-ticket-detailed-fill"></i></div>
+                <div class="fw-bold" style="font-size: 0.88rem;">My Visits</div>
+                <small class="text-secondary" style="font-size: 0.72rem; line-height: 1.1;">Check approval &amp; notes</small>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="pt-action-tile" onclick="switchScreen('profile')">
+                <div class="pt-icon-circle circle-amber"><i class="bi bi-person-vcard-fill"></i></div>
+                <div class="fw-bold" style="font-size: 0.88rem;">My Profile</div>
+                <small class="text-secondary" style="font-size: 0.72rem; line-height: 1.1;">Purok &amp; phone number</small>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="pt-action-tile" onclick="showToast('Calling Brgy. Lao Health Center Hotline: 0909-111-2154')">
+                <div class="pt-icon-circle circle-rose"><i class="bi bi-telephone-outbound-fill"></i></div>
+                <div class="fw-bold" style="font-size: 0.88rem;">Emergency Help</div>
+                <small class="text-secondary" style="font-size: 0.72rem; line-height: 1.1;">Hotlines &amp; Clinic Map</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Available Health Services Section (2-Col Grid on Desktop, Stacked on Mobile) -->
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0"><i class="bi bi-heart-pulse-fill text-success me-1"></i>Available Health Services</h5>
+            <span class="badge badge-soft-emerald">2 Active</span>
+          </div>
+          <p class="text-secondary small mb-3">Select a service below to reserve your free appointment slot.</p>
+
+          <div class="pt-desktop-grid-2 mb-4">
+            <!-- Service Card 1 -->
+            <div class="pt-card p-3 p-lg-4 mb-3">
+              <div>
+                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                  <span class="badge badge-soft-emerald">Immunization Program</span>
+                  <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>22 Slots Left</span>
+                </div>
+                <h5 class="fw-bold mb-2">Free Vaccination &amp; Booster Drive</h5>
+                <div class="p-2 rounded-3 bg-light small mb-3 d-flex flex-column gap-1">
+                  <div><i class="bi bi-calendar3 text-success me-2"></i><strong>Dates:</strong> Nov 02 – Nov 08, 2026</div>
+                  <div><i class="bi bi-clock text-success me-2"></i><strong>Hours:</strong> 8:00 AM – 5:00 PM</div>
+                  <div><i class="bi bi-geo-alt text-success me-2"></i><strong>Where:</strong> Barangay Lao Hall</div>
+                  <div><i class="bi bi-people text-success me-2"></i><strong>Who:</strong> All Residents</div>
+                </div>
+              </div>
+              <button class="btn btn-emerald-lg w-100" onclick="switchScreen('service-detail')">
+                View Details &amp; Book Slot <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            </div>
+
+            <!-- Service Card 2 -->
+            <div class="pt-card p-3 p-lg-4 mb-3">
+              <div>
+                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                  <span class="badge badge-soft-sky">Maternal Care</span>
+                  <span class="badge badge-soft-amber"><i class="bi bi-exclamation-circle me-1"></i>1 Slot Left (Waitlist Open)</span>
+                </div>
+                <h5 class="fw-bold mb-2">Monthly Maternal &amp; Prenatal Check-Up</h5>
+                <div class="p-2 rounded-3 bg-light small mb-3 d-flex flex-column gap-1">
+                  <div><i class="bi bi-calendar3 text-success me-2"></i><strong>Dates:</strong> Nov 02 – Nov 05, 2026</div>
+                  <div><i class="bi bi-clock text-success me-2"></i><strong>Hours:</strong> 8:00 AM – 12:00 PM</div>
+                  <div><i class="bi bi-geo-alt text-success me-2"></i><strong>Where:</strong> Brgy. Lao Health Center</div>
+                  <div><i class="bi bi-people text-success me-2"></i><strong>Who:</strong> Pregnant Women &amp; Mothers</div>
+                </div>
+              </div>
+              <button class="btn btn-outline-success fw-bold w-100 py-2 rounded-3" onclick="switchScreen('service-detail')">
+                View Details &amp; Book Slot <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT STICKY SIDEBAR ON DESKTOP (Next Visit + Community Events + Clinic Info) -->
+        <aside class="pt-sticky-side">
+          <!-- Desktop-Position Next Upcoming Clinic Visit Card -->
+          <div class="pt-card p-3 p-lg-4 mb-4 pt-only-desktop" style="border-left: 5px solid var(--pt-sky-600); background: #f8fbff;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge badge-soft-sky fw-bold"><i class="bi bi-bell-fill me-1"></i>YOUR NEXT CLINIC VISIT</span>
+              <small class="text-secondary fw-semibold">Tomorrow</small>
+            </div>
+            <h6 class="fw-bold mb-1">Free Vaccination Drive (Booster)</h6>
+            <div class="small text-secondary mb-3">
+              <div><i class="bi bi-calendar-event text-primary me-1"></i><strong>Monday, Nov 02, 2026 at 8:00 AM</strong></div>
+              <div><i class="bi bi-geo-alt text-success me-1"></i>Barangay Lao Hall</div>
+            </div>
+            <button class="btn btn-sm btn-primary w-100 fw-semibold rounded-3 py-2" onclick="switchScreen('clinic-pass')">
+              <i class="bi bi-ticket-perforated me-1"></i>Open My Clinic Pass (#982104)
+            </button>
+          </div>
+
+          <!-- Upcoming Community Events Section -->
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="fw-bold mb-0"><i class="bi bi-megaphone-fill text-primary me-1"></i>Community Health Events</h5>
+          </div>
+          <p class="text-secondary small mb-3">No booking needed—just attend at the scheduled time and venue!</p>
+
+          <div class="pt-card p-3 p-lg-4 mb-3">
+            <span class="badge badge-soft-sky mb-2">For: Senior Citizens &amp; PWDs</span>
+            <h6 class="fw-bold mb-1">Senior Citizens Wellness &amp; Free Vitamins Seminar</h6>
+            <div class="small text-secondary mb-3">
+              <div><i class="bi bi-calendar-event me-1"></i>Thursday, Nov 05, 2026 · 8:00 AM</div>
+              <div><i class="bi bi-geo-alt me-1"></i>Brgy. Lao Covered Court</div>
+            </div>
+            <button class="btn btn-sm btn-light border w-100 fw-semibold py-2" onclick="switchScreen('event-detail')">
+              Read Event Details
+            </button>
+          </div>
+
+          <!-- Desktop Health Center Hours & Hotline Card -->
+          <div class="pt-card p-3 p-lg-4 pt-only-desktop bg-light border">
+            <h6 class="fw-bold mb-2"><i class="bi bi-hospital text-success me-2"></i>Brgy. Lao Health Center</h6>
+            <div class="small text-secondary d-flex flex-column gap-1">
+              <div><i class="bi bi-clock me-2"></i>Mon – Fri: 8:00 AM – 5:00 PM</div>
+              <div><i class="bi bi-telephone me-2"></i>Hotline: <strong>0909-111-2154</strong></div>
+              <div><i class="bi bi-geo-alt me-2"></i>Purok 1, Brgy. Lao, Ormoc City</div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 2: SERVICE DETAILS & EASY BOOKING (`barangay/announcements/show`)
+         ===================================================================== -->
+    <section id="screen-service-detail" class="patient-screen">
+      <button class="btn btn-sm btn-light border mb-3 fw-semibold" onclick="switchScreen('home')">
+        <i class="bi bi-arrow-left me-1"></i>Back to Home
+      </button>
+
+      <div class="pt-desktop-split">
+        <!-- LEFT COLUMN: Service Details -->
+        <div class="pt-card overflow-hidden mb-3">
+          <!-- Service Banner -->
+          <div class="p-4 text-white" style="background: linear-gradient(135deg, #065f46, #0f766e);">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge bg-white text-success fw-bold">Free Vaccination Program</span>
+              <span class="badge bg-warning text-dark fw-bold">22 of 100 Slots Left</span>
+            </div>
+            <h3 class="fw-bold mb-1">Free Vaccination &amp; Booster Drive</h3>
+            <small class="opacity-90">Posted by Barangay Lao Health Center</small>
+          </div>
+
+          <div class="p-3 p-md-4">
+            <!-- 4-Box Plain-Language Info Grid (2x2 on Mobile, 4-across on Desktop) -->
+            <div class="row g-2 mb-4 pt-info-4grid">
+              <div class="col-6">
+                <div class="p-3 rounded-3 bg-light h-100">
+                  <div class="text-secondary small fw-semibold"><i class="bi bi-calendar-event text-success me-1"></i>WHEN</div>
+                  <div class="fw-bold small mt-1">Nov 02 – Nov 08, 2026</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-3 rounded-3 bg-light h-100">
+                  <div class="text-secondary small fw-semibold"><i class="bi bi-clock text-success me-1"></i>CLINIC HOURS</div>
+                  <div class="fw-bold small mt-1">8:00 AM – 5:00 PM</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-3 rounded-3 bg-light h-100">
+                  <div class="text-secondary small fw-semibold"><i class="bi bi-geo-alt text-success me-1"></i>WHERE</div>
+                  <div class="fw-bold small mt-1">Barangay Lao Hall</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-3 rounded-3 bg-light h-100">
+                  <div class="text-secondary small fw-semibold"><i class="bi bi-people text-success me-1"></i>WHO CAN JOIN</div>
+                  <div class="fw-bold small mt-1">All Residents</div>
+                </div>
+              </div>
+            </div>
+
+            <h6 class="fw-bold mb-2">About This Health Service</h6>
+            <p class="text-secondary small mb-3" style="line-height: 1.65;">
+              Free routine vaccination and booster doses for Barangay Lao residents. Please bring a valid ID or your previous vaccination card and arrive 15 minutes before your chosen time slot.
+            </p>
+
+            <div class="p-3 rounded-3 bg-light border small mb-4 mb-lg-0">
+              <div class="fw-bold mb-1"><i class="bi bi-clipboard2-check text-success me-1"></i>What to Bring on Your Visit:</div>
+              <ul class="mb-0 ps-3 text-secondary">
+                <li>Barangay ID or any valid government ID</li>
+                <li>Previous Vaccination Card (for Booster Doses)</li>
+                <li>Your Digital Clinic Pass (#UID) on your phone</li>
+              </ul>
+            </div>
+
+            <!-- Mobile-Only Bottom Booking Button -->
+            <button class="btn btn-emerald-lg w-100 shadow pt-only-mobile" data-bs-toggle="modal" data-bs-target="#easyBookModal">
+              <i class="bi bi-calendar-check-fill me-2"></i>Book My Free Slot Now
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT STICKY SIDEBAR ON DESKTOP: Dedicated Slot Reservation Card -->
+        <aside class="pt-card p-4 pt-only-desktop pt-sticky-side">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge badge-soft-emerald">Open for Booking</span>
+            <span class="small fw-bold text-success">22 Slots Remaining</span>
+          </div>
+          <h5 class="fw-bold mb-1">Reserve Your Free Slot</h5>
+          <p class="text-secondary small mb-3">Instant online reservation for Barangay Lao residents.</p>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between small mb-1">
+              <span class="text-secondary">Booked Capacity</span>
+              <span class="fw-semibold">78 / 100 Residents</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-success" style="width: 78%;"></div>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-3 bg-light small mb-3 d-flex flex-column gap-2">
+            <div class="d-flex justify-content-between">
+              <span class="text-secondary">Cost:</span>
+              <strong class="text-success">100% Free</strong>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-secondary">Available Dates:</span>
+              <strong>Nov 02 – Nov 08</strong>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-secondary">Venue:</span>
+              <strong>Barangay Lao Hall</strong>
+            </div>
+          </div>
+
+          <button class="btn btn-emerald-lg w-100 shadow-sm" data-bs-toggle="modal" data-bs-target="#easyBookModal">
+            <i class="bi bi-calendar-check-fill me-2"></i>Book My Free Slot Now
+          </button>
+        </aside>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 3: MY CLINIC VISITS (`barangay/appointments/index.html.erb`)
+         ===================================================================== -->
+    <section id="screen-my-visits" class="patient-screen">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h4 class="fw-bold mb-0">My Clinic Visits</h4>
+          <small class="text-secondary">Tap any visit to open your Clinic Pass</small>
+        </div>
+        <!-- Working button replacing dead href="#" -->
+        <button class="btn btn-sm btn-emerald-lg py-2 px-3" onclick="switchScreen('service-detail')">
+          <i class="bi bi-plus-lg me-1"></i>Book New Visit
+        </button>
+      </div>
+
+      <!-- 2x2 Filter Button Grid on Mobile / Horizontal Row on Desktop -->
+      <div class="pt-filter-scroll mb-3" role="tablist" aria-label="Filter visits by status">
+        <button class="btn btn-sm btn-dark rounded-pill px-3 py-2 fw-semibold visit-filter-btn" onclick="filterVisits('all', this)">
+          <i class="bi bi-collection me-1"></i>All Visits (4)
+        </button>
+        <button class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-2 fw-medium visit-filter-btn" onclick="filterVisits('upcoming', this)">
+          <i class="bi bi-calendar-check text-success me-1"></i>Upcoming (2)
+        </button>
+        <button class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-2 fw-medium visit-filter-btn" onclick="filterVisits('completed', this)">
+          <i class="bi bi-check2-all text-primary me-1"></i>Completed (1)
+        </button>
+        <button class="btn btn-sm btn-white bg-white border rounded-pill px-3 py-2 fw-medium visit-filter-btn" onclick="filterVisits('cancelled', this)">
+          <i class="bi bi-x-circle text-danger me-1"></i>Cancelled (1)
+        </button>
+      </div>
+
+      <!-- 2-Column Card Grid on Desktop, Stacked 1-Col on Mobile -->
+      <div class="pt-desktop-grid-2">
+        <!-- Visit Card 1: Approved (Upcoming) -->
+        <div class="pt-card p-3 p-lg-4 mb-3 visit-card" data-status="upcoming" onclick="switchScreen('clinic-pass')" style="cursor: pointer; border-left: 5px solid var(--pt-emerald-600);">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge badge-soft-emerald fw-bold"><i class="bi bi-check-circle-fill me-1"></i>APPROVED · CONFIRMED</span>
+              <small class="text-secondary fw-semibold">Pass #982104</small>
+            </div>
+            <h6 class="fw-bold mb-2">Free Vaccination &amp; Booster Drive</h6>
+            <div class="p-2 rounded-3 bg-light small mb-2">
+              <div class="fw-bold text-dark"><i class="bi bi-calendar-event text-success me-2"></i>Monday, Nov 02, 2026 at 8:00 AM</div>
+              <div class="text-secondary mt-1"><i class="bi bi-geo-alt text-success me-2"></i>Location: Barangay Lao Hall</div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center pt-2">
+            <small class="text-secondary"><i class="bi bi-person-badge me-1"></i>BHW: Maria Lopez Reyes</small>
+            <span class="text-success fw-bold small">Open Clinic Pass &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Visit Card 2: Pending Approval (Upcoming) -->
+        <div class="pt-card p-3 p-lg-4 mb-3 visit-card" data-status="upcoming" onclick="switchScreen('clinic-pass')" style="cursor: pointer; border-left: 5px solid var(--pt-amber-500);">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge badge-soft-amber fw-bold"><i class="bi bi-hourglass-split me-1"></i>WAITING FOR APPROVAL</span>
+              <small class="text-secondary fw-semibold">Pass #991025</small>
+            </div>
+            <h6 class="fw-bold mb-2">Monthly Maternal &amp; Prenatal Check-Up</h6>
+            <div class="p-2 rounded-3 bg-light small mb-2">
+              <div class="fw-bold text-dark"><i class="bi bi-calendar-event text-warning me-2"></i>Wednesday, Nov 04, 2026 at 9:30 AM</div>
+              <div class="text-secondary mt-1"><i class="bi bi-geo-alt text-warning me-2"></i>Location: Brgy. Lao Health Center</div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center pt-2">
+            <small class="text-secondary">We will notify you once approved</small>
+            <span class="text-success fw-bold small">Details &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Visit Card 3: Completed -->
+        <div class="pt-card p-3 p-lg-4 mb-3 visit-card" data-status="completed" onclick="switchScreen('clinic-pass')" style="cursor: pointer; border-left: 5px solid var(--pt-sky-600);">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge badge-soft-sky fw-bold"><i class="bi bi-check2-all me-1"></i>COMPLETED VISIT</span>
+              <small class="text-secondary fw-semibold">Pass #771209</small>
+            </div>
+            <h6 class="fw-bold mb-2">Free Vaccination Drive (1st Dose)</h6>
+            <div class="p-2 rounded-3 bg-light small mb-2">
+              <div class="fw-bold text-dark"><i class="bi bi-calendar-check text-primary me-2"></i>Monday, Oct 12, 2026 at 9:00 AM</div>
+              <div class="text-secondary mt-1"><i class="bi bi-journal-medical text-primary me-2"></i>Notes: 1st dose administered without adverse reaction</div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center pt-2">
+            <small class="text-secondary"><i class="bi bi-person-badge me-1"></i>BHW: Maria Lopez Reyes</small>
+            <span class="text-primary fw-bold small">View Summary &rarr;</span>
+          </div>
+        </div>
+
+        <!-- Visit Card 4: Cancelled -->
+        <div class="pt-card p-3 p-lg-4 mb-3 visit-card" data-status="cancelled" style="border-left: 5px solid var(--pt-rose-600); opacity: 0.85;">
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge badge-soft-rose fw-bold"><i class="bi bi-x-circle-fill me-1"></i>CANCELLED</span>
+              <small class="text-secondary fw-semibold">Pass #640118</small>
+            </div>
+            <h6 class="fw-bold mb-2">General Blood Pressure Check-Up</h6>
+            <div class="p-2 rounded-3 bg-light small mb-2">
+              <div class="fw-bold text-dark"><i class="bi bi-calendar-x text-danger me-2"></i>Friday, Oct 02, 2026 at 10:00 AM</div>
+              <div class="text-secondary mt-1">Reason: Rescheduled to next week</div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center pt-2">
+            <small class="text-secondary">Slot released</small>
+            <span class="text-secondary small">Closed</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 4: DIGITAL "CLINIC PASS" (`barangay/appointments/show.html.erb`)
+         ===================================================================== -->
+    <section id="screen-clinic-pass" class="patient-screen">
+      <button class="btn btn-sm btn-light border mb-3 fw-semibold" onclick="switchScreen('my-visits')">
+        <i class="bi bi-arrow-left me-1"></i>Back to My Visits
+      </button>
+
+      <!-- Mobile-Only Top Status Tracker -->
+      <div class="pt-card p-3 mb-3 pt-only-mobile">
+        <div class="text-center small fw-bold text-secondary mb-2">APPOINTMENT STATUS</div>
+        <div class="step-tracker">
+          <div class="step-item done">
+            <div class="step-dot"><i class="bi bi-check-lg"></i></div>
+            <div style="font-size: 0.72rem;" class="fw-bold text-success">1. Requested</div>
+          </div>
+          <div class="step-item current">
+            <div class="step-dot"><i class="bi bi-check2-circle"></i></div>
+            <div style="font-size: 0.72rem;" class="fw-bold text-primary">2. Approved</div>
+          </div>
+          <div class="step-item">
+            <div class="step-dot">3</div>
+            <div style="font-size: 0.72rem;" class="fw-medium text-secondary">3. Completed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-desktop-split">
+        <!-- LEFT COLUMN: Official Digital Clinic Ticket Card -->
+        <div class="pt-card overflow-hidden mb-3">
+          <div class="p-3 p-lg-4 text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #059669, #0d9488);">
+            <div>
+              <small class="text-uppercase fw-semibold opacity-75" style="font-size: 0.7rem;">OFFICIAL CLINIC PASS</small>
+              <h4 class="fw-bold mb-0">Visit #982104</h4>
+            </div>
+            <span class="badge bg-white text-success fw-bold px-3 py-2">Approved</span>
+          </div>
+
+          <div class="p-3 p-md-4">
+            <h5 class="fw-bold mb-3">Free Vaccination &amp; Booster Drive</h5>
+
+            <!-- Highlighted Date & Time Box -->
+            <div class="p-3 rounded-3 mb-3" style="background: var(--pt-emerald-50); border: 1px solid #a7f3d0;">
+              <div class="row g-2">
+                <div class="col-6 border-end border-success border-opacity-25">
+                  <small class="text-secondary d-block">DATE</small>
+                  <strong class="text-dark">Nov 02, 2026</strong>
+                  <small class="d-block text-success fw-semibold">Monday</small>
+                </div>
+                <div class="col-6 ps-3">
+                  <small class="text-secondary d-block">TIME</small>
+                  <strong class="text-dark">8:00 AM</strong>
+                  <small class="d-block text-secondary">Arrive by 7:45 AM</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex flex-column gap-2 small mb-3">
+              <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-secondary"><i class="bi bi-person-fill text-success me-1"></i>Patient Name</span>
+                <span class="fw-semibold">Lao Patient (Purok One)</span>
+              </div>
+              <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-secondary"><i class="bi bi-geo-alt-fill text-success me-1"></i>Location</span>
+                <span class="fw-semibold text-end">Barangay Lao Hall, Ormoc City</span>
+              </div>
+              <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-secondary"><i class="bi bi-person-badge-fill text-success me-1"></i>Health Worker</span>
+                <span class="fw-semibold">Maria Lopez Reyes</span>
+              </div>
+              <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-secondary"><i class="bi bi-clipboard2-pulse-fill text-success me-1"></i>Reason for Visit</span>
+                <span class="fw-semibold">Booster Dose</span>
+              </div>
+            </div>
+
+            <!-- Health Worker Notes Box -->
+            <div class="p-3 rounded-3 bg-light border mb-3 mb-lg-0">
+              <div class="fw-bold small mb-1"><i class="bi bi-journal-medical text-primary me-1"></i>Health Worker Notes &amp; Instructions</div>
+              <p class="small text-secondary mb-0">
+                Follow-up booster dose linked to your previous visit (#771209). Please bring your vaccination card.
+              </p>
+            </div>
+
+            <!-- Mobile-Only Reminders & Action Buttons -->
+            <div class="pt-only-mobile mt-3">
+              <div class="p-3 rounded-3 small mb-3" style="background: var(--pt-sky-50); color: #0369a1;">
+                <i class="bi bi-bell-fill me-1"></i>
+                <strong>Automatic Reminders Active:</strong> We will send you an alert 24 hours, 1 hour, and 30 minutes before your check-up.
+              </div>
+              <div class="row g-2 pt-1">
+                <div class="col-6">
+                  <button class="btn btn-outline-primary w-100 fw-semibold py-2 rounded-3" data-bs-toggle="modal" data-bs-target="#rescheduleVisitModal">
+                    <i class="bi bi-calendar-range me-1"></i>Change Date
+                  </button>
+                </div>
+                <div class="col-6">
+                  <button class="btn btn-outline-danger w-100 fw-semibold py-2 rounded-3" data-bs-toggle="modal" data-bs-target="#cancelVisitModal">
+                    <i class="bi bi-x-circle me-1"></i>Cancel Visit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT STICKY SIDEBAR ON DESKTOP: Status Tracker, Reminders & Actions -->
+        <aside class="pt-only-desktop pt-sticky-side">
+          <div class="pt-card p-4 mb-3">
+            <div class="text-center small fw-bold text-secondary mb-3">APPOINTMENT PROGRESS</div>
+            <div class="step-tracker">
+              <div class="step-item done">
+                <div class="step-dot"><i class="bi bi-check-lg"></i></div>
+                <div style="font-size: 0.75rem;" class="fw-bold text-success">1. Requested</div>
+              </div>
+              <div class="step-item current">
+                <div class="step-dot"><i class="bi bi-check2-circle"></i></div>
+                <div style="font-size: 0.75rem;" class="fw-bold text-primary">2. Approved</div>
+              </div>
+              <div class="step-item">
+                <div class="step-dot">3</div>
+                <div style="font-size: 0.75rem;" class="fw-medium text-secondary">3. Completed</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-card p-4">
+            <h6 class="fw-bold mb-2">Manage Your Appointment</h6>
+            <p class="small text-secondary mb-3">Need to pick another day or cancel your slot?</p>
+
+            <div class="p-3 rounded-3 small mb-3" style="background: var(--pt-sky-50); color: #0369a1;">
+              <i class="bi bi-bell-fill me-1"></i>
+              <strong>Automatic Reminders Active:</strong> Alerts scheduled at 24h, 1h, and 30m before your visit.
+            </div>
+
+            <div class="d-grid gap-2">
+              <button class="btn btn-outline-primary fw-semibold py-2 rounded-3" data-bs-toggle="modal" data-bs-target="#rescheduleVisitModal">
+                <i class="bi bi-calendar-range me-1"></i>Change Appointment Date
+              </button>
+              <button class="btn btn-outline-danger fw-semibold py-2 rounded-3" data-bs-toggle="modal" data-bs-target="#cancelVisitModal">
+                <i class="bi bi-x-circle me-1"></i>Cancel This Visit
+              </button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 5: COMMUNITY EVENT DETAILS (`barangay/events/show.html.erb`)
+         ===================================================================== -->
+    <section id="screen-event-detail" class="patient-screen">
+      <button class="btn btn-sm btn-light border mb-3 fw-semibold" onclick="switchScreen('home')">
+        <i class="bi bi-arrow-left me-1"></i>Back to Home
+      </button>
+
+      <div class="pt-desktop-split">
+        <div class="pt-card p-4">
+          <span class="badge badge-soft-sky mb-2">Community Event · Senior Citizens</span>
+          <h4 class="fw-bold mb-2">Senior Citizens Wellness &amp; Free Vitamins Seminar</h4>
+          <div class="p-3 rounded-3 bg-light small mb-3">
+            <div class="mb-1"><i class="bi bi-calendar-event text-success me-2"></i><strong>Date:</strong> Thursday, November 05, 2026 (8:00 AM – 12:00 PM)</div>
+            <div><i class="bi bi-geo-alt text-success me-2"></i><strong>Venue:</strong> Barangay Lao Covered Court</div>
+          </div>
+          <p class="text-secondary small mb-0" style="line-height: 1.65;">
+            All senior citizens and family caregivers in Barangay Lao are invited for free blood pressure screening, nutrition counseling, and distribution of daily multivitamin packs. No appointment booking is required.
+          </p>
+        </div>
+
+        <aside class="pt-card p-4 pt-only-desktop">
+          <span class="badge badge-soft-emerald mb-2"><i class="bi bi-door-open me-1"></i>Walk-In Community Event</span>
+          <h6 class="fw-bold mb-2">No Reservation Required</h6>
+          <p class="small text-secondary mb-3">
+            Simply bring your Senior Citizen ID or Barangay ID to the Barangay Lao Covered Court on the day of the event.
+          </p>
+          <div class="p-3 rounded-3 bg-light small">
+            <div class="fw-semibold mb-1">Organized By:</div>
+            <div class="text-secondary">Barangay Lao Health Center &amp; OSCA</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 6: RESIDENT PROFILE UPDATE PAGE (`barangay/pages/profile.html.erb`)
+         Covers all 4 partials:
+         1. _profile_form.html.erb (Profile Picture Upload)
+         2. _address_form.html.erb (Subdivision / Purok Select or New Input)
+         3. _personal_information_form.html.erb (First, Middle, Last, Suffix, Phone)
+         4. _credentials_form.html.erb (Email, Password, Password Confirmation)
+         ===================================================================== -->
+    <section id="screen-profile" class="patient-screen">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h4 class="fw-bold mb-1">Edit My Profile</h4>
+          <p class="text-secondary small mb-0">Update your profile photo, Purok/Subdivision, personal details, and login password.</p>
+        </div>
+        <span class="badge badge-soft-emerald px-3 py-2 d-none d-md-inline-flex align-items-center gap-1">
+          <i class="bi bi-shield-check"></i> Verified Resident
+        </span>
+      </div>
+
+      <div class="pt-desktop-profile-split">
+        <!-- LEFT COLUMN ON DESKTOP / TOP CARD ON MOBILE:
+             1. Profile Picture & Identity Card (`_profile_form.html.erb`) -->
+        <aside class="pt-card p-3 p-md-4 mb-3 text-center pt-sticky-side">
+          <div class="d-flex d-lg-block align-items-center gap-3 text-start text-lg-center mb-3">
+            <div class="rounded-circle bg-success text-white fw-bold d-inline-flex align-items-center justify-content-center shadow-sm flex-shrink-0" style="width: 72px; height: 72px; font-size: 1.5rem;">
+              LP
+            </div>
+            <div class="mt-lg-2">
+              <h5 class="fw-bold mb-0">Lao Patient</h5>
+              <div class="text-secondary small mb-1">patient@lao.lvh.me</div>
+              <span class="badge badge-soft-emerald">
+                <i class="bi bi-geo-alt-fill me-1"></i>Purok One · Brgy. Lao
+              </span>
+            </div>
+          </div>
+
+          <div class="border-top pt-3 text-start">
+            <label class="form-label small fw-bold mb-1">
+              <i class="bi bi-camera-fill text-success me-1"></i>Update Profile Picture
+            </label>
+            <input type="file" class="form-control form-control-sm mb-2" accept="image/*">
+            <small class="text-secondary d-block mb-3" style="font-size: 0.75rem;">JPG or PNG, max 5MB.</small>
+            <button class="btn btn-sm btn-outline-success fw-semibold w-100 py-2 rounded-3" onclick="showToast('Profile picture updated successfully!')">
+              <i class="bi bi-upload me-1"></i>Update Profile Photo
+            </button>
+          </div>
+        </aside>
+
+        <!-- RIGHT FORMS COLUMN: Purok, Personal Info, and Credentials -->
+        <div>
+          <!-- Friendly Missing Info Prompt -->
+          <div class="p-3 rounded-3 mb-3 d-flex align-items-start gap-2" style="background: var(--pt-amber-50); border: 1px solid #fde68a;">
+            <i class="bi bi-exclamation-circle-fill text-warning fs-5"></i>
+            <div class="small">
+              <strong>Keep Your Purok &amp; Phone Updated:</strong> Health workers use your Purok and cellphone number to coordinate check-ups and send SMS/email reminders.
+            </div>
+          </div>
+
+          <!-- 2. Subdivision / Purok Form (`_address_form.html.erb`) -->
+          <div class="pt-card p-3 p-md-4 mb-3">
+            <h6 class="fw-bold mb-1"><i class="bi bi-geo-alt-fill text-success me-1"></i>1. Update Subdivision / Purok</h6>
+            <p class="text-secondary small mb-3">Select your Purok from the list, or type it below if not yet listed.</p>
+
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label small fw-semibold">Select Existing Subdivision (Purok)</label>
+                <select class="form-select" id="profileSubdivisionSelect">
+                  <option value="">None / Not Listed</option>
+                  <option value="1" selected>Purok One</option>
+                  <option value="2">Purok Two</option>
+                  <option value="3">Purok Three</option>
+                  <option value="4">Purok Four</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small fw-semibold">Or Enter New Subdivision / Purok</label>
+                <input type="text" class="form-control" placeholder="e.g. Purok Cinco / Sitio Riverside">
+              </div>
+            </div>
+            <div class="text-end">
+              <button class="btn btn-emerald-lg w-100 pt-btn-adaptive" onclick="showToast('Profile updated successfully. (Purok saved)')">
+                <i class="bi bi-check2-circle me-1"></i>Update Purok
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Personal Information Form (`_personal_information_form.html.erb`) -->
+          <div class="pt-card p-3 p-md-4 mb-3">
+            <h6 class="fw-bold mb-1"><i class="bi bi-person-lines-fill text-success me-1"></i>2. Update Personal Information</h6>
+            <p class="text-secondary small mb-3">Your legal name and active mobile phone number for clinic records.</p>
+
+            <div class="row g-3 mb-3">
+              <div class="col-12 col-sm-6">
+                <label class="form-label small fw-semibold">First Name *</label>
+                <input type="text" class="form-control" value="Lao">
+              </div>
+              <div class="col-12 col-sm-6">
+                <label class="form-label small fw-semibold">Middle Name</label>
+                <input type="text" class="form-control" value="Santos" placeholder="Optional">
+              </div>
+              <div class="col-8 col-sm-6">
+                <label class="form-label small fw-semibold">Last Name *</label>
+                <input type="text" class="form-control" value="Patient">
+              </div>
+              <div class="col-4 col-sm-6">
+                <label class="form-label small fw-semibold">Suffix</label>
+                <input type="text" class="form-control" value="" placeholder="Jr., Sr., III">
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Cellphone Number *</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-phone text-success"></i></span>
+                  <input type="tel" class="form-control" value="09093332154" placeholder="09XX-XXX-XXXX">
+                </div>
+              </div>
+            </div>
+            <div class="text-end">
+              <button class="btn btn-emerald-lg w-100 pt-btn-adaptive" onclick="showToast('Profile updated successfully. (Personal info saved)')">
+                <i class="bi bi-check2-circle me-1"></i>Update Personal Info
+              </button>
+            </div>
+          </div>
+
+          <!-- 4. Account Credentials Form (`_credentials_form.html.erb`) -->
+          <div class="pt-card p-3 p-md-4 mb-3">
+            <h6 class="fw-bold mb-1"><i class="bi bi-shield-lock-fill text-success me-1"></i>3. Update Login Credentials</h6>
+            <p class="text-secondary small mb-3">Change your login email address or set a new account password.</p>
+
+            <div class="row g-3 mb-3">
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Email Address</label>
+                <input type="email" class="form-control" value="patient@lao.lvh.me">
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small fw-semibold">New Password</label>
+                <div class="input-group">
+                  <input type="password" id="profNewPass" class="form-control" placeholder="Leave blank to keep current">
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePassField('profNewPass', this)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small fw-semibold">Password Confirmation</label>
+                <div class="input-group">
+                  <input type="password" id="profConfirmPass" class="form-control" placeholder="Re-enter new password">
+                  <button class="btn btn-outline-secondary" type="button" onclick="togglePassField('profConfirmPass', this)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="text-end">
+              <button class="btn btn-outline-success fw-bold py-2 px-4 rounded-3 w-100 pt-btn-adaptive" onclick="showToast('Profile updated successfully. (Credentials updated)')">
+                <i class="bi bi-key-fill me-1"></i>Update Credentials
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== STICKY MOBILE BOTTOM NAVIGATION BAR ==================== -->
+  <nav class="pt-bottom-nav">
+    <button class="pt-tab-btn active" id="tab-home" onclick="switchScreen('home')">
+      <i class="bi bi-house-heart-fill"></i>
+      <span>Home</span>
+    </button>
+    <button class="pt-tab-btn" id="tab-service-detail" onclick="switchScreen('service-detail')">
+      <i class="bi bi-heart-pulse-fill"></i>
+      <span>Services</span>
+    </button>
+    <button class="pt-tab-btn" id="tab-my-visits" onclick="switchScreen('my-visits')">
+      <i class="bi bi-ticket-perforated-fill"></i>
+      <span>My Visits</span>
+    </button>
+    <button class="pt-tab-btn" id="tab-profile" onclick="switchScreen('profile')">
+      <i class="bi bi-person-circle"></i>
+      <span>Profile</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- ==================== GUIDED BOOKING MODAL (`_modal_form.html.erb`) ==================== -->
+<div class="modal fade" id="easyBookModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 1.1rem;">
+      <div class="modal-header border-bottom px-4 py-3">
+        <div>
+          <h5 class="modal-title fw-bold mb-0">Book Free Appointment</h5>
+          <small class="text-secondary">Free Vaccination &amp; Booster Drive</small>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <!-- Clear Date Window Helper (Prevents date validation errors!) -->
+        <div class="p-3 rounded-3 mb-3 small" style="background: var(--pt-emerald-50); border: 1px solid #a7f3d0;">
+          <div class="fw-bold text-success mb-1"><i class="bi bi-calendar-check me-1"></i>Available Schedule Window:</div>
+          <div>Pick any date between <strong>Nov 02 – Nov 08, 2026</strong> from <strong>8:00 AM to 5:00 PM</strong>.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold small">1. Choose Your Date &amp; Time *</label>
+          <input type="datetime-local" class="form-control form-control-lg" value="2026-11-03T09:00" min="2026-11-02T08:00" max="2026-11-08T17:00">
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label fw-bold small">2. Reason for Visit (Tap one or type below) *</label>
+          <div class="d-flex flex-wrap gap-1 mb-2">
+            <span class="reason-chip active" onclick="selectReasonChip(this, 'First Vaccination Dose')">First Dose</span>
+            <span class="reason-chip" onclick="selectReasonChip(this, 'Booster Dose Check-Up')">Booster Dose</span>
+            <span class="reason-chip" onclick="selectReasonChip(this, 'Childhood Immunization')">Child Immunization</span>
+            <span class="reason-chip" onclick="selectReasonChip(this, 'General Vaccine Consultation')">General Consultation</span>
+          </div>
+          <textarea id="bookingReasonInput" class="form-control" rows="2">First Vaccination Dose</textarea>
+        </div>
+      </div>
+      <div class="modal-footer bg-light px-4 py-3">
+        <button type="button" class="btn btn-emerald-lg w-100" data-bs-dismiss="modal" onclick="completeBookingDemo()">
+          <i class="bi bi-check2-circle me-1"></i>Confirm My Appointment
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== RESCHEDULE MODAL ==================== -->
+<div class="modal fade" id="rescheduleVisitModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 1.1rem;">
+      <div class="modal-header border-bottom px-4 py-3">
+        <h5 class="modal-title fw-bold mb-0">Change Appointment Date</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-3">
+          <label class="form-label fw-bold small">New Date &amp; Time (Nov 02 – Nov 08)</label>
+          <input type="datetime-local" class="form-control" value="2026-11-04T10:00">
+        </div>
+        <div class="mb-2">
+          <label class="form-label fw-bold small">Why do you need to change the date?</label>
+          <textarea class="form-control" rows="2" placeholder="e.g. Conflict with work schedule...">Need to move to Wednesday morning</textarea>
+        </div>
+      </div>
+      <div class="modal-footer bg-light px-4 py-3">
+        <button type="button" class="btn btn-emerald-lg w-100" data-bs-dismiss="modal" onclick="showToast('Appointment reschedule request sent!')">
+          Save New Date
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CANCEL MODAL ==================== -->
+<div class="modal fade" id="cancelVisitModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 1.1rem;">
+      <div class="modal-header border-bottom px-4 py-3">
+        <h5 class="modal-title fw-bold text-danger mb-0">Cancel This Visit?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="small text-secondary">Cancelling frees up your slot for another resident in Barangay Lao.</p>
+        <label class="form-label fw-bold small">Reason for Cancelling *</label>
+        <textarea class="form-control" rows="2" placeholder="Please share a brief reason...">Already completed check-up</textarea>
+      </div>
+      <div class="modal-footer bg-light px-4 py-3">
+        <button type="button" class="btn btn-danger fw-bold w-100 py-2 rounded-3" data-bs-dismiss="modal" onclick="showToast('Visit cancelled.')">
+          Yes, Cancel My Visit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== NOTIFICATIONS MODAL ==================== -->
+<div class="modal fade" id="patientNotifModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 1.1rem;">
+      <div class="modal-header border-bottom px-4 py-3">
+        <h5 class="modal-title fw-bold mb-0"><i class="bi bi-bell-fill text-success me-2"></i>My Health Alerts</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-3">
+        <div class="p-3 rounded-3 mb-2" style="background: var(--pt-emerald-50); border-left: 4px solid var(--pt-emerald-600);">
+          <div class="d-flex justify-content-between small mb-1">
+            <strong class="text-success">Appointment Approved!</strong>
+            <span class="text-secondary">10m ago</span>
+          </div>
+          <div class="small">Your booking for <strong>Free Vaccination Drive</strong> on Nov 02 at 8:00 AM has been approved.</div>
+        </div>
+        <div class="p-3 rounded-3 bg-light border">
+          <div class="d-flex justify-content-between small mb-1">
+            <strong>24-Hour Reminder</strong>
+            <span class="text-secondary">1h ago</span>
+          </div>
+          <div class="small text-secondary">Don't forget your check-up tomorrow at Barangay Lao Hall.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
+  <div id="liveToast" class="toast align-items-center text-bg-dark border-0 shadow-lg" role="alert">
+    <div class="d-flex">
+      <div class="toast-body d-flex align-items-center gap-2">
+        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+        <span id="toastMessage">Done!</span>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function switchScreen(screenKey) {
+    document.querySelectorAll('.patient-screen').forEach(el => el.classList.remove('active'));
+    const target = document.getElementById('screen-' + screenKey);
+    if (target) target.classList.add('active');
+
+    document.querySelectorAll('.pt-tab-btn').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.pt-desktop-link').forEach(el => el.classList.remove('active'));
+    const tabMap = {
+      'home': 'home',
+      'service-detail': 'service-detail',
+      'event-detail': 'home',
+      'my-visits': 'my-visits',
+      'clinic-pass': 'my-visits',
+      'profile': 'profile'
+    };
+    const activeKey = tabMap[screenKey];
+    const tabEl = document.getElementById('tab-' + activeKey);
+    if (tabEl) tabEl.classList.add('active');
+    const dnavEl = document.getElementById('dnav-' + activeKey);
+    if (dnavEl) dnavEl.classList.add('active');
+
+    const mainEl = document.querySelector('#viewportSimulator > main');
+    if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function setViewportMode(mode) {
+    const isMobile = mode === 'mobile';
+    document.body.classList.toggle('mobile-preview-mode', isMobile);
+    document.getElementById('btnMobileMode').className = isMobile ? 'btn btn-warning fw-bold text-dark' : 'btn btn-outline-light';
+    document.getElementById('btnDesktopMode').className = !isMobile ? 'btn btn-warning fw-bold text-dark' : 'btn btn-outline-light';
+  }
+
+  function selectReasonChip(chipEl, text) {
+    document.querySelectorAll('.reason-chip').forEach(el => el.classList.remove('active'));
+    chipEl.classList.add('active');
+    document.getElementById('bookingReasonInput').value = text;
+  }
+
+  function filterVisits(status, btnEl) {
+    document.querySelectorAll('.visit-filter-btn').forEach(el => {
+      el.className = 'btn btn-sm btn-white bg-white border rounded-pill px-3 py-2 fw-medium visit-filter-btn';
+    });
+    btnEl.className = 'btn btn-sm btn-dark rounded-pill px-3 py-2 fw-semibold visit-filter-btn';
+
+    document.querySelectorAll('.visit-card').forEach(card => {
+      const match = status === 'all' || card.getAttribute('data-status') === status;
+      card.style.display = match ? '' : 'none';
+    });
+  }
+
+  function completeBookingDemo() {
+    showToast('Appointment booked! Opening your Clinic Pass...');
+    setTimeout(() => switchScreen('clinic-pass'), 400);
+  }
+
+  function togglePassField(inputId, btnEl) {
+    const input = document.getElementById(inputId);
+    const icon = btnEl.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      input.type = 'password';
+      icon.className = 'bi bi-eye';
+    }
+  }
+
+  function showToast(msg) {
+    document.getElementById('toastMessage').textContent = msg;
+    bootstrap.Toast.getOrCreateInstance(document.getElementById('liveToast'), { delay: 3200 }).show();
+  }
+</script>
+</body>
+</html>
