@@ -1,74 +1,105 @@
-<div style="min-height: calc(100vh - 56px); max-height: calc(100vh - 56px); top: 56px;" class="sticky-top">
-  <div class="collapse show collapse-horizontal h-100" id="collapseWidthExample">
-    <div class="d-flex flex-column p-3 text-bg-dark h-100" style="width: 280px;">
-      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-        <%= image_tag("logo_no_background.png", class: "d-inline-block align-text-top me-2", alt: "Logo", height: 40) %>
+<%
+  sidebar_barangays_count = ActsAsTenant.without_tenant { Barangay.count }
+  sidebar_pending_admins_count = ActsAsTenant.without_tenant { User.tagged_with(["require_validation"]).count }
+  sidebar_open_issues_count = ActsAsTenant.without_tenant { IssueReport.open.count }
+%>
+<aside id="saSidebar" class="sa-sidebar">
+  <!-- Brand Header -->
+  <div class="sa-brand d-flex align-items-center justify-content-between">
+    <%= link_to super_admin_dashboard_index_path, class: "d-flex align-items-center text-decoration-none text-white gap-2" do %>
+      <span class="sa-brand-icon">
+        <i class="bi bi-heart-pulse-fill"></i>
+      </span>
+      <div>
+        <div class="fw-bold lh-1" style="font-size: 1.05rem;">BrgyHealth</div>
+        <small class="fw-semibold" style="font-size: 0.7rem; color: #34d399;">SUPER ADMIN PORTAL</small>
+      </div>
+    <% end %>
+    <button type="button" class="btn btn-sm text-secondary d-lg-none" onclick="document.getElementById('saSidebar').classList.toggle('collapsed')">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
 
-        <span class="fs-4"><%= current_user.role.titleize %> Panel</span>
+  <!-- Navigation Links -->
+  <div class="flex-grow-1 overflow-y-auto py-2">
+    <div class="sa-nav-section-label">Core Management</div>
+
+    <%= link_to super_admin_dashboard_index_path, class: "sa-nav-link #{sa_nav_active('dashboard')}" do %>
+      <span><i class="bi bi-grid-1x2-fill"></i> Dashboard</span>
+    <% end %>
+
+    <%= link_to super_admin_barangays_path, class: "sa-nav-link #{sa_nav_active('barangays')}" do %>
+      <span><i class="bi bi-buildings-fill"></i> Barangays</span>
+      <span class="badge rounded-pill bg-secondary bg-opacity-25 text-light"><%= sidebar_barangays_count %></span>
+    <% end %>
+
+    <%= link_to super_admin_users_path, class: "sa-nav-link #{sa_nav_active('users')}" do %>
+      <span><i class="bi bi-people-fill"></i> Users &amp; Admins</span>
+      <% if sidebar_pending_admins_count > 0 %>
+        <span class="badge rounded-pill bg-warning text-dark" title="<%= sidebar_pending_admins_count %> Pending Validation"><%= sidebar_pending_admins_count %></span>
+      <% end %>
+    <% end %>
+
+    <div class="sa-nav-section-label">Moderation &amp; Content</div>
+
+    <%= link_to super_admin_issue_reports_path, class: "sa-nav-link #{sa_nav_active('issue_reports')}" do %>
+      <span><i class="bi bi-bug-fill"></i> Issue Reports</span>
+      <% if sidebar_open_issues_count > 0 %>
+        <span class="badge rounded-pill bg-danger"><%= sidebar_open_issues_count %></span>
+      <% end %>
+    <% end %>
+
+    <%= link_to super_admin_testimonials_path, class: "sa-nav-link #{sa_nav_active('testimonials')}" do %>
+      <span><i class="bi bi-chat-heart-fill"></i> Testimonials</span>
+    <% end %>
+
+    <%= link_to super_admin_cms_path, class: "sa-nav-link #{sa_nav_active('cms')}" do %>
+      <span><i class="bi bi-window-stack"></i> Global CMS</span>
+    <% end %>
+
+    <div class="sa-nav-section-label">System &amp; Account</div>
+
+    <%= link_to "/jobs", target: "_blank", rel: "noopener", class: "sa-nav-link" do %>
+      <span><i class="bi bi-cpu-fill"></i> Background Jobs</span>
+      <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem; width: auto;"></i>
+    <% end %>
+
+    <%= link_to edit_profile_path(current_user), class: "sa-nav-link #{sa_nav_active('profile')}" do %>
+      <span><i class="bi bi-person-gear"></i> My Profile</span>
+    <% end %>
+
+    <%= link_to root_path, class: "sa-nav-link" do %>
+      <span><i class="bi bi-globe2"></i> Public Home</span>
+    <% end %>
+  </div>
+
+  <!-- Sidebar User Footer -->
+  <div class="p-3 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center justify-content-between text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="d-flex align-items-center gap-2 overflow-hidden">
+          <%= image_tag(profile_url(current_user), class: "rounded-circle flex-shrink-0", size: "36x36", alt: current_user.full_name) %>
+          <div class="overflow-hidden">
+            <div class="fw-semibold text-truncate" style="font-size: 0.85rem;"><%= current_user.full_name %></div>
+            <div class="text-secondary text-truncate" style="font-size: 0.73rem;"><%= current_user.email %></div>
+          </div>
+        </div>
       </a>
-
-      <hr>
-
-      <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item">
-          <%= link_to super_admin_dashboard_index_path, class: "nav-link text-white #{ navbar_link_status(super_admin_dashboard_index_path) }" do %>
-            <i class="bi bi-speedometer2"></i>
-            Dashboard
+      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+        <li>
+          <%= link_to edit_profile_path(current_user), class: "dropdown-item d-flex align-items-center gap-2" do %>
+            <i class="bi bi-person"></i>
+            <span>My Profile</span>
           <% end %>
-
-          <%= link_to super_admin_barangays_path, class: "nav-link text-white #{ navbar_link_status(super_admin_barangays_path) }" do %>
-            <i class="bi bi-people"></i>
-            Barangay
-          <% end %>
-
-          <%= link_to super_admin_users_path, class: "nav-link text-white #{ navbar_link_status(super_admin_users_path) }" do %>
-            <i class="bi bi-people"></i>
-            Users
-          <% end %>
-
-          <%= link_to super_admin_testimonials_path, class: "nav-link text-white #{ navbar_link_status(super_admin_testimonials_path) }" do %>
-            <i class="bi bi-chat-quote"></i>
-            Testimonials
-          <% end %>
-
-          <%= link_to super_admin_cms_path, class: "nav-link text-white #{ navbar_link_status(super_admin_cms_path) }" do %>
-            <i class="bi bi-layout-text-window"></i>
-            CMS
-          <% end %>
-
-          <%= link_to super_admin_issue_reports_path, class: "nav-link text-white #{ navbar_link_status(super_admin_issue_reports_path)}" do %>
-            <i class="bi bi-exclamation-triangle"></i>
-            Issue Reports
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <%= link_to destroy_user_session_path, data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to sign out?" }, class: "dropdown-item d-flex align-items-center gap-2 text-danger" do %>
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Sign Out</span>
           <% end %>
         </li>
       </ul>
-
-      <hr>
-
-      <div class="dropdown">
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          <%= image_tag(profile_url(current_user), class: "rounded-circle me-2", size: "32x32")  %>
-
-          <strong><%= current_user.full_name %></strong>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-          <li>
-            <%= link_to edit_profile_path(current_user), class: "dropdown-item d-flex align-items-center gap-2" do %>
-              <i class="bi bi-person"></i>
-              <span>Profile</span>
-            <% end %>
-          </li>
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-          <li>
-            <%= link_to destroy_user_session_path, data: { turbo_method: :DELETE, turbo_confirm: "Are your sure?" }, class: "dropdown-item" do %>
-              <i class="bi bi-box-arrow-right"></i>
-              Sign Out
-            <% end %>
-          </li>
-        </ul>
-      </div>
     </div>
   </div>
-</div>
+</aside>

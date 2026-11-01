@@ -76,4 +76,48 @@ module ApplicationHelper
       "text-bg-secondary"
     end
   end
+
+  def soft_badge_class(status)
+    case status.to_s
+    when "verified", "approved", "completed", "resolved", "visible", "active", "patient"
+      "badge-soft-emerald"
+    when "unverified", "pending", "require_validation", "high", "open", "waitlisted"
+      "badge-soft-amber"
+    when "critical", "bug", "security", "rejected", "canceled", "cancelled"
+      "badge-soft-rose"
+    when "in_progress", "admin", "ui_ux", "medium"
+      "badge-soft-sky"
+    when "super_admin", "staff", "feature_request"
+      "badge-soft-purple"
+    else
+      "badge-soft-slate"
+    end
+  end
+
+  def sa_nav_active(controller_segment)
+    controller_path.include?(controller_segment.to_s) ? "active" : ""
+  end
+
+  def sa_breadcrumb_title
+    return content_for(:breadcrumb) if content_for?(:breadcrumb)
+
+    case controller_name
+    when "dashboard"
+      "Dashboard Overview"
+    when "barangays"
+      action_name == "show" && @barangay ? "Barangays / #{@barangay.name}" : "Registered Barangays"
+    when "users"
+      action_name == "show" && @user ? "Users / #{@user.full_name}" : "Users & Admins Directory"
+    when "issue_reports"
+      "Issue Reports Triage"
+    when "testimonials"
+      "Testimonials Moderation"
+    when "cms"
+      "Global CMS Manager"
+    when "profile"
+      "Edit SuperAdmin Profile"
+    else
+      controller_name.titleize
+    end
+  end
 end

@@ -2,8 +2,19 @@ class SuperAdmin::UsersController < SuperAdminController
   before_action :set_user, only: [ :show, :validated ]
 
   def index
-    @q = User.includes(:barangay, :taggings).ransack(params[:q])
-    @pagy, @users = pagy(@q.result(distinct: true))
+    @all_users_count = User.count
+    @pending_validation_count = User.tagged_with([ "require_validation" ]).count
+    @admins_count = User.admin.count
+    @staff_count = User.staff.count
+    @patients_count = User.patient.count
+
+    base_scope = User.includes(:barangay, :taggings)
+    if params[:filter] == "pending_validation"
+      base_scope = base_scope.tagged_with([ "require_validation" ])
+    end
+
+    @q = base_scope.ransack(params[:q])
+    @pagy, @users = pagy(@q.result(distinct: true).order(created_at: :desc))
   end
 
   def show
@@ -14,10 +25,10 @@ class SuperAdmin::UsersController < SuperAdminController
     @user.flag_list.remove("require_validation")
 
     if @user.save
-      redirect_to super_admin_users_path, status: :see_other, notice: "User removed validation."
       UserMailer.admin_validated_email(@user).deliver_later
+      redirect_back fallback_location: super_admin_users_path, status: :see_other, notice: "User validation approved successfully."
     else
-      redirect_to super_admin_users_path, status: :see_other, alert: "Error removing validation."
+      redirect_back fallback_location: super_admin_users_path, status: :see_other, alert: "Error updating user validation."
     end
   end
 

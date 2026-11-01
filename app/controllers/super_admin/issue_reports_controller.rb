@@ -2,8 +2,14 @@ class SuperAdmin::IssueReportsController < SuperAdminController
   before_action :set_issue_report, only: [ :status_update ]
 
   def index
+    @all_issues_count = IssueReport.count
+    @open_issues_count = IssueReport.open.count
+    @critical_issues_count = IssueReport.open.critical.count
+    @in_progress_issues_count = IssueReport.in_progress.count
+    @resolved_issues_count = IssueReport.where(status: [ :resolved, :closed ]).count
+
     @q = IssueReport.includes(:images_attachments).ransack(params[:q])
-    @pagy, @issue_reports = pagy(@q.result(distinct: true))
+    @pagy, @issue_reports = pagy(@q.result(distinct: true).order(created_at: :desc))
 
     current_user.notifications.where(type: "NewIssueReportNotifier::Notification").mark_as_read
   end

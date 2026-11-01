@@ -1,77 +1,117 @@
-<div class="container mt-4">
-  <h2 class="mb-4 text-center text-secondary fw-bold">User Details</h2>
+<% needs_val = @user.flag_list.include?("require_validation") %>
 
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <div class="row g-3">
+<!-- Top Navigation & Quick Approval Bar -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+  <%= link_to super_admin_users_path, class: "btn btn-sm btn-light border d-inline-flex align-items-center gap-1" do %>
+    <i class="bi bi-arrow-left"></i>
+    <span>Back to Users Directory</span>
+  <% end %>
 
-        <div class="col-md-6">
-          <p><strong>Public ID:</strong> <%= @user.public_uid %></p>
-        </div>
+  <div class="d-flex flex-wrap gap-2">
+    <% if needs_val %>
+      <%= link_to validated_super_admin_user_path(@user.public_uid),
+            class: "btn btn-sm btn-emerald d-inline-flex align-items-center gap-1",
+            data: {
+              turbo_method: :patch,
+              turbo_confirm: "Approve #{@user.full_name} and activate their account?",
+              turbo_submits_with: "Approving..."
+            } do %>
+        <i class="bi bi-shield-check"></i>
+        <span>Approve &amp; Validate Admin</span>
+      <% end %>
+    <% end %>
 
-        <div class="col-md-6">
-          <p><strong>Subdomain Link:</strong>
-            <%= link_to root_url(subdomain: @user.barangay&.subdomain), root_url(subdomain: @user.barangay&.subdomain), class: "link-primary" %>
-          </p>
-        </div>
+    <% if @user.barangay %>
+      <%= link_to super_admin_barangay_path(@user.barangay), class: "btn btn-sm btn-outline-emerald d-inline-flex align-items-center gap-1" do %>
+        <i class="bi bi-building"></i>
+        <span>Inspect Barangay</span>
+      <% end %>
+    <% end %>
+  </div>
+</div>
 
-        <div class="col-md-6">
-          <p><strong>Name:</strong> <%= @user.full_name %></p>
-        </div>
+<div class="row g-4">
+  <!-- Left Identity Summary Card -->
+  <div class="col-12 col-lg-4">
+    <div class="sa-card p-4 text-center h-100">
+      <%= image_tag(profile_url(@user), class: "rounded-circle border mb-3 shadow-sm", size: "84x84", alt: @user.full_name) %>
+      <h4 class="fw-bold mb-1"><%= @user.full_name %></h4>
+      <div class="text-secondary small mb-3"><%= @user.email %></div>
 
-        <div class="col-md-6">
-          <p><strong>Email:</strong> <%= @user.email %></p>
-        </div>
-
-        <div class="col-md-6">
-          <p><strong>Phone Number:</strong> <%= @user.phone_number || "Not provided" %></p>
-        </div>
-
-        <div class="col-md-6">
-          <p><strong>Role:</strong> <%= @user.role.titleize %></p>
-        </div>
-
-        <div class="col-md-6">
-          <p><strong>Barangay:</strong> <%= @user.barangay&.full_address || "Not assigned" %></p>
-        </div>
-
-        <div class="col-md-6">
-          <p><strong>Subdivision ID:</strong> <%= @user.subdivision_id || "Not assigned" %></p>
-        </div>
-
-        <div class="col-md-12">
-          <p><strong>Flags:</strong>
-            <% if @user.flag_list.present? %>
-              <% @user.flag_list.each do |flag| %>
-                <span class="badge bg-primary me-1"><%= flag.titleize %></span>
-              <% end %>
-            <% else %>
-              None
-            <% end %>
-          </p>
-        </div>
-
-        <div class="col-md-6">
-          <p><strong>Created At:</strong> <%= @user.created_at.strftime("%B %d, %Y %I:%M %p") %></p>
-        </div>
-
-        <div class="col-md-6">
-          <p><strong>Last Updated:</strong> <%= @user.updated_at.strftime("%B %d, %Y %I:%M %p") %></p>
-        </div>
-
+      <div class="d-flex justify-content-center flex-wrap gap-1 mb-4">
+        <span class="badge <%= soft_badge_class(@user.role) %> px-3 py-2"><%= @user.role.titleize %></span>
+        <% if needs_val %>
+          <span class="badge badge-soft-amber px-3 py-2"><i class="bi bi-clock-history me-1"></i>Pending Approval</span>
+        <% else %>
+          <span class="badge badge-soft-emerald px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i>Verified Account</span>
+        <% end %>
       </div>
 
-      <div class="mt-4">
-        <% if @user.flag_list.include?("require_validation") %>
-          <%= link_to "Remove Validation",
-              validated_super_admin_user_path(@user.public_uid),
-              class: "btn btn-danger",
-              data: {
-                turbo_method: :PATCH,
-                turbo_confirm: "Are you sure?",
-                turbo_submits_with: "Submitting..."
-              } %>
+      <div class="border-top pt-3 text-start small d-flex flex-column gap-2">
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Public UID:</span>
+          <code class="fw-bold text-dark">#<%= @user.public_uid %></code>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Phone Number:</span>
+          <span class="fw-semibold"><%= @user.phone_number.presence || "Not provided" %></span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Subdivision / Purok:</span>
+          <span class="fw-semibold"><%= @user.subdivision&.name || "Not assigned" %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Account & Tenant Details Card -->
+  <div class="col-12 col-lg-8">
+    <div class="sa-card p-4 mb-4">
+      <h6 class="fw-bold border-bottom pb-2 mb-3"><i class="bi bi-building text-success me-2"></i>Tenant &amp; Barangay Assignment</h6>
+      <div class="row g-3" style="font-size: 0.9rem;">
+        <div class="col-sm-6">
+          <div class="text-secondary small">Assigned Barangay</div>
+          <div class="fw-semibold text-dark mt-1"><%= @user.barangay&.full_address || "Platform Global (No Tenant)" %></div>
+        </div>
+        <div class="col-sm-6">
+          <div class="text-secondary small">Subdomain Portal Link</div>
+          <div class="mt-1">
+            <% if @user.barangay&.subdomain.present? %>
+              <%= link_to root_url(subdomain: @user.barangay.subdomain), root_url(subdomain: @user.barangay.subdomain), target: "_blank", rel: "noopener", class: "text-success fw-semibold text-decoration-none" %>
+            <% else %>
+              <span class="text-muted">N/A</span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sa-card p-4">
+      <h6 class="fw-bold border-bottom pb-2 mb-3"><i class="bi bi-flag text-primary me-2"></i>System Flags &amp; Timestamps</h6>
+      <div class="mb-3">
+        <div class="text-secondary small mb-2">Active Account Flags</div>
+        <% if @user.flag_list.present? %>
+          <div class="d-flex flex-wrap gap-2">
+            <% @user.flag_list.each do |flag| %>
+              <span class="badge <%= flag == 'require_validation' ? 'badge-soft-amber' : 'badge-soft-slate' %> px-3 py-2">
+                <%= flag.titleize %>
+              </span>
+            <% end %>
+          </div>
+        <% else %>
+          <span class="badge badge-soft-emerald px-3 py-2"><i class="bi bi-check2-all me-1"></i>No Pending Flags (Profile Complete)</span>
         <% end %>
+      </div>
+
+      <div class="row g-3 pt-2 border-top" style="font-size: 0.88rem;">
+        <div class="col-sm-6">
+          <div class="text-secondary small">Registered At</div>
+          <div class="fw-semibold mt-1"><%= @user.created_at.strftime("%B %d, %Y at %I:%M %p") %></div>
+        </div>
+        <div class="col-sm-6">
+          <div class="text-secondary small">Last Updated</div>
+          <div class="fw-semibold mt-1"><%= @user.updated_at.strftime("%B %d, %Y at %I:%M %p") %></div>
+        </div>
       </div>
     </div>
   </div>

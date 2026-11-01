@@ -1,12 +1,49 @@
-<%= render 'search_form', q: @q, cities: @cities, provinces: @provinces, regions: @regions %>
-
-<div class="card shadow-sm">
-  <div class="card-body table-responsive">
-    <%= render 'table', barangays: @barangays %>
-
-    <div>
-      <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
-    </div>
+<!-- Page Header + Segmented Status Filter Pills -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+  <div>
+    <h3 class="fw-bold mb-1">Registered Barangays</h3>
+    <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+      Manage barangay health center tenants, inspect subdomains, and verify administrator accounts.
+    </p>
   </div>
-</div>  
 
+  <ul class="nav sa-filter-pills bg-white p-1 rounded-3 border">
+    <li class="nav-item">
+      <%= link_to super_admin_barangays_path(q: params[:q]&.to_unsafe_h),
+            class: "nav-link #{params[:status].blank? ? 'active' : ''}" do %>
+        All <span class="badge badge-soft-slate ms-1"><%= @all_barangays_count %></span>
+      <% end %>
+    </li>
+    <li class="nav-item">
+      <%= link_to super_admin_barangays_path(status: "verified", q: params[:q]&.to_unsafe_h),
+            class: "nav-link #{params[:status] == 'verified' ? 'active' : ''}" do %>
+        Verified <span class="badge badge-soft-emerald ms-1"><%= @verified_barangays_count %></span>
+      <% end %>
+    </li>
+    <li class="nav-item">
+      <%= link_to super_admin_barangays_path(status: "unverified", q: params[:q]&.to_unsafe_h),
+            class: "nav-link #{params[:status] == 'unverified' ? 'active' : ''}" do %>
+        Unverified <span class="badge badge-soft-amber ms-1"><%= @unverified_barangays_count %></span>
+      <% end %>
+    </li>
+  </ul>
+</div>
+
+<!-- Inline Search & Geographic Filter Bar -->
+<%= render "search_form", q: @q, cities: @cities, provinces: @provinces, regions: @regions %>
+
+<!-- Barangays Data Table Card -->
+<div class="sa-card overflow-hidden">
+  <div class="table-responsive">
+    <%= render "table", barangays: @barangays, verified_barangay_ids: @verified_barangay_ids %>
+  </div>
+
+  <% if @pagy.pages > 1 %>
+    <div class="p-3 border-top bg-light bg-opacity-50 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <small class="text-secondary">Showing <strong><%= @pagy.from %>–<%= @pagy.to %></strong> of <strong><%= @pagy.count %></strong> barangays</small>
+      <div>
+        <%== pagy_bootstrap_nav(@pagy) %>
+      </div>
+    </div>
+  <% end %>
+</div>

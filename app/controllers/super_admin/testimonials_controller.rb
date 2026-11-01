@@ -5,7 +5,10 @@ module SuperAdmin
     before_action :set_testimonial, only: [ :show ]
 
     def index
-      @testimonials = Testimonial.includes(:user).all
+      @total_testimonials_count = Testimonial.count
+      @average_rating = Testimonial.average(:rating)&.round(1) || 0.0
+
+      @testimonials = Testimonial.includes(user: :barangay).all
 
       if params[:full_name].present?
         @testimonials = @testimonials.joins(:user)
@@ -33,8 +36,6 @@ module SuperAdmin
 
       current_user.notifications.where(type: "NewTestimonialNotifier::Notification").mark_as_read
     end
-
-
 
     private
 

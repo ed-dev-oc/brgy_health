@@ -1,53 +1,170 @@
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="display-4">Barangay <%= @barangay.name %></h1>
-    <%= link_to "Visit Subdomain Page",
-                root_url(subdomain: @barangay.subdomain),
-                class: "btn btn-green-600",
-                target: "_blank",
-                rel: "noopener" %>
-  </div>
+<% is_verified = @barangay.verified? %>
 
-  <div class="card mb-4 shadow-sm">
-    <div class="card-body">
-      <h5 class="card-title">Location Details</h5>
-      <p class="card-text mb-1">
-        <strong>Status:</strong>
-        <% if @barangay.verified? %>
-          <span class="badge bg-primary"><%= @barangay.verified_status %></span>
-        <% else %>
-          <span class="badge bg-warning text-dark"><%= @barangay.verified_status %></span>
-        <% end %>
-      </p>
-      <p class="card-text mb-1"><strong>Region:</strong> <%= @barangay.region %></p>
-      <p class="card-text mb-1"><strong>Province:</strong> <%= @barangay.province %></p>
-      <p class="card-text"><strong>City:</strong> <%= @barangay.city %></p>
+<!-- Top Navigation & Actions Bar -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+  <%= link_to super_admin_barangays_path, class: "btn btn-sm btn-light border d-inline-flex align-items-center gap-1" do %>
+    <i class="bi bi-arrow-left"></i>
+    <span>Back to Barangays</span>
+  <% end %>
+
+  <div class="d-flex flex-wrap gap-2">
+    <% if @barangay.has_unvalidated_admin? %>
+      <%= button_to validated_super_admin_user_path(@barangay.unvalidated_admin.public_uid),
+            method: :patch,
+            form: { data: { turbo_confirm: "Are you sure you want to approve #{@barangay.unvalidated_admin.full_name} and verify Barangay #{@barangay.name}?" } },
+            class: "btn btn-sm btn-emerald d-inline-flex align-items-center gap-1" do %>
+        <i class="bi bi-shield-check"></i>
+        <span>Verify Admin Now</span>
+      <% end %>
+    <% end %>
+
+    <%= link_to root_url(subdomain: @barangay.subdomain),
+          class: "btn btn-sm btn-outline-emerald d-inline-flex align-items-center gap-1",
+          target: "_blank",
+          rel: "noopener" do %>
+      <i class="bi bi-box-arrow-up-right"></i>
+      <span>Visit Subdomain Portal</span>
+    <% end %>
+  </div>
+</div>
+
+<!-- Barangay Hero Profile Card -->
+<div class="sa-card p-4 mb-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 pb-3 border-bottom">
+    <div class="d-flex align-items-center gap-3">
+      <div class="sa-icon-well <%= is_verified ? 'well-emerald' : 'well-amber' %>" style="width: 56px; height: 56px; font-size: 1.6rem;">
+        <i class="bi bi-hospital"></i>
+      </div>
+      <div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <h3 class="fw-bold mb-0">Barangay <%= @barangay.name %></h3>
+          <% if is_verified %>
+            <span class="badge badge-soft-emerald rounded-pill px-2 py-1">
+              <i class="bi bi-check-circle-fill me-1"></i>Verified Tenant
+            </span>
+          <% else %>
+            <span class="badge badge-soft-amber rounded-pill px-2 py-1">
+              <i class="bi bi-clock-history me-1"></i>Unverified Tenant
+            </span>
+          <% end %>
+        </div>
+        <div class="text-secondary mt-1" style="font-size: 0.9rem;">
+          <i class="bi bi-geo-alt me-1"></i><%= @barangay.full_address %>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-md-end">
+      <div class="text-secondary small">Tenant Subdomain</div>
+      <code class="fs-6 fw-bold text-success"><%= @barangay.subdomain %></code>
     </div>
   </div>
 
-  <h3 class="mb-3">Admins & Staff</h3>
-  <ul class="list-group mb-4 shadow-sm">
-    <% @admins_and_staff.each do |user| %>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <strong><%= user.email %></strong> (<%= user.role.capitalize %>)
-          <% if user.flag_list.include?("require_validation") %>
-            <span class="badge bg-warning text-dark ms-2">Needs Validation</span>
-          <% end %>
-        </div>
-        <%= link_to "View Profile", super_admin_user_path(user.public_uid), class: "btn btn-sm btn-outline-green-600" %>
-      </li>
-    <% end %>
-  </ul>
+  <!-- 4 Summary Metadata Tiles -->
+  <div class="row g-3 pt-3">
+    <div class="col-6 col-md-3">
+      <div class="p-3 rounded-3 bg-light h-100">
+        <div class="text-secondary small fw-semibold">REGION</div>
+        <div class="fw-bold text-dark mt-1"><%= @barangay.region %></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="p-3 rounded-3 bg-light h-100">
+        <div class="text-secondary small fw-semibold">PROVINCE</div>
+        <div class="fw-bold text-dark mt-1"><%= @barangay.province %></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="p-3 rounded-3 bg-light h-100">
+        <div class="text-secondary small fw-semibold">CITY / MUNICIPALITY</div>
+        <div class="fw-bold text-dark mt-1"><%= @barangay.city %></div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="p-3 rounded-3 bg-light h-100">
+        <div class="text-secondary small fw-semibold">ADMINS &amp; HEALTH STAFF</div>
+        <div class="fw-bold text-dark mt-1"><%= @admins_and_staff.count %> Registered</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <div class="mb-4 d-flex justify-content-start">
-    <% if @barangay.has_unvalidated_admin? %>
-      <%= button_to "Verify Admin", validated_super_admin_user_path(@barangay.unvalidated_admin.public_uid),
-            method: :patch,
-            data: { confirm: "Are you sure you want to validate this admin?" },
-            class: "btn btn-success btn-sm" %>
-    <% else %>
-      <button class="btn btn-secondary btn-sm" disabled>No admin to validate</button>
-    <% end %>
+<!-- Admins & Health Staff Roster Card -->
+<div class="sa-card overflow-hidden">
+  <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+    <div>
+      <h6 class="fw-bold mb-0"><i class="bi bi-people-fill text-success me-2"></i>Barangay Administrators &amp; Health Staff</h6>
+      <small class="text-secondary">Assigned personnel managing Barangay <%= @barangay.name %> Health Center</small>
+    </div>
+    <span class="badge badge-soft-slate"><%= @admins_and_staff.count %> Accounts</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table sa-table mb-0">
+      <thead>
+        <tr>
+          <th>Staff / Administrator</th>
+          <th>Email Address</th>
+          <th>Role</th>
+          <th>Validation Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @admins_and_staff.any? %>
+          <% @admins_and_staff.each do |user| %>
+            <% needs_val = user.flag_list.include?("require_validation") %>
+            <tr>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="sa-avatar <%= needs_val ? 'well-amber' : 'well-emerald' %>"><%= user.initials %></div>
+                  <div>
+                    <div class="fw-semibold text-dark"><%= user.full_name %></div>
+                    <small class="text-secondary font-monospace">#<%= user.public_uid %></small>
+                  </div>
+                </div>
+              </td>
+              <td><%= user.email %></td>
+              <td>
+                <span class="badge <%= soft_badge_class(user.role) %>"><%= user.role.titleize %></span>
+              </td>
+              <td>
+                <% if needs_val %>
+                  <span class="badge badge-soft-amber">
+                    <i class="bi bi-exclamation-circle me-1"></i>Needs Validation
+                  </span>
+                <% else %>
+                  <span class="badge badge-soft-emerald">
+                    <i class="bi bi-check-circle-fill me-1"></i>Verified
+                  </span>
+                <% end %>
+              </td>
+              <td class="text-end">
+                <div class="d-inline-flex gap-1">
+                  <% if needs_val %>
+                    <%= link_to validated_super_admin_user_path(user.public_uid),
+                          class: "btn btn-sm btn-emerald",
+                          data: {
+                            turbo_method: :patch,
+                            turbo_confirm: "Approve #{user.full_name} as verified administrator?",
+                            turbo_submits_with: "Approving..."
+                          } do %>
+                      <i class="bi bi-check-lg me-1"></i>Approve Admin
+                    <% end %>
+                  <% end %>
+                  <%= link_to super_admin_user_path(user.public_uid), class: "btn btn-sm btn-outline-emerald" do %>
+                    <i class="bi bi-eye me-1"></i>View Profile
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="text-center py-4 text-secondary">No administrators or staff registered for this barangay.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>

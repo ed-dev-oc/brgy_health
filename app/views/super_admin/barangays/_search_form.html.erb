@@ -1,15 +1,44 @@
-<div class="card mb-4 shadow-sm">
-  <div class="card-body">
-  <%= search_form_for q, url: super_admin_barangays_path, method: :get, class: "d-flex gap-2 justify-content-between align-items-start" do |f| %>
-    <div class="input-group w-25" style="min-width: 265px;">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <%= f.search_field :name_cont, placeholder: "Search Barangay Name", class: "form-control" %>
-    </div>
+<div class="sa-card p-3 mb-4">
+  <%= search_form_for q, url: super_admin_barangays_path, method: :get do |f| %>
+    <%= hidden_field_tag :status, params[:status] if params[:status].present? %>
 
-    <div class="d-flex align-items-start gap-2">
-      <%= render 'filters_dropdown', cities: cities, provinces: provinces, regions: regions %>
-      <button class="btn btn-green-600" type="submit" style="min-width: 150px;">Search</button>
+    <div class="row g-2 align-items-center">
+      <div class="col-12 col-md-4">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0 text-secondary"><i class="bi bi-search"></i></span>
+          <%= f.search_field :name_cont, placeholder: "Search barangay name...", class: "form-control border-start-0" %>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <%= f.select :region_eq,
+              options_for_select(regions, params.dig(:q, :region_eq)),
+              { include_blank: "All Regions" },
+              class: "form-select" %>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <%= f.select :province_eq,
+              options_for_select(provinces, params.dig(:q, :province_eq)),
+              { include_blank: "All Provinces" },
+              class: "form-select" %>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <%= f.select :city_eq,
+              options_for_select(cities, params.dig(:q, :city_eq)),
+              { include_blank: "All Cities" },
+              class: "form-select" %>
+      </div>
+
+      <div class="col-6 col-md-2 d-flex gap-2">
+        <button class="btn btn-emerald flex-grow-1" type="submit">
+          <i class="bi bi-funnel me-1"></i>Filter
+        </button>
+        <%= link_to super_admin_barangays_path, class: "btn btn-light border", title: "Reset Filters" do %>
+          <i class="bi bi-arrow-counterclockwise"></i>
+        <% end %>
+      </div>
     </div>
   <% end %>
-  </div>
 </div>

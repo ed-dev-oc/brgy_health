@@ -12,4 +12,8 @@ class IssueReport < ApplicationRecord
   def self.ransackable_attributes(auth_object = nil)
     [ "created_at", "description", "email", "id", "issue_type", "module_area", "priority", "public_uid", "status", "title", "updated_at", "url" ]
   end
+
+  def self.ransackable_associations(auth_object = nil)
+    [ "images_attachments", "images_blobs" ]
+  end
 end

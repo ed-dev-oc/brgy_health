@@ -1,46 +1,42 @@
-<div class="card mb-4 shadow-sm">
-  <div class="card-body">
-    <%= form_with url: super_admin_testimonials_path, method: :get, local: true, html: { class: "d-flex justify-content-between align-items-start flex-wrap gap-2" } do |f| %>
-
-      <div class="d-flex gap-2">
-        <div class="input-group" style="min-width: 265px;">
-          <span class="input-group-text"><i class="bi bi-search"></i></span>
-          <%= f.text_field :full_name, value: params[:full_name], class: "form-control", placeholder: "Search Full Name" %>
-        </div>
-
-        <div class="input-group" style="min-width: 265px;">
-          <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-          <%= f.text_field :email, value: params[:email], class: "form-control", placeholder: "Search Email" %>
+<div class="sa-card p-3 mb-4">
+  <%= form_with url: super_admin_testimonials_path, method: :get, local: true do |f| %>
+    <div class="row g-2 align-items-center">
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0 text-secondary"><i class="bi bi-person"></i></span>
+          <%= f.text_field :full_name, value: params[:full_name], class: "form-control border-start-0", placeholder: "Search author name..." %>
         </div>
       </div>
 
-      <div class="d-flex gap-2 flex-wrap justify-content-end">
-        <div class="dropdown">
-          <button class="btn btn-outline-green-600 dropdown-toggle" type="button" id="filtersDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 150px;">
-            <i class="bi bi-filter"></i> Filters
-          </button>
-          <div class="dropdown-menu p-3 shadow" aria-labelledby="filtersDropdown" style="min-width: 300px;">
-            <div class="mb-3">
-              <%= f.label :rating, "Rating", class: "form-label" %>
-              <%= f.select :rating, options_for_select((1..5).map { |r| [r, r] }, params[:rating]), { include_blank: "All Ratings" }, class: "form-select" %>
-            </div>
-            <div class="mb-3">
-              <%= f.label :year_filter, "Date", class: "form-label" %>
-              <%= f.select :year_filter,
-                          options_for_select([["All Time", "all"], ["This Year", "this_year"], ["Previous Year", "last_year"]],
-                                              params[:year_filter] || "all"),
-                          {},
-                          class: "form-select" %>
-            </div>
-            <div class="d-grid">
-              <%= f.submit "Apply Filters", class: "btn btn-green-600" %>
-            </div>
-          </div>
+      <div class="col-12 col-sm-6 col-md-3">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0 text-secondary"><i class="bi bi-envelope"></i></span>
+          <%= f.text_field :email, value: params[:email], class: "form-control border-start-0", placeholder: "Search author email..." %>
         </div>
-        
-        <%= f.submit "Search", class: "btn btn-green-600", style: "min-width: 150px;" %>
       </div>
 
-    <% end %>
-  </div>
+      <div class="col-6 col-md-2">
+        <%= f.select :rating,
+              options_for_select((1..5).reverse_each.map { |r| ["#{r} Stars", r] }, params[:rating]),
+              { include_blank: "All Ratings" },
+              class: "form-select" %>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <%= f.select :year_filter,
+              options_for_select([["All Time", "all"], ["This Year", "this_year"], ["Previous Year", "last_year"]], params[:year_filter] || "all"),
+              {},
+              class: "form-select" %>
+      </div>
+
+      <div class="col-12 col-md-2 d-flex gap-2">
+        <button class="btn btn-emerald flex-grow-1" type="submit">
+          <i class="bi bi-funnel me-1"></i>Filter
+        </button>
+        <%= link_to super_admin_testimonials_path, class: "btn btn-light border", title: "Reset Filters" do %>
+          <i class="bi bi-arrow-counterclockwise"></i>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>

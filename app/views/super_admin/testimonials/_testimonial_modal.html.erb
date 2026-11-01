@@ -1,38 +1,42 @@
 <div class="modal fade" id="testimonialModal_<%= testimonial.id %>" tabindex="-1" aria-labelledby="modalLabel_<%= testimonial.id %>" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content shadow-lg">
-      <div class="modal-header bg-green-600 text-white">
-        <h5 class="modal-title" id="modalLabel_<%= testimonial.id %>">Testimonial Details</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 0.9rem;">
+      <div class="modal-header border-bottom px-4 py-3">
+        <h5 class="modal-title fw-bold mb-0" id="modalLabel_<%= testimonial.id %>">
+          <i class="bi bi-chat-heart-fill text-success me-2"></i>Community Testimonial
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+
       <div class="modal-body p-4">
-        <div class="mb-3">
-          <h6 class="fw-bold text-secondary">Rating</h6>
-          <p class="mb-0"><%= testimonial.rating %> / 5</p>
-        </div>
-
-        <div class="mb-3">
-          <h6 class="fw-bold text-secondary">Message</h6>
-          <div class="border rounded p-3 bg-light">
-            <%= simple_format(testimonial.data) %>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <div class="sa-avatar well-emerald"><%= user.initials %></div>
+            <div>
+              <div class="fw-bold text-dark"><%= user.full_name %></div>
+              <small class="text-secondary">
+                <%= user.barangay&.name ? "Brgy. #{user.barangay.name} &bull; ".html_safe : "" %><%= user.email %>
+              </small>
+            </div>
+          </div>
+          <div class="text-warning fs-5">
+            <% testimonial.rating.to_i.times do %><i class="bi bi-star-fill"></i><% end %>
+            <% (5 - testimonial.rating.to_i).times do %><i class="bi bi-star text-muted"></i><% end %>
           </div>
         </div>
 
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <h6 class="fw-bold text-secondary">Full Name</h6>
-            <p class="mb-0"><%= user.full_name %></p>
-          </div>
-          <div class="col-md-6">
-            <h6 class="fw-bold text-secondary">Email</h6>
-            <p class="mb-0"><%= user.email %></p>
-          </div>
-        </div>
+        <blockquote class="p-3 rounded-3 bg-light border fst-italic mb-3" style="font-size: 0.92rem;">
+          <%= simple_format(testimonial.data, class: "mb-0") %>
+        </blockquote>
 
-        <div class="mb-2">
-          <h6 class="fw-bold text-secondary">Submitted On</h6>
-          <p class="mb-0"><%= testimonial.created_at.strftime("%B %d, %Y") %></p>
+        <div class="d-flex justify-content-between align-items-center small text-secondary">
+          <span><i class="bi bi-calendar3 me-1"></i>Submitted on <%= testimonial.created_at.strftime("%B %d, %Y") %></span>
+          <span class="badge badge-soft-emerald"><%= testimonial.rating %> / 5 Rating</span>
         </div>
+      </div>
+
+      <div class="modal-footer bg-light px-4 py-3">
+        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
