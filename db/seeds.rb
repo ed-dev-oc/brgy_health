@@ -1,3 +1,12 @@
+# frozen_string_literal: true
+
+# Guard to protect production from accidental seeding
+if Rails.env.production? && ENV["ALLOW_PRODUCTION_SEEDS"] != "true"
+  puts "==> [db:seed] Skipped: Seeding is disabled in production to protect live data."
+  puts "==> To apply seeds manually in production, run: bin/rails db:seed:manual"
+  return
+end
+
 # This file should ensure the existence of records required to run the application in every environment (production,
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
