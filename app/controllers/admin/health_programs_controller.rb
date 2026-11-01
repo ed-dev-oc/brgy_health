@@ -48,7 +48,7 @@ class Admin::HealthProgramsController < AdminController
     respond_to do |format|
       if @admin_health_program.update(admin_health_program_params)
         format.html { redirect_to [ :admin, @admin_health_program ], notice: "Health program was successfully updated." }
-        format.json { render :show, status: :ok, location: [ admin, @admin_health_program ] }
+        format.json { render :show, status: :ok, location: [ :admin, @admin_health_program ] }
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @admin_health_program.errors, status: :unprocessable_entity }

@@ -67,14 +67,12 @@ export default class extends Controller {
 
     thumbnails.mount();
 
-    if (this.mainSlidesTarget) {
+    if (this.hasMainSlidesTarget && this.main) {
       this.main.sync(thumbnails);
     }
   }
 
   smallSlidesTargetConnected(element) {
-    splide.mount();
-
     var splide = new Splide(element, {
       type: 'slide',
       drag: 'free',

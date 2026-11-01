@@ -54,7 +54,7 @@ class BarangayGeneratePagesJob < ApplicationJob
       barangay: @barangay,
       title: "Contact Us",
       subheadline: "Have questions or need assistance? We're here to help!",
-      latitude: 120.9842,
+      latitude: 14.5995,
       longitude: 120.9842,
       section: 2)
 

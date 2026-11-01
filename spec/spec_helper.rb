@@ -95,17 +95,15 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 =end
 
-  config.before(:suite) do
-    $default_barangay = Barangay.find_or_create_by!(name: "Lao", region: "Region VIII", province: "Leyte", city: "Ormoc")
-  end
-
   config.before(:each) do |example|
+    default_barangay = Barangay.find_by(id: 1) || Barangay.find_or_create_by!(name: "Lao", region: "Region VIII", province: "Leyte", city: "Ormoc")
+
     if example.metadata[:type] == :request
       # Set the `test_tenant` value for integration tests
-      ActsAsTenant.test_tenant = $default_barangay
+      ActsAsTenant.test_tenant = default_barangay
     else
       # Otherwise just use current_tenant
-      ActsAsTenant.current_tenant = $default_barangay
+      ActsAsTenant.current_tenant = default_barangay
     end
   end
 

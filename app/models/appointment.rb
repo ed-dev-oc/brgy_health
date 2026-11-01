@@ -26,7 +26,7 @@ class Appointment < ApplicationRecord
 
   validates :scheduled_at, presence: true
   validates :cancel_reason, presence: true, if: :cancelled?
-  validates :reschedule_reason, presence: true, if: -> { self.flag_list.include?("reschedule") }
+  validates :reschedule_reason, presence: true, if: -> { self.flag_list.include?("rescheduled") || self.flag_list.include?("reschedule") }
   validate :scheduled_at_within_announcement_range
 
   after_update :completed_appointment
@@ -86,7 +86,7 @@ class Appointment < ApplicationRecord
   end
 
   def scheduled_at_within_announcement_range
-    return if scheduled_at.blank?
+    return if scheduled_at.blank? || announcement.blank? || announcement.start_date.blank? || announcement.end_date.blank?
 
     unless scheduled_at.between?(announcement.start_date, announcement.end_date)
       errors.add(:scheduled_at, "must be during the announcement's time range (#{announcement.start_date.strftime("%B %e, %Y")} to #{announcement.end_date.strftime("%B %e, %Y")})")

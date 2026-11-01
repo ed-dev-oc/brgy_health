@@ -73,8 +73,6 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :testimonials, only: [ :create, :update ]
-
     resources :events, only: [ :index, :create, :update ] do
       member do
         patch :archive

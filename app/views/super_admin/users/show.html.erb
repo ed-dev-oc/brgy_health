@@ -11,7 +11,7 @@
 
         <div class="col-md-6">
           <p><strong>Subdomain Link:</strong>
-            <%= link_to root_url(subdomain: @user.barangay&.subdomain), root_path(subdomain: @user.barangay&.subdomain), class: "link-primary" %>
+            <%= link_to root_url(subdomain: @user.barangay&.subdomain), root_url(subdomain: @user.barangay&.subdomain), class: "link-primary" %>
           </p>
         </div>
 

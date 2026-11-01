@@ -1,4 +1,4 @@
-<%= form_for(@user, url: profile_path, html: { method: :patch, class: "needs-validation" }) do |form| %>
+<%= form_for(@user, url: profile_path(@user.id), html: { method: :patch, class: "needs-validation" }) do |form| %>
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">Update Subdivision (Purok)</h5>

@@ -1,7 +1,11 @@
 class UserCredentialChangedNotifier < ApplicationNotifier
   deliver_by :notification_broadcast, class: "DeliveryMethods::NotificationBroadcast"
   deliver_by :web_push, class: "DeliveryMethods::WebPush"
-  deliver_by :email, mailer: "UserMailer", method: :credential_changed
+  deliver_by :email do |config|
+    config.mailer = "UserMailer"
+    config.method = :credential_changed
+    config.args = -> { [ self ] }
+  end
 
   required_param :changed_attributes
 

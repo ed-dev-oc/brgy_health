@@ -48,8 +48,6 @@ class Admin::UsersController < AdminController
   end
 
   def toggle_status
-    @user = User.find(params[:id])
-
     if @user.flag_list.include?("active")
       @user.flag_list.remove("active")
       @user.flag_list.add("inactive")
@@ -85,7 +83,7 @@ class Admin::UsersController < AdminController
     ]
 
     if current_user&.super_admin? || current_user&.admin?
-      permitted << :role
+      permitted << :role unless params.dig(:user, :role) == "super_admin" && !current_user&.super_admin?
       permitted << { flag_list: [] }
     end
 

@@ -3,7 +3,7 @@ class Barangay::PagesController < BarangayController
     @hero_banner = Page.find_by(section: "homepage_hero_banner")
 
     if user_signed_in?
-      @hero_banner.notifications.where(recipient: current_user).mark_as_read
+      @hero_banner&.notifications&.where(recipient: current_user)&.mark_as_read
 
       if current_user.admin?
         current_user.notifications.where(type: "StaticPageUpdatedNotifier::Notification").mark_as_read

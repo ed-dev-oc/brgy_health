@@ -76,10 +76,6 @@ class User < ApplicationRecord
     [ "about_me_notifications", "announcements", "appointments", "appointments_as_health_worker", "barangay", "base_tags", "events", "flag_taggings", "flags", "noticed_events", "notifications", "push_subscriptions", "subdivision", "taggings", "testimonial" ]
   end
 
-  def self.ransackable_associations(auth_object = nil)
-    %w[barangay subdivision]
-  end
-
   def full_name
     "#{self.first_name} #{self.middle_name} #{self.last_name} #{self.suffix}".strip
   end
@@ -118,9 +114,9 @@ class User < ApplicationRecord
   end
 
   def send_notification_to_super_admin
-    super_admin = User.super_admin.first
+    super_admin = ActsAsTenant.without_tenant { User.super_admin.first }
 
-    NewAdminNotifier.with(record: self).deliver(super_admin)
+    NewAdminNotifier.with(record: self).deliver(super_admin) if super_admin.present?
   end
 
   def prevent_super_admin_demotion
@@ -160,6 +156,7 @@ class User < ApplicationRecord
     end
 
     UserCredentialChangedNotifier.with(
+      record: self,
       changed_attributes: changed_attributes
     ).deliver_later(self)
   end

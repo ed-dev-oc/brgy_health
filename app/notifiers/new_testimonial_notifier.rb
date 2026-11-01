@@ -3,7 +3,11 @@ class NewTestimonialNotifier < ApplicationNotifier
 
   deliver_by :notification_broadcast, class: "DeliveryMethods::NotificationBroadcast"
   deliver_by :web_push, class: "DeliveryMethods::WebPush"
-  deliver_by :email, mailer: "UserMailer", method: :new_testimonial_email
+  deliver_by :email do |config|
+    config.mailer = "UserMailer"
+    config.method = :new_testimonial_email
+    config.args = -> { [ self ] }
+  end
 
   notification_methods do
     def title

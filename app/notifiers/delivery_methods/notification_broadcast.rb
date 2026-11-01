@@ -3,13 +3,16 @@ class DeliveryMethods::NotificationBroadcast < ApplicationDeliveryMethod
   required_options # :foo, :bar
 
   def deliver
-    record.broadcast_prepend_later_to recipient.notification_channel,
+    broadcaster = record || recipient
+    return unless broadcaster
+
+    broadcaster.broadcast_prepend_later_to recipient.notification_channel,
       target: "notifications_list",
       partial: "notifications/notification",
       locals: { notification: notification }
 
-    record.broadcast_replace_later_to recipient.notification_channel,
-      target: "notification_status",
+    broadcaster.broadcast_replace_later_to recipient.notification_channel,
+      target: "notification_status_frame",
       partial: "notifications/notification_status",
       locals: { notifications: recipient.notifications.unread.to_a }
   end

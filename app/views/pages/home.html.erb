@@ -1,12 +1,14 @@
-<section class="hero-banner" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-  url(<%= url_for(@hero_banner.image) %>);">
-  <div class="container">
-    <div class="hero-content">
-      <h1 class="display-4 fw-bold mb-4"><%= @hero_banner.title %></h1>
-      <p class="lead mb-4"><%= @hero_banner.subheadline %></p>
+<% if @hero_banner.present? %>
+  <section class="hero-banner" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+    url(<%= url_for(@hero_banner.image) if @hero_banner.image.attached? %>);">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="display-4 fw-bold mb-4"><%= @hero_banner.title %></h1>
+        <p class="lead mb-4"><%= @hero_banner.subheadline %></p>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+<% end %>
 
 <% if @barangays.any? %>
   <section class="registered-barangay py-5">
@@ -26,7 +28,11 @@
       <div class="carousel-inner">
         <% @barangays.each_with_index do |barangay, index| %>
           <div class="carousel-item <%= index == 0 ? 'active' : '' %>">
-            <%= image_tag(barangay.pages.homepage_hero_banner.first.image.variant(resize_to_fill: [600, 200]), class: "d-block w-100") %>
+            <% if barangay.pages.homepage_hero_banner.first&.image&.attached? %>
+              <%= image_tag(barangay.pages.homepage_hero_banner.first.image.variant(resize_to_fill: [600, 200]), class: "d-block w-100") %>
+            <% else %>
+              <%= image_tag("hero_banner.png", class: "d-block w-100", style: "height: 200px; object-fit: cover;") %>
+            <% end %>
             <div class="carousel-caption d-none d-md-block pb-5" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
               <h5><i class="bi bi-house-door-fill me-1"></i><%= barangay.name %></h5>
               <%= link_to root_url(subdomain: barangay.slug), class: "link-light link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" do %>

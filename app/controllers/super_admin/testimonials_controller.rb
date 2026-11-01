@@ -9,7 +9,7 @@ module SuperAdmin
 
       if params[:full_name].present?
         @testimonials = @testimonials.joins(:user)
-                                    .where("users.full_name ILIKE ?", "%#{params[:full_name]}%")
+                                    .where("CONCAT_WS(' ', users.first_name, users.middle_name, users.last_name, users.suffix) ILIKE ?", "%#{params[:full_name]}%")
       end
 
       if params[:email].present?

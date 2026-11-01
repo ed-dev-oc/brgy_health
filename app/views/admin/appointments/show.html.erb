@@ -186,7 +186,7 @@
               <% end %>
             <% end %>
 
-            <% if @appointment.flag_list.include?("follow_up_check_up") %>
+            <% if @appointment.flag_list.include?("follow_up_check_up") && @appointment.parent_appointment.present? %>
               <%= link_to admin_appointment_path(@appointment.parent_appointment.public_uid), class: "btn btn-primary" do %>
                 <i class="bi bi-calendar-check"></i>
                 View Follow Up Check Up

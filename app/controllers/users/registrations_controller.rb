@@ -25,6 +25,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
       end
 
       resource.save
+      resource.build_barangay if resource.barangay.nil? && ActsAsTenant.current_tenant.blank?
 
       # if resource.role == :admin
       #   sign_out resource

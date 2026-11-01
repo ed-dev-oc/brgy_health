@@ -138,7 +138,7 @@
                   <h5 class="mb-1">Related</h5>
                   <p class="mb-0">
                     <% if @appointment.follow_up_id %>
-                      <%= link_to admin_appointment_path(@appointment.follow_up.public_uid), class: "btn btn-sm btn-outline-green-600" do %>
+                      <%= link_to appointment_path(@appointment.follow_up.public_uid), class: "btn btn-sm btn-outline-green-600" do %>
                         <i class="bi bi-arrow-left"></i>
                         View Previous Appointment
                       <% end %>

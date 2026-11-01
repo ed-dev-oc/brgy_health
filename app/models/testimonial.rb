@@ -15,8 +15,7 @@ class Testimonial < ApplicationRecord
     ActsAsTenant.without_tenant do
       super_admins = User.where(role: "super_admin")
       if super_admins.any?
-        UserMailer.new_testimonial_email(self, super_admins.first).deliver_later
-        NewTestimonialNotifier.with(testimonial: self).deliver_later(super_admins)
+        NewTestimonialNotifier.with(record: self, testimonial: self).deliver_later(super_admins)
       end
     end
   end

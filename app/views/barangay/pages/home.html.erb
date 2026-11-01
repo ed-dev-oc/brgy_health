@@ -1,16 +1,18 @@
-<section class="hero-banner" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-  url(<%= url_for(@hero_banner.image) %>);">
-  <div class="container">
-    <div class="hero-content">
-      <h1 class="display-4 fw-bold mb-4"><%= @hero_banner.title %></h1>
-      <p class="lead mb-4"><%= @hero_banner.subheadline %></p>
-      <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-        <%= link_to "View Announcements", root_path(anchor: 'AnnouncementCarousel'), class: "btn btn-primary btn-lg btn-cta" %>
-        <%= link_to "View Events", root_path(anchor: 'EventCarousel'), class: "btn btn-outline-light btn-lg btn-cta" %>
+<% if @hero_banner.present? %>
+  <section class="hero-banner" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+    url(<%= url_for(@hero_banner.image) if @hero_banner.image.attached? %>);">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="display-4 fw-bold mb-4"><%= @hero_banner.title %></h1>
+        <p class="lead mb-4"><%= @hero_banner.subheadline %></p>
+        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+          <%= link_to "View Announcements", root_path(anchor: 'AnnouncementCarousel'), class: "btn btn-primary btn-lg btn-cta" %>
+          <%= link_to "View Events", root_path(anchor: 'EventCarousel'), class: "btn btn-outline-light btn-lg btn-cta" %>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+<% end %>
 
 <div class="container d-flex flex-column" data-controller="splide-loader">
   <%= turbo_frame_tag :announcements_carousel_frame, src: announcements_path(format: :turbo_stream), loading: :lazy do %>

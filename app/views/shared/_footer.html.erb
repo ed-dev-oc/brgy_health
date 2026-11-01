@@ -18,7 +18,7 @@
           <span>
             <i class="bi bi-telephone-fill"></i>
             <% if ActsAsTenant.current_tenant.present? %>
-              <%= ActsAsTenant.current_tenant.users.admin.first.phone_number %>
+              <%= ActsAsTenant.current_tenant.users.admin.first&.phone_number %>
             <% else %>
               09061720165
             <% end %>
@@ -26,7 +26,7 @@
           <span>
             <i class="bi bi-envelope"></i>
             <% if ActsAsTenant.current_tenant.present? %>
-              <%= ActsAsTenant.current_tenant.users.admin.first.email %>
+              <%= ActsAsTenant.current_tenant.users.admin.first&.email %>
             <% else %>
               junjunpojr@gmail.com
             <% end %>

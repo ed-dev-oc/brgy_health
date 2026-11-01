@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="display-4">Barangay <%= @barangay.name %></h1>
     <%= link_to "Visit Subdomain Page",
-                "http://#{@barangay.subdomain}.lvh.me:3000",
+                root_url(subdomain: @barangay.subdomain),
                 class: "btn btn-green-600",
                 target: "_blank",
                 rel: "noopener" %>

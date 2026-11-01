@@ -10,7 +10,6 @@ class Admin::TestimonialsController < AdminController
       flash[:notice] = "Testimonial was successfully created."
     else
       flash.now[:alert] = "Testimonial was not created."
-      render :new
     end
   end
 

@@ -95,15 +95,17 @@
       </div>
 
       <!-- Health Program Description Card -->
-      <div class="card border-0 mb-5" style="background-color: #f0f7ff;">
-        <div class="card-body">
-          <h5 class="card-title text-green-600 mb-3">About the Health Program</h5>
-          <h6 class="text-muted small mb-2"><%= announcement.health_program.name %></h6>
-          <div class="rich-text-content">
-            <p><%= announcement.health_program.description %></p>
+      <% if announcement.health_program.present? %>
+        <div class="card border-0 mb-5" style="background-color: #f0f7ff;">
+          <div class="card-body">
+            <h5 class="card-title text-green-600 mb-3">About the Health Program</h5>
+            <h6 class="text-muted small mb-2"><%= announcement.health_program.name %></h6>
+            <div class="rich-text-content">
+              <p><%= announcement.health_program.description %></p>
+            </div>
           </div>
         </div>
-      </div>
+      <% end %>
 
       <!-- Additional Information -->
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
