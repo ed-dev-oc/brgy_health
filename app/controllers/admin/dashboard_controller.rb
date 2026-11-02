@@ -17,7 +17,7 @@ class Admin::DashboardController < AdminController
                                        .order(scheduled_at: :asc)
                                        .limit(5)
 
-    @today_appointments = Appointment.includes(:patient, :announcement, :health_worker)
+    @today_appointments = Appointment.includes(:patient, :announcement)
                                      .where(scheduled_at: Time.current.all_day)
                                      .order(scheduled_at: :asc)
                                      .limit(5)

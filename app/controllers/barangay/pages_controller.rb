@@ -7,7 +7,7 @@ class Barangay::PagesController < BarangayController
 
     if user_signed_in?
       @next_appointment = current_user.appointments
-        .includes(:announcement, :health_worker)
+        .includes(:announcement)
         .where(status: [ :pending, :approved ])
         .where("scheduled_at >= ?", Time.current.beginning_of_day)
         .order(scheduled_at: :asc)

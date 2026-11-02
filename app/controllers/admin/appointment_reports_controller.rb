@@ -4,7 +4,7 @@ class Admin::AppointmentReportsController < AdminController
   before_action :set_announcement
 
   def index
-    @appointments = @announcement.appointment_reports
+    @appointments = @announcement.appointment_reports.includes(:barangay)
 
     respond_to do |format|
       format.html

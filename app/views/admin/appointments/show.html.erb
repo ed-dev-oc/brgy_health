@@ -1,5 +1,5 @@
 <% content_for :title, "Appointment ##{@appointment.public_uid} — #{@appointment.patient.full_name}" %>
-<% patient_history = Appointment.includes(:announcement, :health_worker)
+<% patient_history = Appointment.includes(:announcement)
                                 .where(patient_id: @appointment.patient_id)
                                 .where.not(id: @appointment.id)
                                 .order(scheduled_at: :desc)

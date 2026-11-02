@@ -4,7 +4,7 @@ class Admin::UsersController < AdminController
   before_action :set_user, only: [ :edit, :update, :show, :toggle_status, :medical_records ]
 
   def index
-    @q = User.includes(:taggings, :subdivision).ransack(params[:q])
+    @q = User.includes(:taggings, :subdivision, :profile_attachment).ransack(params[:q])
     users = @q.result
 
     if params[:status].present?
@@ -70,7 +70,7 @@ class Admin::UsersController < AdminController
 
   def medical_records
     @appointments = Appointment
-    .includes(:health_worker, :announcement)
+    .includes(:health_worker, :announcement, :taggings, :follow_up)
     .where(patient_id: @user.id)
     .order(scheduled_at: :desc)
   end

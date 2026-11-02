@@ -3,7 +3,7 @@ class Admin::AnnouncementsController < AdminController
 
   # GET /admin/announcements or /admin/announcements.json
   def index
-    @q = Announcement.includes(:health_program, :posted_by, :rich_text_description).ransack(params[:q])
+    @q = Announcement.includes(:health_program, :rich_text_description).ransack(params[:q])
     @pagy, @announcements = pagy(@q.result(distinct: true).order(created_at: :desc))
     @announcement = Announcement.new
     @announcement.build_health_program
@@ -42,7 +42,7 @@ class Admin::AnnouncementsController < AdminController
   end
 
   def appointment_details
-    @q = @announcement.appointments.ransack(params[:q])
+    @q = @announcement.appointments.includes(:health_worker, :taggings, patient: :profile_attachment).ransack(params[:q])
     @pagy, @appointments = pagy(@q.result(distinct: true).order(created_at: :desc), limit: 5)
 
     @capacity_percentage = @announcement.capacity_percentage
