@@ -30,7 +30,7 @@ class Users::SessionsController < Devise::SessionsController
 
   # Redirect users after successful sign in
   def after_sign_in_path_for(resource)
-    if resource.role == "super_admin"
+    if resource.platform_user?
       super_admin_dashboard_index_path
     else
       stored_location_for(resource) || root_path
@@ -46,7 +46,7 @@ class Users::SessionsController < Devise::SessionsController
   end
 
   def unauthorized_super_admin_access?(user)
-    user&.role != "super_admin" && ActsAsTenant.current_tenant.blank?
+    !user&.platform_user? && ActsAsTenant.current_tenant.blank?
   end
 
   def handle_validation_required

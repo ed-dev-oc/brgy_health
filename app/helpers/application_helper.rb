@@ -10,7 +10,7 @@ module ApplicationHelper
   end
 
   def administrator_path_helper
-    if current_user.super_admin?
+    if current_user.platform_user?
       super_admin_dashboard_index_path
     else
       admin_dashboard_index_path
@@ -43,7 +43,7 @@ module ApplicationHelper
 
   def back_button_for_user
     path =
-      if current_user.super_admin?
+      if current_user.platform_user?
         super_admin_dashboard_index_path
       elsif current_user.admin?
         admin_dashboard_index_path
@@ -87,7 +87,7 @@ module ApplicationHelper
       "badge-soft-rose"
     when "in_progress", "admin", "ui_ux", "medium"
       "badge-soft-sky"
-    when "super_admin", "staff", "feature_request"
+    when "super_admin", "platform_staff", "staff", "feature_request"
       "badge-soft-purple"
     else
       "badge-soft-slate"

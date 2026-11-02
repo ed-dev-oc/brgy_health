@@ -143,7 +143,7 @@
           <i class="bi bi-journal-medical me-2"></i>Patient Medical Records (EHR)
         <% end %>
 
-        <% is_active = @user.flag_list.include?("active") %>
+        <% is_active = @user.active? %>
         <%= button_to toggle_status_admin_user_path(@user),
           method: :patch,
           form: { "data-turbo" => "false" },

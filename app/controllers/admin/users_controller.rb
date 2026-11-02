@@ -48,7 +48,12 @@ class Admin::UsersController < AdminController
   end
 
   def toggle_status
-    if @user.flag_list.include?("active")
+    if @user.active?
+      if @user.admin? && @user.last_active_admin_in_barangay?
+        redirect_back fallback_location: admin_users_path, alert: "Cannot deactivate this admin. Each barangay must have at least one active admin."
+        return
+      end
+
       @user.flag_list.remove("active")
       @user.flag_list.add("inactive")
     else
@@ -57,9 +62,9 @@ class Admin::UsersController < AdminController
     end
 
     if @user.save
-      redirect_to admin_users_path, notice: "User status updated."
+      redirect_back fallback_location: admin_users_path, notice: "User status updated."
     else
-      redirect_to admin_users_path, alert: "Failed to update user status."
+      redirect_back fallback_location: admin_users_path, alert: @user.errors.full_messages.to_sentence.presence || "Failed to update user status."
     end
   end
 
@@ -83,7 +88,7 @@ class Admin::UsersController < AdminController
     ]
 
     if current_user&.super_admin? || current_user&.admin?
-      permitted << :role unless params.dig(:user, :role) == "super_admin" && !current_user&.super_admin?
+      permitted << :role unless [ "super_admin", "platform_staff" ].include?(params.dig(:user, :role)) && !current_user&.super_admin?
       permitted << { flag_list: [] }
     end
 

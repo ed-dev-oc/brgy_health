@@ -27,7 +27,7 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :barangay
 
-  enum :role, [ :super_admin, :admin, :staff, :patient ]
+  enum :role, [ :super_admin, :admin, :staff, :patient, :platform_staff ]
 
   validates :email, :public_uid, uniqueness: true
   validates :phone_number, uniqueness: true, allow_blank: true
@@ -38,10 +38,12 @@ class User < ApplicationRecord
   }
 
   validates :first_name, :last_name, :email, :role, presence: true
-  validates :barangay, presence: true, unless: -> { self.role == "super_admin" }
+  validates :barangay, presence: true, unless: -> { self.platform_user? }
+  validate :ensure_at_least_one_active_admin, on: :update
   # validate :barangay_already_have_admin, if: -> { self.role == "admin" }
 
   before_create :add_admin_flag_require_validation, if: -> { self.role == "admin" }
+  before_create :set_default_status
   before_create :add_requirements_flags
   before_update :remove_requirements_flags
   after_create :send_registration_verification_email,
@@ -88,10 +90,59 @@ class User < ApplicationRecord
     "#{self.first_name.first.capitalize}#{self.last_name.first.capitalize}"
   end
 
+  def platform_user?
+    super_admin? || platform_staff?
+  end
+
+  def active?
+    if flag_list.include?("inactive")
+      false
+    elsif flag_list.include?("active")
+      true
+    else
+      !flag_list.include?("require_validation")
+    end
+  end
+
+  def active_for_authentication?
+    super && !flag_list.include?("inactive")
+  end
+
+  def inactive_message
+    flag_list.include?("inactive") ? :inactive : super
+  end
+
+  def last_active_admin_in_barangay?
+    return false unless admin? && barangay_id.present?
+
+    ActsAsTenant.without_tenant do
+      other_active_admins = User.where(barangay_id: barangay_id, role: :admin)
+                                .where.not(id: id)
+                                .select(&:active?)
+      other_active_admins.empty?
+    end
+  end
+
   private
 
+  def ensure_at_least_one_active_admin
+    return unless barangay_id.present? && role_was == "admin"
+
+    is_no_longer_active_admin = (role != "admin") || flag_list.include?("inactive") || !active?
+
+    if is_no_longer_active_admin && last_active_admin_in_barangay?
+      errors.add(:base, "Each barangay must have at least one active admin.")
+    end
+  end
+
+  def set_default_status
+    unless flag_list.include?("inactive") || (admin? && flag_list.include?("require_validation"))
+      self.flag_list.add("active")
+    end
+  end
+
   def add_requirements_flags
-    if self.role != "super_admin"
+    if !self.platform_user?
       self.flag_list.add("no_subdivision") if self.subdivision.nil?
     end
 
@@ -114,9 +165,11 @@ class User < ApplicationRecord
   end
 
   def send_notification_to_super_admin
-    super_admin = ActsAsTenant.without_tenant { User.super_admin.first }
+    super_admins = ActsAsTenant.without_tenant { User.where(role: [ :super_admin, :platform_staff ]) }
 
-    NewAdminNotifier.with(record: self).deliver(super_admin) if super_admin.present?
+    super_admins.each do |admin|
+      NewAdminNotifier.with(record: self).deliver(admin)
+    end
   end
 
   def prevent_super_admin_demotion

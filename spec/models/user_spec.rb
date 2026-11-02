@@ -293,4 +293,108 @@ RSpec.describe User, type: :model do
       expect(user.flag_list).not_to include("no_phone_number")
     end
   end
+
+  describe "platform_staff role" do
+    it "is valid without a barangay" do
+      staff = User.new(
+        email: "platform_staff@test.com",
+        first_name: "Platform",
+        last_name: "Staff",
+        role: :platform_staff,
+        password: "password123",
+        password_confirmation: "password123"
+      )
+
+      expect(staff).to be_valid
+      expect(staff.platform_user?).to be true
+    end
+  end
+
+  describe "default active status" do
+    it "defaults patient to active" do
+      patient = User.create!(
+        email: "new_patient@test.com",
+        first_name: "New",
+        last_name: "Patient",
+        role: :patient,
+        barangay_id: 1,
+        password: "password123",
+        password_confirmation: "password123"
+      )
+
+      expect(patient.flag_list).to include("active")
+      expect(patient.active?).to be true
+    end
+
+    it "defaults staff to active" do
+      staff = User.create!(
+        email: "new_staff@test.com",
+        first_name: "New",
+        last_name: "Staff",
+        role: :staff,
+        barangay_id: 1,
+        password: "password123",
+        password_confirmation: "password123"
+      )
+
+      expect(staff.flag_list).to include("active")
+      expect(staff.active?).to be true
+    end
+  end
+
+  describe "active_for_authentication?" do
+    it "returns true if active" do
+      patient = users(:patient)
+      patient.flag_list.add("active")
+      expect(patient.active_for_authentication?).to be true
+    end
+
+    it "returns false if inactive" do
+      patient = users(:patient)
+      patient.flag_list.add("inactive")
+      expect(patient.active_for_authentication?).to be false
+      expect(patient.inactive_message).to eq(:inactive)
+    end
+  end
+
+  describe "admin deactivation restrictions" do
+    it "prevents deactivating the only active admin in a barangay" do
+      admin = users(:admin)
+      admin.flag_list.add("active")
+      admin.save!
+
+      # Make sure no other admin is active in barangay 1
+      User.where(barangay_id: admin.barangay_id, role: :admin).where.not(id: admin.id).destroy_all
+
+      admin.flag_list.remove("active")
+      admin.flag_list.add("inactive")
+
+      expect(admin.save).to be false
+      expect(admin.errors[:base]).to include("Each barangay must have at least one active admin.")
+    end
+
+    it "allows deactivating an admin if another active admin exists in the same barangay" do
+      admin1 = users(:admin)
+      admin1.flag_list.add("active")
+      admin1.save!
+
+      admin2 = User.create!(
+        email: "co_admin@test.com",
+        first_name: "Co",
+        last_name: "Admin",
+        role: :admin,
+        barangay_id: admin1.barangay_id,
+        password: "password123",
+        password_confirmation: "password123"
+      )
+      admin2.flag_list.remove("require_validation")
+      admin2.flag_list.add("active")
+      admin2.save!
+
+      admin1.flag_list.remove("active")
+      admin1.flag_list.add("inactive")
+
+      expect(admin1.save).to be true
+    end
+  end
 end

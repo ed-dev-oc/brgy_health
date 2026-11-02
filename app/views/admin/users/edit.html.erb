@@ -24,10 +24,10 @@
 
       <div class="col-md-6">
         <%= f.label :role, "Account Role", class: "form-label fw-semibold small" %>
-        <% if @user.role == "super_admin" %>
+        <% if @user.platform_user? %>
           <%= f.text_field :role, value: @user.role.titleize, class: "form-control bg-light", readonly: true %>
         <% else %>
-          <%= f.select :role, User.roles.keys.reject { |r| r == "super_admin" }.map { |r| [r.titleize, r] }, {}, class: "form-select" %>
+          <%= f.select :role, User.roles.keys.reject { |r| ["super_admin", "platform_staff"].include?(r) }.map { |r| [r.titleize, r] }, {}, class: "form-select" %>
         <% end %>
       </div>
 

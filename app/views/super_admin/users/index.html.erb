@@ -40,6 +40,12 @@
         Patients <span class="badge badge-soft-emerald ms-1"><%= @patients_count %></span>
       <% end %>
     </li>
+    <li class="nav-item">
+      <%= link_to super_admin_users_path(q: { role_eq: User.roles[:platform_staff] }),
+            class: "nav-link #{current_role_eq == User.roles[:platform_staff].to_s ? 'active' : ''}" do %>
+        Platform Staff <span class="badge badge-soft-purple ms-1"><%= @platform_staff_count %></span>
+      <% end %>
+    </li>
   </ul>
 </div>
 

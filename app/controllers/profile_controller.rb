@@ -1,13 +1,13 @@
 class ProfileController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_tenant, unless: -> { current_user.super_admin? }
+  before_action :set_tenant, unless: -> { current_user&.platform_user? }
 
   layout :select_layout
 
   def edit
     @user = current_user
 
-    @subdivisions = if @user.super_admin?
+    @subdivisions = if @user.platform_user?
       ActsAsTenant.without_tenant { Subdivision.none }
     else
       Subdivision.where(barangay_id: @user.barangay_id)
@@ -19,7 +19,7 @@ class ProfileController < ApplicationController
   def update
     @user = current_user
 
-    @subdivisions = if @user.super_admin?
+    @subdivisions = if @user.platform_user?
       ActsAsTenant.without_tenant { Subdivision.none }
     else
       Subdivision.where(barangay_id: @user.barangay_id)
@@ -55,7 +55,7 @@ class ProfileController < ApplicationController
   def select_layout
     if current_user&.admin? || current_user&.staff?
       "admin"
-    elsif current_user&.super_admin?
+    elsif current_user&.platform_user?
       "super_admin"
     else
       "barangay"
@@ -63,7 +63,7 @@ class ProfileController < ApplicationController
   end
 
   def select_user_profile_page
-    if current_user&.super_admin?
+    if current_user&.platform_user?
       "pages/profile"
     else
       "barangay/pages/profile"

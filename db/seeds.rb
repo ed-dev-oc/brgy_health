@@ -28,6 +28,21 @@ super_admin.assign_attributes(
   role: :super_admin
 )
 super_admin.save!
+super_admin.flag_list.add("active")
+super_admin.save!
+
+platform_staff = User.find_or_initialize_by(email: "platform_staff@test.com")
+platform_staff.assign_attributes(
+  first_name: "Platform",
+  last_name: "Staff",
+  phone_number: "09090002155",
+  password: "admin123",
+  password_confirmation: "admin123",
+  role: :platform_staff
+)
+platform_staff.save!
+platform_staff.flag_list.add("active")
+platform_staff.save!
 
 lao_barangay = Barangay.create!(
   name: "Lao",
@@ -65,6 +80,7 @@ lao_admin = User.create!(
   subdivision_id: lao_subdivision.id
 )
 lao_admin.flag_list.remove("require_validation")
+lao_admin.flag_list.add("active")
 lao_admin.save
 
 san_isidro_admin = User.create!(
@@ -79,6 +95,7 @@ san_isidro_admin = User.create!(
   subdivision_id: san_isidro_subdivision.id
 )
 san_isidro_admin.flag_list.remove("require_validation")
+san_isidro_admin.flag_list.add("active")
 san_isidro_admin.save
 
 lao_patient = User.create!(

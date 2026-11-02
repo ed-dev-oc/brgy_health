@@ -7,6 +7,7 @@ class SuperAdmin::UsersController < SuperAdminController
     @admins_count = User.admin.count
     @staff_count = User.staff.count
     @patients_count = User.patient.count
+    @platform_staff_count = User.platform_staff.count
 
     base_scope = User.includes(:barangay, :taggings)
     if params[:filter] == "pending_validation"
@@ -23,6 +24,7 @@ class SuperAdmin::UsersController < SuperAdminController
 
   def validated
     @user.flag_list.remove("require_validation")
+    @user.flag_list.add("active")
 
     if @user.save
       UserMailer.admin_validated_email(@user).deliver_later
