@@ -1,0 +1,131 @@
+<% content_for :title, "Community Health Events — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h3 class="fw-bold mb-1">Community Health Events</h3>
+    <p class="text-secondary small mb-0">
+      Organize barangay medical missions, health seminars, nutrition outreach, and wellness activities.
+    </p>
+  </div>
+
+  <div>
+    <button type="button" class="btn btn-emerald" data-bs-toggle="modal" data-bs-target="#<%= dom_id(@event, 'form_modal') %>">
+      <i class="bi bi-plus-lg me-1"></i>New Community Event
+    </button>
+    <%= render partial: "admin/events/form_modal", locals: { event: @event } %>
+  </div>
+</div>
+
+<!-- Filter Tabs & Search Bar -->
+<div class="sa-card p-3 mb-4">
+  <% current_status = params.dig(:q, :status_eq).to_s %>
+  <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3">
+    <ul class="nav sa-filter-pills bg-light p-1 rounded-3">
+      <li class="nav-item">
+        <%= link_to "All Events", admin_events_path, class: "nav-link #{current_status.blank? ? 'active' : ''}" %>
+      </li>
+      <% Event.statuses.each do |status_name, status_val| %>
+        <li class="nav-item">
+          <%= link_to status_name.titleize, admin_events_path(q: { status_eq: status_val }), class: "nav-link #{current_status == status_val.to_s ? 'active' : ''}" %>
+        </li>
+      <% end %>
+    </ul>
+
+    <div class="flex-grow-1" style="max-width: 540px;">
+      <%= render partial: "admin/events/search_form" %>
+    </div>
+  </div>
+</div>
+
+<!-- Events Table Card -->
+<div class="sa-card overflow-hidden">
+  <% if @events.any? %>
+    <div class="table-responsive">
+      <table class="table sa-table mb-0">
+        <thead>
+          <tr>
+            <th>UID &amp; Event Title</th>
+            <th>Venue Location</th>
+            <th>Event Schedule</th>
+            <th>Target Audience</th>
+            <th>Posted By</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @events.each do |event| %>
+            <tr>
+              <td>
+                <div class="fw-bold text-dark"><%= event.name %></div>
+                <small class="text-secondary">#<%= event.public_uid %></small>
+              </td>
+              <td>
+                <span class="small text-dark">
+                  <i class="bi bi-geo-alt-fill text-success me-1"></i><%= event.location %>
+                </span>
+              </td>
+              <td>
+                <div class="small fw-semibold text-dark">
+                  <%= event.start_date.strftime("%b %d, %Y · %I:%M %p") %>
+                </div>
+                <small class="text-secondary">
+                  to <%= event.end_date.strftime("%b %d, %Y · %I:%M %p") %>
+                </small>
+              </td>
+              <td>
+                <span class="badge badge-soft-sky">
+                  <i class="bi bi-people me-1"></i><%= event.audience.to_s.titleize %>
+                </span>
+              </td>
+              <td class="small text-secondary"><%= event.posted_by.full_name %></td>
+              <td>
+                <span class="badge <%= soft_badge_class(event.status) %>">
+                  <%= event.status.titleize %>
+                </span>
+              </td>
+              <td class="text-end">
+                <%= render partial: "admin/events/form_modal", locals: { event: event } %>
+                <%= render partial: "admin/events/event", locals: { event: event } %>
+                <div class="d-inline-flex align-items-center gap-1">
+                  <button type="button" class="btn btn-sm btn-light border" data-bs-toggle="modal" data-bs-target="#<%= dom_id(event, 'modal') %>" title="View Event">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-light border" data-bs-toggle="modal" data-bs-target="#<%= dom_id(event, 'form_modal') %>" title="Edit Event">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <% unless event.archived? %>
+                    <%= link_to archive_admin_event_path(event.public_uid),
+                      class: "btn btn-sm btn-outline-danger",
+                      title: "Archive Event",
+                      data: { turbo_method: :PATCH, turbo_submits_with: "...", turbo_confirm: "Archive '#{event.name}'?" } do %>
+                      <i class="bi bi-archive"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @pagy.pages > 1 %>
+      <div class="p-3 border-top d-flex justify-content-end">
+        <%== pagy_bootstrap_nav(@pagy) %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="p-5 text-center">
+      <div class="sa-icon-well well-slate mx-auto mb-3">
+        <i class="bi bi-calendar-event"></i>
+      </div>
+      <h5 class="fw-bold mb-1">No Community Events Found</h5>
+      <p class="text-secondary small mb-3">Create an event to notify barangay residents about upcoming health activities.</p>
+      <button type="button" class="btn btn-emerald btn-sm" data-bs-toggle="modal" data-bs-target="#<%= dom_id(@event, 'form_modal') %>">
+        <i class="bi bi-plus-lg me-1"></i>New Community Event
+      </button>
+    </div>
+  <% end %>
+</div>

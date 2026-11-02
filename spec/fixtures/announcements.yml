@@ -1,0 +1,29 @@
+first_announcement:
+  public_uid: "a1b2c3d4e5"
+  barangay_id: 1
+  posted_by_id: 1
+  # health_program_id: 1
+  name: "Free Vaccination Drive"
+  start_date: <%= Time.current.advance(days: 1).change(hour: 8, min: 0, sec: 0) %>
+  end_date: <%= Time.current.advance(days: 6).change(hour: 17, min: 0, sec: 0) %>
+  open_time: <%= Time.current.advance(days: 1).change(hour: 8, min: 0, sec: 0) %>
+  close_time: <%= Time.current.advance(days: 6).change(hour: 17, min: 0, sec: 0) %>
+  location: "Barangay Hall"
+  max_patients: 100
+  audience: "All Residents"
+  status: 1
+
+second_announcement:
+  public_uid: "f6g7h8i9j0"
+  barangay_id: 2
+  posted_by_id: 2
+  # health_program_id: 2
+  name: "Nutrition Seminar"
+  start_date: <%= Time.current.advance(days: 1).change(hour: 8, min: 0, sec: 0) %>
+  end_date: <%= Time.current.advance(days: 6).change(hour: 17, min: 0, sec: 0) %>
+  open_time: <%= Time.current.advance(days: 1).change(hour: 8, min: 0, sec: 0) %>
+  close_time: <%= Time.current.advance(days: 6).change(hour: 17, min: 0, sec: 0) %>
+  location: "Community Center"
+  max_patients: 50
+  audience: "Parents and Guardians"
+  status: 1

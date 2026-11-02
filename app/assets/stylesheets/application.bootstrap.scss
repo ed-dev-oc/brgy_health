@@ -1,3 +1,17 @@
-@import 'bootstrap/scss/bootstrap';
+// @import 'bootstrap/scss/bootstrap';
+@import 'custom_bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
 @import 'flash';
+@import 'hero_banner';
+@import 'custom_splide';
+@import '@splidejs/splide/dist/css/themes/splide-sea-green.min';
+@import 'issue_report';
+@import 'super_admin';
+@import 'public';
+@import 'patient';
+@import 'leaflet/dist/leaflet';
+
+.leaflet-container {
+  z-index: 1;
+}
+

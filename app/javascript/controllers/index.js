@@ -4,8 +4,32 @@
 
 import { application } from "./application"
 
+import AdminTestimonialController from "./admin_testimonial_controller"
+application.register("admin-testimonial", AdminTestimonialController)
+
 import FlashController from "./flash_controller"
 application.register("flash", FlashController)
 
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import IssueReportController from "./issue_report_controller"
+application.register("issue-report", IssueReportController)
+
+import LeafletController from "./leaflet_controller"
+application.register("leaflet", LeafletController)
+
+import NestedAttributesVisibilityController from "./nested_attributes_visibility_controller"
+application.register("nested-attributes-visibility", NestedAttributesVisibilityController)
+
+import PasswordVisibilityController from "./password_visibility_controller"
+application.register("password-visibility", PasswordVisibilityController)
+
+import RegisterServiceWorkerController from "./register_service_worker_controller"
+application.register("register-service-worker", RegisterServiceWorkerController)
+
+import SelectPhilippinesAddressController from "./select_philippines_address_controller"
+application.register("select-philippines-address", SelectPhilippinesAddressController)
+
+import SplideLoaderController from "./splide_loader_controller"
+application.register("splide-loader", SplideLoaderController)

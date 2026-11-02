@@ -1,0 +1,23 @@
+<div class="modal fade" id="<%= dom_id(@new_appointment, "follow_up_modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(@new_appointment, "follow_up_modal") %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header border-bottom px-4 py-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="sa-icon-well well-sky" style="width: 36px; height: 36px; font-size: 1rem;">
+            <i class="bi bi-calendar-plus"></i>
+          </span>
+          <div>
+            <h5 class="modal-title fw-bold mb-0" id="<%= dom_id(@new_appointment, "follow_up_modal") %>Label">Schedule Follow-Up Visit</h5>
+            <small class="text-secondary">Patient: <%= @appointment.patient.full_name %></small>
+          </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <%= turbo_frame_tag :follow_up_appointment_form do %>
+          <%= render partial: "admin/appointments/follow_up_form", locals: { appointment: @new_appointment, parent_appointment: @appointment } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

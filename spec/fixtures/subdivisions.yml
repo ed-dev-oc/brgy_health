@@ -1,0 +1,11 @@
+purok_one:
+  id: 1
+  barangay_id: 1
+  name: "Purok One"
+  slug: "purok-one"
+
+zone_one:
+  id: 2
+  barangay_id: 2
+  name: "Zone One"
+  slug: "zone-one"

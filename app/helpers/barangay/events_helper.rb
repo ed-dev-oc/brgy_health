@@ -1,0 +1,2 @@
+module Barangay::EventsHelper
+end

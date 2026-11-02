@@ -1,0 +1,55 @@
+<div class="container py-5">
+  <div class="pub-card p-4 p-md-5 mx-auto shadow-sm" style="max-width: 480px;">
+    <div class="text-center mb-4">
+      <div class="pub-icon-well mx-auto mb-3">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <h4 class="fw-bold mb-1">Set a New Password</h4>
+      <p class="text-secondary small mb-0">
+        Choose a strong password that includes letters, numbers, and symbols.
+      </p>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :reset_password_token %>
+
+      <div class="mb-3">
+        <%= f.label :password, class: "form-label fw-semibold small" do %>
+          New Password
+          <% if @minimum_password_length %>
+            <span class="text-secondary fw-normal">(<%= @minimum_password_length %> chars min)</span>
+          <% end %>
+        <% end %>
+        <div class="input-group" data-controller="password-visibility">
+          <span class="input-group-text bg-light"><i class="bi bi-lock text-secondary"></i></span>
+          <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: "form-control", data: { password_visibility_target: "passwordInput" }, required: true %>
+          <button type="button" class="btn btn-outline-secondary" data-action="click->password-visibility#togglePasswordVisibility" aria-label="Toggle password visibility">
+            <i class="bi bi-eye" data-password-visibility-target="icon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :password_confirmation, "Confirm New Password", class: "form-label fw-semibold small" %>
+        <div class="input-group" data-controller="password-visibility">
+          <span class="input-group-text bg-light"><i class="bi bi-lock-fill text-secondary"></i></span>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", data: { password_visibility_target: "passwordInput" }, required: true %>
+          <button type="button" class="btn btn-outline-secondary" data-action="click->password-visibility#togglePasswordVisibility" aria-label="Toggle password visibility">
+            <i class="bi bi-eye" data-password-visibility-target="icon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="d-grid mb-3">
+        <%= f.submit "Update Password", class: "btn btn-emerald btn-lg" %>
+      </div>
+
+      <div class="text-center">
+        <%= link_to new_session_path(resource_name), class: "small fw-semibold text-secondary text-decoration-none" do %>
+          <i class="bi bi-arrow-left me-1"></i>Back to Sign In
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

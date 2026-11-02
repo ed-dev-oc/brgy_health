@@ -1,0 +1,17 @@
+<% if events.empty? %>
+  <div class="pt-card p-4 text-center mb-4">
+    <div class="pt-icon-circle circle-sky mx-auto mb-2">
+      <i class="bi bi-calendar-event"></i>
+    </div>
+    <h6 class="fw-bold mb-1">No Upcoming Community Events</h6>
+    <p class="text-secondary small mb-0">
+      Check back soon for upcoming barangay wellness seminars and medical missions.
+    </p>
+  </div>
+<% else %>
+  <div class="d-flex flex-column gap-3 mb-4" id="EventCarousel">
+    <% events.each do |event| %>
+      <%= render partial: "barangay/events/card", locals: { event: event } %>
+    <% end %>
+  </div>
+<% end %>

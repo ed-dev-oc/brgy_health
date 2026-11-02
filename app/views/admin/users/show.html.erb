@@ -1,0 +1,187 @@
+<% content_for :title, "#{@user.full_name} — User Details" %>
+<% user_appointments = @user.appointments.includes(:announcement, :health_worker).order(scheduled_at: :desc).limit(8) %>
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <span class="badge <%= soft_badge_class(@user.role) %>"><%= @user.role.titleize %></span>
+      <% @user.flag_list.each do |flag| %>
+        <span class="badge <%= soft_badge_class(flag) %>"><%= flag.titleize %></span>
+      <% end %>
+      <span class="text-secondary small">UID #<%= @user.public_uid %></span>
+    </div>
+    <h3 class="fw-bold mb-0"><%= @user.full_name %></h3>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2">
+    <%= link_to admin_users_path, class: "btn btn-light border btn-sm" do %>
+      <i class="bi bi-arrow-left me-1"></i>Back to Directory
+    <% end %>
+    <% if @user.patient? || @user.appointments.any? %>
+      <%= link_to medical_records_admin_user_path(@user.public_uid), class: "btn btn-emerald btn-sm" do %>
+        <i class="bi bi-journal-medical me-1"></i>Medical Records (EHR)
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Left Column: Profile Summary & Real Appointment History -->
+  <div class="col-12 col-lg-8">
+    <!-- Personal Information Card -->
+    <div class="sa-card p-4 mb-4">
+      <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom">
+        <%= image_tag(profile_url(@user), class: "rounded-circle object-fit-cover", size: "64x64") %>
+        <div>
+          <h5 class="fw-bold text-dark mb-0"><%= @user.full_name %></h5>
+          <div class="text-secondary small"><%= @user.email %></div>
+          <% if @user.subdivision.present? %>
+            <span class="badge badge-soft-emerald mt-1">
+              <i class="bi bi-geo-alt me-1"></i><%= @user.subdivision.name %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">First Name</small>
+          <span class="fw-semibold text-dark"><%= @user.first_name.presence || "—" %></span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Middle Name</small>
+          <span class="fw-semibold text-dark"><%= @user.middle_name.presence || "—" %></span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Last Name &amp; Suffix</small>
+          <span class="fw-semibold text-dark"><%= [@user.last_name, @user.suffix].compact_blank.join(" ") %></span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Phone Number</small>
+          <span class="fw-semibold text-dark"><%= @user.phone_number.presence || "Not provided" %></span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Purok / Subdivision</small>
+          <span class="fw-semibold text-dark"><%= @user.subdivision&.name || "Not assigned" %></span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Barangay</small>
+          <span class="fw-semibold text-dark">Brgy. <%= @user.barangay&.name %></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Real Appointments History Table (Replaces fake hardcoded Activity Log!) -->
+    <div class="sa-card overflow-hidden">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold mb-0">
+          <i class="bi bi-calendar2-check text-success me-2"></i>Appointment History (<%= @user.appointments.count %>)
+        </h6>
+        <% if @user.appointments.any? %>
+          <%= link_to medical_records_admin_user_path(@user.public_uid), class: "btn btn-sm btn-light border" do %>
+            Open Full EHR Chart <i class="bi bi-arrow-right ms-1"></i>
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if user_appointments.any? %>
+        <div class="table-responsive">
+          <table class="table sa-table mb-0">
+            <thead>
+              <tr>
+                <th>Booking</th>
+                <th>Service / Announcement</th>
+                <th>Scheduled Date</th>
+                <th>Health Worker</th>
+                <th>Status</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% user_appointments.each do |appt| %>
+                <tr>
+                  <td class="fw-semibold">#<%= appt.public_uid %></td>
+                  <td class="text-truncate" style="max-width: 200px;"><%= appt.announcement.name %></td>
+                  <td class="small"><%= appt.scheduled_at.strftime("%b %d, %Y · %I:%M %p") %></td>
+                  <td class="small text-secondary"><%= appt.health_worker&.full_name || "Unassigned" %></td>
+                  <td>
+                    <span class="badge <%= soft_badge_class(appt.status) %>"><%= appt.status.titleize %></span>
+                  </td>
+                  <td class="text-end">
+                    <%= link_to admin_appointment_path(appt.public_uid), class: "btn btn-sm btn-light border" do %>
+                      <i class="bi bi-eye"></i>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="p-4 text-center text-secondary small">
+          No appointments recorded for this user yet.
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Right Column: Quick Actions & Metadata -->
+  <div class="col-12 col-lg-4">
+    <div class="sa-card p-4 mb-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        Quick Actions
+      </h6>
+      <div class="d-grid gap-2">
+        <% if current_user&.admin? && @user.role == "staff" %>
+          <%= link_to edit_admin_user_path(@user.public_uid), class: "btn btn-emerald" do %>
+            <i class="bi bi-pencil me-2"></i>Edit Staff Account
+          <% end %>
+        <% end %>
+
+        <%= link_to medical_records_admin_user_path(@user.public_uid), class: "btn btn-outline-emerald" do %>
+          <i class="bi bi-journal-medical me-2"></i>Patient Medical Records (EHR)
+        <% end %>
+
+        <% is_active = @user.active? %>
+        <%= button_to toggle_status_admin_user_path(@user),
+          method: :patch,
+          form: { "data-turbo" => "false" },
+          data: { confirm: "Are you sure you want to #{is_active ? 'deactivate' : 'activate'} this user?" },
+          class: "btn #{is_active ? 'btn-outline-danger' : 'btn-emerald'} w-100" do %>
+          <i class="bi <%= is_active ? 'bi-person-slash' : 'bi-person-check' %> me-2"></i><%= is_active ? "Deactivate Account" : "Activate Account" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="sa-card p-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        Account Metadata
+      </h6>
+      <div class="d-flex flex-column gap-2 small">
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Public UID</span>
+          <code class="fw-semibold text-dark">#<%= @user.public_uid %></code>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Registered</span>
+          <span class="text-dark"><%= @user.created_at.strftime("%b %d, %Y") %></span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Last Updated</span>
+          <span class="text-dark"><%= @user.updated_at.strftime("%b %d, %Y %I:%M %p") %></span>
+        </div>
+        <% if @user.flag_list.any? %>
+          <div class="pt-2 border-top d-flex justify-content-between align-items-center">
+            <span class="text-secondary">Flags</span>
+            <div class="d-flex flex-wrap gap-1">
+              <% @user.flag_list.each do |flag| %>
+                <span class="badge <%= soft_badge_class(flag) %>"><%= flag %></span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

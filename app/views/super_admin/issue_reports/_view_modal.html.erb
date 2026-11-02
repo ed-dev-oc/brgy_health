@@ -1,0 +1,87 @@
+<div class="modal fade" id="<%= dom_id(issue_report, "view_modal") %>" tabindex="-1" aria-labelledby="<%= dom_id(issue_report, "view_modal") %>Label" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 0.9rem;">
+      <div class="modal-header border-bottom px-4 py-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-dark font-monospace">#<%= issue_report.public_uid %></span>
+          <h5 class="modal-title fw-bold mb-0" id="<%= dom_id(issue_report, "view_modal") %>Label">Issue Report Details</h5>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <div class="d-flex flex-wrap gap-2 mb-2">
+          <span class="badge <%= soft_badge_class(issue_report.priority) %>">Priority: <%= issue_report.priority.titleize %></span>
+          <span class="badge <%= soft_badge_class(issue_report.issue_type) %>"><%= issue_report.issue_type.titleize %></span>
+          <span class="badge badge-soft-slate">Module: <%= issue_report.module_area.titleize %></span>
+          <span class="badge <%= soft_badge_class(issue_report.status) %>">Status: <%= issue_report.status.titleize %></span>
+        </div>
+
+        <h5 class="fw-bold mb-3"><%= issue_report.title %></h5>
+
+        <div class="p-3 rounded-3 bg-light border mb-3">
+          <h6 class="text-uppercase text-secondary fw-bold mb-1" style="font-size: 0.72rem;">Description</h6>
+          <div style="font-size: 0.9rem;"><%= simple_format(issue_report.description, class: "mb-0") %></div>
+        </div>
+
+        <div class="row g-3 mb-3" style="font-size: 0.85rem;">
+          <div class="col-sm-6">
+            <div class="p-3 rounded-3 border h-100">
+              <div class="text-secondary small">Reported By</div>
+              <div class="fw-semibold text-dark"><%= issue_report.email %></div>
+              <div class="text-secondary small mt-1">
+                <i class="bi bi-calendar-event me-1"></i><%= issue_report.created_at.strftime("%b %d, %Y at %I:%M %p") %>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="p-3 rounded-3 border h-100">
+              <div class="text-secondary small">Affected Page URL</div>
+              <% if issue_report.url.present? %>
+                <%= link_to issue_report.url, issue_report.url, target: "_blank", rel: "noopener", class: "text-success text-truncate d-block fw-medium" %>
+              <% else %>
+                <span class="text-muted">Not specified</span>
+              <% end %>
+              <div class="text-secondary small mt-1">
+                <i class="bi bi-paperclip me-1"></i><%= pluralize(issue_report.images.count, "Screenshot") %> Attached
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <% if issue_report.images.any? %>
+          <div class="border-top pt-3">
+            <h6 class="fw-bold small text-uppercase text-secondary mb-2">
+              <i class="bi bi-images me-1"></i>Attached Screenshots
+            </h6>
+            <div class="bg-dark rounded-3 p-3 text-center">
+              <div id="<%= dom_id(issue_report, "carousel") %>" class="carousel slide">
+                <div class="carousel-inner">
+                  <% issue_report.images.each_with_index do |image, index| %>
+                    <div class="carousel-item <%= index == 0 ? 'active' : '' %>">
+                      <%= image_tag(image.variant(resize_to_limit: [720, 480]), class: "img-fluid rounded") %>
+                    </div>
+                  <% end %>
+                </div>
+                <% if issue_report.images.count > 1 %>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#<%= dom_id(issue_report, "carousel") %>" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#<%= dom_id(issue_report, "carousel") %>" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="modal-footer bg-light px-4 py-3">
+        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

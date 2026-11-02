@@ -1,0 +1,97 @@
+class Admin::UsersController < AdminController
+  include Pagy::Backend
+
+  before_action :set_user, only: [ :edit, :update, :show, :toggle_status, :medical_records ]
+
+  def index
+    @q = User.includes(:taggings, :subdivision, :profile_attachment).ransack(params[:q])
+    users = @q.result
+
+    if params[:status].present?
+      users = users.tagged_with(params[:status], on: :flags)
+    end
+
+    if params[:role].present?
+      users = users.where(role: params[:role])
+    end
+
+    @pagy, @staff_users = pagy(users.order(:last_name))
+  end
+
+  def edit
+  end
+
+  def create
+    @user = User.new(user_params)
+    @user.role = "staff"
+
+    if @user.save
+      redirect_to admin_users_path, notice: "Staff user created successfully."
+    else
+      flash.now[:alert] = "There was a problem creating the user."
+      render :index, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    flag_str = params[:user].delete(:flag_list)
+    params[:user][:flag_list] = flag_str.to_s.split(",").map(&:strip) if flag_str
+
+    if @user.update(user_params)
+      redirect_to admin_users_path, notice: "User updated successfully."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def show
+  end
+
+  def toggle_status
+    if @user.active?
+      if @user.admin? && @user.last_active_admin_in_barangay?
+        redirect_back fallback_location: admin_users_path, alert: "Cannot deactivate this admin. Each barangay must have at least one active admin."
+        return
+      end
+
+      @user.flag_list.remove("active")
+      @user.flag_list.add("inactive")
+    else
+      @user.flag_list.remove("inactive")
+      @user.flag_list.add("active")
+    end
+
+    if @user.save
+      redirect_back fallback_location: admin_users_path, notice: "User status updated."
+    else
+      redirect_back fallback_location: admin_users_path, alert: @user.errors.full_messages.to_sentence.presence || "Failed to update user status."
+    end
+  end
+
+  def medical_records
+    @appointments = Appointment
+    .includes(:health_worker, :announcement, :taggings, :follow_up)
+    .where(patient_id: @user.id)
+    .order(scheduled_at: :desc)
+  end
+
+  private
+
+  def set_user
+     @user = User.find_by(public_uid: params[:id]) || User.find_by(id: params[:id])
+  end
+
+  def user_params
+    permitted = [
+      :email, :public_uid, :first_name, :middle_name, :last_name, :suffix,
+      :password, :password_confirmation, :phone_number
+    ]
+
+    if current_user&.super_admin? || current_user&.admin?
+      permitted << :role unless [ "super_admin", "platform_staff" ].include?(params.dig(:user, :role)) && !current_user&.super_admin?
+      permitted << { flag_list: [] }
+    end
+
+    params.require(:user).permit(permitted)
+  end
+end

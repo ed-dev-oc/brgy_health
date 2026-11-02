@@ -13,6 +13,9 @@
 # it.
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+require 'factory_bot_rails'
+
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
@@ -91,4 +94,24 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
+
+  config.before(:each) do |example|
+    default_barangay = Barangay.find_by(id: 1) || Barangay.find_or_create_by!(name: "Lao", region: "Region VIII", province: "Leyte", city: "Ormoc")
+
+    if example.metadata[:type] == :request
+      # Set the `test_tenant` value for integration tests
+      ActsAsTenant.test_tenant = default_barangay
+    else
+      # Otherwise just use current_tenant
+      ActsAsTenant.current_tenant = default_barangay
+    end
+  end
+
+  config.after(:each) do |example|
+    # Clear any tenancy that might have been set
+    ActsAsTenant.current_tenant = nil
+    ActsAsTenant.test_tenant = nil
+  end
+
+  config.include FactoryBot::Syntax::Methods
 end

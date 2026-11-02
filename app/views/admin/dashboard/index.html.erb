@@ -1,1 +1,477 @@
-<h1>Admin Page</h1>
+<% content_for :title, "Clinic Dashboard — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
+
+<!-- ==================== WELCOME HEADER & QUICK ACTIONS ==================== -->
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+  <div>
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <span class="badge badge-soft-emerald">
+        <i class="bi bi-hospital me-1"></i>Brgy. <%= ActsAsTenant.current_tenant&.name %> Health Center
+      </span>
+      <span class="text-secondary small">
+        <i class="bi bi-calendar3 me-1"></i><%= Time.current.strftime("%A, %B %d, %Y") %>
+      </span>
+    </div>
+    <h3 class="fw-bold mb-0">Clinic Operations &amp; Patient Queue</h3>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2">
+    <%= link_to admin_appointments_path(q: { status_eq: 0 }), class: "btn btn-light border btn-sm fw-semibold" do %>
+      <i class="bi bi-hourglass-split text-warning me-1"></i>Pending Approvals (<%= @pending_appointments_count %>)
+    <% end %>
+    <%= link_to admin_announcements_path, class: "btn btn-light border btn-sm fw-semibold" do %>
+      <i class="bi bi-megaphone text-success me-1"></i>Announcements
+    <% end %>
+    <%= link_to admin_events_path, class: "btn btn-light border btn-sm fw-semibold" do %>
+      <i class="bi bi-calendar-event text-primary me-1"></i>Events
+    <% end %>
+    <%= link_to admin_users_path, class: "btn btn-emerald btn-sm" do %>
+      <i class="bi bi-people me-1"></i>Residents &amp; Staff
+    <% end %>
+  </div>
+</div>
+
+<!-- ==================== ROW 1: 4 CLINICAL KPI CARDS ==================== -->
+<div class="row g-3 mb-4">
+  <!-- KPI 1: Today's Clinic Schedule -->
+  <div class="col-12 col-sm-6 col-xl-3">
+    <%= link_to admin_appointments_path(today: "true"), class: "text-decoration-none text-dark d-block h-100" do %>
+      <div class="sa-kpi-card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <div class="text-secondary small fw-semibold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.04em;">
+              Today's Clinic Schedule
+            </div>
+            <div class="fs-2 fw-bold text-dark mt-1"><%= @today_appointments_count %></div>
+          </div>
+          <div class="sa-icon-well well-emerald">
+            <i class="bi bi-calendar-check"></i>
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between small pt-2 border-top">
+          <span class="text-success fw-medium">
+            <i class="bi bi-check2-circle me-1"></i><%= @today_completed_count %> Completed
+          </span>
+          <span class="text-secondary">
+            <%= [@today_appointments_count - @today_completed_count, 0].max %> Remaining
+          </span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- KPI 2: Pending Appointment Approvals -->
+  <div class="col-12 col-sm-6 col-xl-3">
+    <%= link_to admin_appointments_path(q: { status_eq: 0 }), class: "text-decoration-none text-dark d-block h-100" do %>
+      <div class="sa-kpi-card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <div class="text-secondary small fw-semibold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.04em;">
+              Pending Approvals
+            </div>
+            <div class="fs-2 fw-bold text-dark mt-1"><%= @pending_appointments_count %></div>
+          </div>
+          <div class="sa-icon-well well-amber">
+            <i class="bi bi-hourglass-split"></i>
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between small pt-2 border-top">
+          <% if @pending_appointments_count > 0 %>
+            <span class="badge badge-soft-amber">Needs Review</span>
+          <% else %>
+            <span class="text-success fw-medium"><i class="bi bi-check-all me-1"></i>All caught up</span>
+          <% end %>
+          <span class="text-secondary"><%= @waitlisted_appointments_count %> Waitlisted</span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- KPI 3: Registered Residents / Patients -->
+  <div class="col-12 col-sm-6 col-xl-3">
+    <%= link_to admin_users_path(role: "patient"), class: "text-decoration-none text-dark d-block h-100" do %>
+      <div class="sa-kpi-card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <div class="text-secondary small fw-semibold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.04em;">
+              Registered Residents
+            </div>
+            <div class="fs-2 fw-bold text-dark mt-1"><%= number_with_delimiter(@total_patients) %></div>
+          </div>
+          <div class="sa-icon-well well-sky">
+            <i class="bi bi-people"></i>
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between small pt-2 border-top">
+          <span class="text-secondary">
+            <i class="bi bi-geo-alt me-1"></i><%= @subdivisions_count %> Puroks/Zones
+          </span>
+          <span class="text-success fw-medium">+<%= @new_patients_this_month %> this month</span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- KPI 4: Health Programs & Staff -->
+  <div class="col-12 col-sm-6 col-xl-3">
+    <%= link_to admin_health_programs_path, class: "text-decoration-none text-dark d-block h-100" do %>
+      <div class="sa-kpi-card p-3 h-100">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <div class="text-secondary small fw-semibold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.04em;">
+              Active Health Programs
+            </div>
+            <div class="fs-2 fw-bold text-dark mt-1"><%= @total_health_programs %></div>
+          </div>
+          <div class="sa-icon-well well-purple">
+            <i class="bi bi-heart-pulse"></i>
+          </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-between small pt-2 border-top">
+          <span class="text-secondary"><%= @active_announcements_count %> Active Schedules</span>
+          <span class="badge badge-soft-purple"><%= @total_health_workers %> Staff</span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- ==================== ROW 2: LIVE CLINICAL QUEUES ==================== -->
+<div class="row g-4 mb-4">
+  <!-- Left Column: Tabbed Appointment Queue (Pending Approvals & Today's Schedule) -->
+  <div class="col-12 col-xl-7">
+    <div class="sa-card h-100 d-flex flex-column">
+      <div class="p-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <ul class="nav sa-filter-pills bg-light p-1 rounded-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tab-pending-btn" data-bs-toggle="tab" data-bs-target="#pane-pending" type="button" role="tab">
+              <i class="bi bi-hourglass-split text-warning me-1"></i>Pending Approval
+              <span class="badge rounded-pill bg-warning text-dark ms-1"><%= @pending_appointments_count %></span>
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tab-today-btn" data-bs-toggle="tab" data-bs-target="#pane-today" type="button" role="tab">
+              <i class="bi bi-calendar-check text-success me-1"></i>Today's Schedule
+              <span class="badge rounded-pill bg-success ms-1"><%= @today_appointments_count %></span>
+            </button>
+          </li>
+        </ul>
+
+        <%= link_to admin_appointments_path, class: "btn btn-sm btn-light border" do %>
+          View All Appointments <i class="bi bi-arrow-right ms-1"></i>
+        <% end %>
+      </div>
+
+      <div class="tab-content flex-grow-1">
+        <!-- Tab 1: Pending Appointment Requests -->
+        <div class="tab-pane fade show active" id="pane-pending" role="tabpanel">
+          <% if @pending_appointments.any? %>
+            <div class="table-responsive">
+              <table class="table sa-table mb-0">
+                <thead>
+                  <tr>
+                    <th>Patient</th>
+                    <th>Service / Announcement</th>
+                    <th>Requested Schedule</th>
+                    <th class="text-end">Quick Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @pending_appointments.each do |appt| %>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center gap-2">
+                          <%= image_tag(profile_url(appt.patient), class: "rounded-circle object-fit-cover", size: "32x32") %>
+                          <div>
+                            <div class="fw-semibold text-dark"><%= appt.patient.full_name %></div>
+                            <small class="text-secondary">#<%= appt.public_uid %></small>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="fw-medium text-dark text-truncate" style="max-width: 190px;"><%= appt.announcement.name %></div>
+                        <small class="text-secondary">
+                          Slots: <%= appt.announcement.approved_patients_count %>/<%= appt.announcement.max_patients %>
+                        </small>
+                      </td>
+                      <td>
+                        <div class="small fw-medium text-dark"><%= appt.scheduled_at.strftime("%b %d, %Y") %></div>
+                        <small class="text-secondary"><%= appt.scheduled_at.strftime("%I:%M %p") %></small>
+                      </td>
+                      <td class="text-end">
+                        <div class="d-inline-flex gap-1">
+                          <%= link_to flag_as_approved_admin_appointment_path(appt.public_uid),
+                            data: { turbo_method: :PATCH, turbo_confirm: "Approve appointment ##{appt.public_uid} for #{appt.patient.full_name}?" },
+                            class: "btn btn-sm btn-emerald", title: "Approve" do %>
+                            <i class="bi bi-check-lg"></i> Approve
+                          <% end %>
+                          <%= link_to flag_as_rejected_admin_appointment_path(appt.public_uid),
+                            data: { turbo_method: :PATCH, turbo_confirm: "Reject appointment ##{appt.public_uid}?" },
+                            class: "btn btn-sm btn-outline-danger", title: "Reject" do %>
+                            <i class="bi bi-x-lg"></i>
+                          <% end %>
+                          <%= link_to admin_appointment_path(appt.public_uid), class: "btn btn-sm btn-light border", title: "View Details" do %>
+                            <i class="bi bi-eye"></i>
+                          <% end %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="p-5 text-center">
+              <div class="sa-icon-well well-emerald mx-auto mb-3">
+                <i class="bi bi-check2-all"></i>
+              </div>
+              <h6 class="fw-bold mb-1">No Pending Appointment Requests</h6>
+              <p class="text-secondary small mb-0">All patient appointment bookings have been reviewed.</p>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Tab 2: Today's Scheduled Patients -->
+        <div class="tab-pane fade" id="pane-today" role="tabpanel">
+          <% if @today_appointments.any? %>
+            <div class="table-responsive">
+              <table class="table sa-table mb-0">
+                <thead>
+                  <tr>
+                    <th>Patient</th>
+                    <th>Service / Announcement</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th class="text-end">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @today_appointments.each do |appt| %>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center gap-2">
+                          <%= image_tag(profile_url(appt.patient), class: "rounded-circle object-fit-cover", size: "32x32") %>
+                          <div>
+                            <div class="fw-semibold text-dark"><%= appt.patient.full_name %></div>
+                            <small class="text-secondary">#<%= appt.public_uid %></small>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="fw-medium text-dark text-truncate" style="max-width: 180px;"><%= appt.announcement.name %></div>
+                        <small class="text-secondary text-truncate d-block" style="max-width: 180px;"><%= appt.reason.presence || "Routine check-up" %></small>
+                      </td>
+                      <td class="small fw-semibold"><%= appt.scheduled_at.strftime("%I:%M %p") %></td>
+                      <td>
+                        <span class="badge <%= soft_badge_class(appt.status) %>"><%= appt.status.titleize %></span>
+                      </td>
+                      <td class="text-end">
+                        <%= link_to admin_appointment_path(appt.public_uid), class: "btn btn-sm btn-light border" do %>
+                          <i class="bi bi-journal-medical me-1"></i>Consult
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="p-5 text-center">
+              <div class="sa-icon-well well-slate mx-auto mb-3">
+                <i class="bi bi-calendar-x"></i>
+              </div>
+              <h6 class="fw-bold mb-1">No Appointments Scheduled for Today</h6>
+              <p class="text-secondary small mb-0">Patients booked for today's date will appear here.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column: Active Announcements & Slot Capacity Monitor -->
+  <div class="col-12 col-xl-5">
+    <div class="sa-card h-100 d-flex flex-column">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="fw-bold mb-0">
+            <i class="bi bi-megaphone-fill text-success me-2"></i>Active Service Schedules &amp; Capacity
+          </h6>
+          <small class="text-secondary">Real-time patient slot utilization</small>
+        </div>
+        <%= link_to admin_announcements_path, class: "btn btn-sm btn-light border" do %>
+          Manage All
+        <% end %>
+      </div>
+
+      <div class="p-3 flex-grow-1 d-flex flex-column gap-3">
+        <% if @active_announcements.any? %>
+          <% @active_announcements.each do |announcement| %>
+            <% pct = announcement.capacity_percentage.round.clamp(0, 100) %>
+            <% bar_class = pct >= 90 ? "bg-danger" : (pct >= 70 ? "bg-warning" : "bg-success") %>
+            <div class="p-3 rounded-3 border bg-light bg-opacity-50">
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                <div>
+                  <h6 class="fw-bold mb-0 text-dark">
+                    <%= link_to announcement.name, admin_announcement_path(announcement.public_uid), class: "text-dark text-decoration-none" %>
+                  </h6>
+                  <small class="text-secondary">
+                    <i class="bi bi-calendar-range me-1"></i><%= announcement.start_date.strftime("%b %d") %> &ndash; <%= announcement.end_date.strftime("%b %d, %Y") %>
+                  </small>
+                </div>
+                <% if announcement.health_program.present? %>
+                  <span class="badge badge-soft-emerald"><%= announcement.health_program.name %></span>
+                <% end %>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center small mt-2 mb-1">
+                <span class="text-secondary">Booked Capacity</span>
+                <span class="fw-semibold text-dark">
+                  <%= announcement.approved_patients_count %> / <%= announcement.max_patients %> slots (<%= pct %>%)
+                </span>
+              </div>
+              <div class="progress mb-2" style="height: 7px;">
+                <div class="progress-bar <%= bar_class %>" role="progressbar" style="width: <%= pct %>%"></div>
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center pt-1">
+                <span class="small text-secondary">
+                  <i class="bi bi-hourglass-split text-warning me-1"></i><%= announcement.pending_patients_count %> pending
+                </span>
+                <div class="d-flex gap-1">
+                  <%= link_to appointment_details_admin_announcement_path(announcement.public_uid), class: "btn btn-sm btn-light border py-0 px-2", style: "font-size: 0.76rem;" do %>
+                    <i class="bi bi-people me-1"></i>Roster
+                  <% end %>
+                  <%= link_to admin_announcement_appointment_reports_path(announcement.public_uid, format: :pdf), target: "_blank", class: "btn btn-sm btn-light border text-danger py-0 px-2", style: "font-size: 0.76rem;" do %>
+                    <i class="bi bi-file-earmark-pdf me-1"></i>PDF
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="p-4 text-center my-auto">
+            <div class="sa-icon-well well-slate mx-auto mb-3">
+              <i class="bi bi-megaphone"></i>
+            </div>
+            <h6 class="fw-bold mb-1">No Active Service Schedules</h6>
+            <p class="text-secondary small mb-3">Publish an announcement so residents can book slots online.</p>
+            <%= link_to admin_announcements_path, class: "btn btn-sm btn-emerald" do %>
+              <i class="bi bi-plus-lg me-1"></i>Create Announcement
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ROW 3: CONSULTATION ANALYTICS ==================== -->
+<div class="row g-4">
+  <div class="col-12 col-xl-8">
+    <div class="sa-card p-3 p-md-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h6 class="fw-bold mb-0">Weekly Appointments Trend</h6>
+          <small class="text-secondary">Booking volume grouped by service announcement</small>
+        </div>
+        <span class="badge badge-soft-sky"><i class="bi bi-graph-up me-1"></i>Weekly Volume</span>
+      </div>
+      <div id="appointments-chart" style="height: 300px;">
+        <%= line_chart @line_chart_data, height: "300px" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <div class="sa-card p-3 p-md-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <h6 class="fw-bold mb-0">Health Program Distribution</h6>
+          <small class="text-secondary">Service announcements per health program</small>
+        </div>
+        <span class="badge badge-soft-emerald"><i class="bi bi-pie-chart me-1"></i>Programs</span>
+      </div>
+      <div id="services-chart" style="height: 300px;">
+        <%= pie_chart @pie_data, donut: true, height: "300px" %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ROW 4: HEALTH PROGRAM PERFORMANCE (CTE METRICS) ==================== -->
+<% if @program_performance_stats.present? && @program_performance_stats.any? %>
+  <div class="row g-4 mt-1">
+    <div class="col-12">
+      <div class="sa-card p-3 p-md-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <div>
+            <div class="d-flex align-items-center gap-2">
+              <h6 class="fw-bold mb-0">Health Program Operational Metrics</h6>
+              <span class="badge badge-soft-emerald" style="font-size: 0.7rem;">
+                <i class="bi bi-database me-1"></i>CTE Powered
+              </span>
+            </div>
+            <small class="text-secondary">Multi-tier aggregated analytics computed via Common Table Expressions (CTE)</small>
+          </div>
+          <%= link_to admin_health_programs_path, class: "btn btn-sm btn-light border" do %>
+            View Health Programs <i class="bi bi-arrow-right ms-1"></i>
+          <% end %>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table sa-table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Health Program</th>
+                <th class="text-center">Active Schedules</th>
+                <th class="text-center">Total Bookings</th>
+                <th class="text-center">Completed</th>
+                <th class="text-center">Approved</th>
+                <th class="text-center">Pending</th>
+                <th class="text-center">Cancelled</th>
+                <th class="text-end">Completion Rate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @program_performance_stats.each do |stat| %>
+                <% rate = stat["completion_rate"].to_f %>
+                <tr>
+                  <td>
+                    <div class="fw-semibold text-dark"><%= stat["program_name"] %></div>
+                    <small class="text-secondary">Program #<%= stat["health_program_id"] %></small>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-light text-dark border px-2 py-1"><%= stat["announcements_count"] %></span>
+                  </td>
+                  <td class="text-center fw-medium"><%= stat["total_appointments"] %></td>
+                  <td class="text-center">
+                    <span class="text-success fw-semibold"><%= stat["completed_appointments"] %></span>
+                  </td>
+                  <td class="text-center">
+                    <span class="text-primary fw-medium"><%= stat["approved_appointments"] %></span>
+                  </td>
+                  <td class="text-center">
+                    <span class="text-warning fw-medium"><%= stat["pending_appointments"] %></span>
+                  </td>
+                  <td class="text-center">
+                    <span class="text-secondary"><%= stat["cancelled_appointments"] %></span>
+                  </td>
+                  <td class="text-end">
+                    <div class="d-inline-flex align-items-center gap-2">
+                      <div class="progress" style="width: 70px; height: 6px;">
+                        <div class="progress-bar <%= rate >= 80 ? 'bg-success' : (rate >= 40 ? 'bg-primary' : 'bg-secondary') %>"
+                             role="progressbar"
+                             style="width: <%= rate %>%"></div>
+                      </div>
+                      <span class="small fw-bold text-dark"><%= rate %>%</span>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

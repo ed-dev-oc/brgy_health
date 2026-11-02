@@ -1,0 +1,315 @@
+<% content_for :title, "Appointment ##{@appointment.public_uid} — #{@appointment.patient.full_name}" %>
+<% patient_history = Appointment.includes(:announcement)
+                                .where(patient_id: @appointment.patient_id)
+                                .where.not(id: @appointment.id)
+                                .order(scheduled_at: :desc)
+                                .limit(5) %>
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+      <span class="badge <%= soft_badge_class(@appointment.status) %>">
+        <%= @appointment.status.humanize %>
+      </span>
+      <% @appointment.flag_list.each do |flag| %>
+        <span class="badge <%= soft_badge_class(flag) %>">
+          <i class="bi bi-tag-fill me-1"></i><%= flag.humanize %>
+        </span>
+      <% end %>
+      <span class="text-secondary small">Booking #<%= @appointment.public_uid %></span>
+    </div>
+    <h3 class="fw-bold mb-0">Clinical Consultation &amp; Appointment Record</h3>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2">
+    <%= link_to admin_appointments_path, class: "btn btn-light border btn-sm" do %>
+      <i class="bi bi-arrow-left me-1"></i>Back to Appointments
+    <% end %>
+    <%= link_to medical_records_admin_user_path(@appointment.patient.public_uid), class: "btn btn-outline-emerald btn-sm" do %>
+      <i class="bi bi-journal-medical me-1"></i>Patient EHR Chart
+    <% end %>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Left Column: Consultation Details & Real Patient History -->
+  <div class="col-12 col-lg-8">
+    <!-- Status Alerts (Cancelled / Rescheduled) -->
+    <% if @appointment.cancelled? && @appointment.cancel_reason.present? %>
+      <div class="alert alert-danger rounded-3 border-0 shadow-sm d-flex align-items-start gap-3 mb-4">
+        <i class="bi bi-x-octagon-fill fs-4"></i>
+        <div>
+          <div class="fw-bold">Appointment Cancelled</div>
+          <div class="small"><%= @appointment.cancel_reason %></div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @appointment.flag_list.include?("rescheduled") && @appointment.reschedule_reason.present? %>
+      <div class="alert alert-warning rounded-3 border-0 shadow-sm d-flex align-items-start gap-3 mb-4">
+        <i class="bi bi-calendar2-range-fill fs-4"></i>
+        <div>
+          <div class="fw-bold">Rescheduled Appointment</div>
+          <div class="small"><%= @appointment.reschedule_reason %></div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Schedule & Service Overview Card -->
+    <div class="sa-card p-4 mb-4">
+      <div class="d-flex justify-content-between align-items-center pb-3 mb-3 border-bottom">
+        <div>
+          <h6 class="fw-bold text-uppercase text-secondary small mb-1" style="letter-spacing: 0.05em;">
+            Service Schedule &amp; Assignment
+          </h6>
+          <h5 class="fw-bold text-dark mb-0">
+            <%= link_to @appointment.announcement.name, admin_announcement_path(@appointment.announcement.public_uid), class: "text-dark text-decoration-none" %>
+          </h5>
+        </div>
+        <%= link_to admin_announcement_path(@appointment.announcement.public_uid), class: "btn btn-sm btn-light border" do %>
+          <i class="bi bi-megaphone me-1"></i>View Service
+        <% end %>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Scheduled Date &amp; Time</small>
+          <span class="fw-bold text-dark">
+            <i class="bi bi-calendar-event text-success me-1"></i><%= @appointment.scheduled_at.strftime("%b %d, %Y · %I:%M %p") %>
+          </span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Attending Health Worker</small>
+          <span class="fw-semibold text-dark">
+            <i class="bi bi-person-badge text-primary me-1"></i><%= @appointment.health_worker&.full_name || "Pending Assignment" %>
+          </span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Venue / Clinic</small>
+          <span class="fw-semibold text-dark">
+            <i class="bi bi-geo-alt text-danger me-1"></i><%= @appointment.announcement.location %>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chief Complaint & Clinical Consultation Notes Card -->
+    <div class="sa-card p-4 mb-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        <i class="bi bi-clipboard2-pulse text-success me-1"></i>Clinical Consultation Summary
+      </h6>
+
+      <div class="p-3 rounded-3 bg-light mb-3">
+        <div class="small fw-bold text-secondary text-uppercase mb-1" style="font-size: 0.72rem;">
+          Reason for Visit / Chief Complaint
+        </div>
+        <p class="mb-0 text-dark fw-medium">
+          <%= @appointment.reason.presence || "Routine health center consultation." %>
+        </p>
+      </div>
+
+      <div class="p-3 rounded-3 border" style="background: var(--sa-emerald-50); border-color: #a7f3d0 !important;">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="small fw-bold text-success text-uppercase" style="font-size: 0.72rem;">
+            <i class="bi bi-journal-medical me-1"></i>Health Worker Clinical Notes
+          </span>
+          <% if @appointment.completed? %>
+            <span class="badge badge-soft-emerald">Completed</span>
+          <% end %>
+        </div>
+        <p class="mb-0 text-dark">
+          <%= @appointment.notes.presence || "No clinical consultation notes recorded yet. Click 'Complete Consultation' once the patient has been examined." %>
+        </p>
+      </div>
+
+      <!-- Follow-Up Chain Links -->
+      <% if @appointment.follow_up.present? || (@appointment.flag_list.include?("follow_up_check_up") && @appointment.parent_appointment.present?) %>
+        <div class="d-flex flex-wrap gap-2 mt-3 pt-3 border-top">
+          <% if @appointment.follow_up.present? %>
+            <%= link_to admin_appointment_path(@appointment.follow_up.public_uid), class: "btn btn-sm btn-light border" do %>
+              <i class="bi bi-arrow-left me-1"></i>Previous Visit (#<%= @appointment.follow_up.public_uid %>)
+            <% end %>
+          <% end %>
+          <% if @appointment.flag_list.include?("follow_up_check_up") && @appointment.parent_appointment.present? %>
+            <%= link_to admin_appointment_path(@appointment.parent_appointment.public_uid), class: "btn btn-sm btn-outline-emerald" do %>
+              <i class="bi bi-calendar-check me-1"></i>Scheduled Follow-Up Visit (#<%= @appointment.parent_appointment.public_uid %>) &rarr;
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Real Patient Consultation History (Replaces fake 2023 hardcoded Activity Log!) -->
+    <div class="sa-card overflow-hidden">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold mb-0">
+          <i class="bi bi-clock-history text-success me-2"></i>Patient's Other Visits (<%= patient_history.count %>)
+        </h6>
+        <%= link_to medical_records_admin_user_path(@appointment.patient.public_uid), class: "btn btn-sm btn-light border" do %>
+          Full Medical Records <i class="bi bi-arrow-right ms-1"></i>
+        <% end %>
+      </div>
+
+      <% if patient_history.any? %>
+        <div class="table-responsive">
+          <table class="table sa-table mb-0">
+            <thead>
+              <tr>
+                <th>Booking</th>
+                <th>Service</th>
+                <th>Scheduled Date</th>
+                <th>Status</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% patient_history.each do |past_appt| %>
+                <tr>
+                  <td class="fw-semibold">#<%= past_appt.public_uid %></td>
+                  <td class="text-truncate" style="max-width: 200px;"><%= past_appt.announcement.name %></td>
+                  <td class="small"><%= past_appt.scheduled_at.strftime("%b %d, %Y · %I:%M %p") %></td>
+                  <td>
+                    <span class="badge <%= soft_badge_class(past_appt.status) %>"><%= past_appt.status.titleize %></span>
+                  </td>
+                  <td class="text-end">
+                    <%= link_to admin_appointment_path(past_appt.public_uid), class: "btn btn-sm btn-light border" do %>
+                      <i class="bi bi-eye"></i>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="p-4 text-center text-secondary small">
+          This is <%= @appointment.patient.full_name %>'s first recorded appointment in Barangay <%= @appointment.barangay.name %>.
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Right Column: Clinical Actions, Patient Profile Card & System Metadata -->
+  <div class="col-12 col-lg-4">
+    <!-- Clinical Workflow Actions Card -->
+    <div class="sa-card p-4 mb-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        Clinical Workflow Actions
+      </h6>
+
+      <div class="d-grid gap-2">
+        <% if @appointment.pending? %>
+          <%= link_to flag_as_approved_admin_appointment_path(@appointment.public_uid),
+            data: { turbo_method: :PATCH, turbo_confirm: "Approve appointment ##{@appointment.public_uid}?" },
+            class: "btn btn-emerald d-flex align-items-center justify-content-center gap-2" do %>
+            <i class="bi bi-check-circle-fill"></i>
+            <span>Approve Appointment</span>
+            <%= turbo_frame_tag dom_id(@appointment, "capacity_percentage"), src: announcement_capacity_admin_appointment_path(id: @appointment.public_uid, format: :turbo_stream), loading: :lazy do %>
+              <div class="spinner-border spinner-border-sm text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <% if @appointment.approved? %>
+          <button type="button" class="btn btn-emerald" data-bs-toggle="modal" data-bs-target="#<%= dom_id(@appointment, 'modal') %>">
+            <i class="bi bi-check2-circle me-1"></i>Complete Consultation &amp; Add Notes
+          </button>
+          <%= render partial: "admin/appointments/completed_modal" %>
+        <% end %>
+
+        <% if @appointment.completed? && @appointment.flag_list.exclude?("follow_up_check_up") %>
+          <button type="button" class="btn btn-emerald" data-bs-toggle="modal" data-bs-target="#<%= dom_id(@new_appointment, 'follow_up_modal') %>">
+            <i class="bi bi-calendar-plus me-1"></i>Schedule Follow-Up Check-Up
+          </button>
+          <%= render partial: "admin/appointments/follow_up_modal" %>
+        <% end %>
+
+        <% if display_resceduled_button?(@appointment) %>
+          <button type="button" class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#<%= dom_id(@appointment, 'reschedule_modal') %>">
+            <i class="bi bi-calendar2-range me-1"></i>Reschedule Appointment
+          </button>
+          <%= render partial: "admin/appointments/reschedule_modal" %>
+        <% end %>
+
+        <% if Appointment::ADMIN_VALID_FOR_APPROVE_AND_REJECTED_STATUS.include?(@appointment.status.to_sym) %>
+          <%= link_to flag_as_rejected_admin_appointment_path(@appointment.public_uid),
+            data: { turbo_method: :PATCH, turbo_confirm: "Are you sure you want to reject this appointment?" },
+            class: "btn btn-outline-danger" do %>
+            <i class="bi bi-x-circle me-1"></i>Reject Request
+          <% end %>
+        <% end %>
+
+        <% if Appointment::ADMIN_VALID_FOR_CANCELLATION_STATUS.include?(@appointment.status.to_sym) %>
+          <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#<%= dom_id(@appointment, 'cancel_schedule_modal') %>">
+            <i class="bi bi-x-circle me-1"></i>Cancel Appointment
+          </button>
+          <%= render partial: "admin/appointments/cancel_modal" %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Patient Profile Card (Fixed broken "#" link!) -->
+    <div class="sa-card p-4 mb-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        Patient Information
+      </h6>
+
+      <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
+        <%= image_tag(profile_url(@appointment.patient), class: "rounded-circle object-fit-cover", size: "56x56") %>
+        <div class="overflow-hidden">
+          <h6 class="fw-bold text-dark mb-0 text-truncate"><%= @appointment.patient.full_name %></h6>
+          <small class="text-secondary d-block">ID: #<%= @appointment.patient.public_uid %></small>
+          <% if @appointment.patient.subdivision.present? %>
+            <span class="badge badge-soft-emerald mt-1">
+              <i class="bi bi-geo-alt me-1"></i><%= @appointment.patient.subdivision.name %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column gap-2 small mb-3">
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary"><i class="bi bi-envelope me-1"></i>Email</span>
+          <span class="text-dark fw-medium text-truncate" style="max-width: 180px;"><%= @appointment.patient.email %></span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary"><i class="bi bi-telephone me-1"></i>Phone</span>
+          <span class="text-dark fw-medium"><%= @appointment.patient.phone_number.presence || "Not provided" %></span>
+        </div>
+      </div>
+
+      <div class="d-grid gap-2">
+        <%= link_to admin_user_path(@appointment.patient.public_uid), class: "btn btn-sm btn-light border" do %>
+          <i class="bi bi-person-vcard me-1"></i>View Patient Profile
+        <% end %>
+        <%= link_to medical_records_admin_user_path(@appointment.patient.public_uid), class: "btn btn-sm btn-outline-emerald" do %>
+          <i class="bi bi-journal-medical me-1"></i>View Medical Records (EHR)
+        <% end %>
+      </div>
+    </div>
+
+    <!-- System Metadata Card -->
+    <div class="sa-card p-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        Booking Metadata
+      </h6>
+      <div class="d-flex flex-column gap-2 small">
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Public UID</span>
+          <code class="fw-semibold text-dark">#<%= @appointment.public_uid %></code>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Created On</span>
+          <span class="text-dark"><%= @appointment.created_at.strftime("%b %d, %Y %I:%M %p") %></span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Last Updated</span>
+          <span class="text-dark"><%= @appointment.updated_at.strftime("%b %d, %Y %I:%M %p") %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

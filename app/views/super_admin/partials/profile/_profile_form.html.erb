@@ -1,0 +1,21 @@
+<div class="sa-card p-4 text-center">
+  <div class="mb-3">
+    <%= image_tag(profile_url(@user), class: "rounded-circle border shadow-sm", size: "88x88", alt: @user.full_name) %>
+  </div>
+  <h5 class="fw-bold mb-1"><%= @user.full_name %></h5>
+  <div class="text-secondary small mb-2"><%= @user.email %></div>
+  <span class="badge badge-soft-purple mb-3">Global Administrator</span>
+
+  <div class="border-top pt-3 text-start">
+    <%= form_with model: @user, url: profile_path(@user.id), local: true, html: { multipart: true } do |form| %>
+      <div class="mb-3">
+        <%= form.label :profile, class: "form-label small fw-semibold" do %>
+          <i class="bi bi-camera text-success me-1"></i>Update Profile Picture
+        <% end %>
+        <%= form.file_field :profile, class: "form-control form-control-sm", accept: "image/*" %>
+      </div>
+
+      <%= form.submit "Update Profile Photo", class: "btn btn-sm btn-emerald w-100" %>
+    <% end %>
+  </div>
+</div>

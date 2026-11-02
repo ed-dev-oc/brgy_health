@@ -7,14 +7,27 @@ class FlashComponent < ViewComponent::Base
 
   def icon(type)
     case type.to_s
-    when "alert", "error"
+    when "alert", "error", "danger"
       "bi-exclamation-diamond-fill"
+    when "warning"
+      "bi-exclamation-triangle-fill"
     else
       "bi-check-lg"
     end
   end
 
+  def title(type)
+    case type.to_s
+    when "alert", "error", "danger"
+      "Attention Needed"
+    when "warning"
+      "Warning"
+    else
+      "Success"
+    end
+  end
+
   def css_class(type)
-    "flash #{type} position-fixed top-0 end-0 text-light m-1 px-3 py-2 rounded shadow"
+    "flash #{type}"
   end
 end

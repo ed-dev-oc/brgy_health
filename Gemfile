@@ -40,7 +40,8 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+# sudo apt install -y libvips libvips-dev
+gem "image_processing", "~> 1.2"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -59,12 +60,18 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  gem "letter_opener_web", "~> 3.0"
+  gem "bullet", "~> 8.0"
+  gem "rack-mini-profiler", "~> 4.0"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem "shoulda-matchers", "~> 5.0"
+  gem "factory_bot_rails"
 end
 
 gem "view_component", "~> 3.21"
@@ -78,3 +85,31 @@ gem "ruby-lsp", "~> 0.23.14", group: :development
 gem "htmlbeautifier", "~> 1.4", group: :development
 
 gem "letter_opener", "~> 1.10", group: :development
+
+gem "devise", "~> 4.9"
+
+gem "friendly_id", "~> 5.5"
+
+gem "acts_as_tenant", "~> 1.0"
+
+gem "acts-as-taggable-on", "~> 12.0"
+
+gem "pagy", "~> 9.3"
+
+gem "ransack", "~> 4.3"
+
+gem "noticed", "~> 2.6"
+
+gem "mission_control-jobs", "~> 1.0"
+
+gem "web-push", "~> 3.0"
+
+gem "chartkick", "~> 5.2"
+
+gem "groupdate", "~> 6.7"
+
+gem "scenic", "~> 1.8"
+
+gem "grover", "~> 1.2"
+
+gem "dotenv-rails", "~> 3.1"

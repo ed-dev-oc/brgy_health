@@ -1,0 +1,216 @@
+<% content_for :title, "Brgy. #{ActsAsTenant.current_tenant&.name} Health Center" %>
+
+<div class="container py-3 py-lg-4">
+  <!-- ==================== PERSONALIZED COMMUNITY HERO BANNER ==================== -->
+  <div class="p-4 rounded-4 text-white mb-4 shadow-sm pt-hero-banner"
+       style="background: linear-gradient(135deg, rgba(6, 95, 70, 0.92) 0%, rgba(13, 148, 136, 0.92) 100%)<%= ", url(#{url_for(@hero_banner.image)}) center/cover no-repeat" if @hero_banner&.image&.attached? %>;">
+    <div>
+      <span class="badge bg-white bg-opacity-25 text-white mb-2">
+        <i class="bi bi-geo-alt-fill me-1"></i>
+        <% if user_signed_in? && current_user.subdivision.present? %>
+          <%= current_user.subdivision.name %> &middot; Brgy. <%= ActsAsTenant.current_tenant&.name %>
+        <% else %>
+          Brgy. <%= ActsAsTenant.current_tenant&.name %>, <%= ActsAsTenant.current_tenant&.city %>
+        <% end %>
+      </span>
+      <h2 class="fw-bold mb-1">
+        <% if user_signed_in? %>
+          Magandang Araw, <%= current_user.first_name %>!
+        <% elsif @hero_banner&.title.present? %>
+          <%= @hero_banner.title %>
+        <% else %>
+          Welcome to Brgy. <%= ActsAsTenant.current_tenant&.name %> Health Center
+        <% end %>
+      </h2>
+      <p class="small opacity-90 mb-3 mb-lg-0" style="max-width: 640px;">
+        <%= @hero_banner&.subheadline.presence || "Book free health check-ups, vaccination slots, and view community health events from your phone or computer." %>
+      </p>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+      <%= link_to root_path(anchor: "AnnouncementCarousel"), class: "btn btn-light text-success fw-bold w-100 py-2 rounded-3 shadow-sm pt-hero-cta" do %>
+        <i class="bi bi-calendar-plus-fill me-1"></i>Book a Free Check-Up Now
+      <% end %>
+    </div>
+  </div>
+
+  <!-- ==================== 2-COLUMN ADAPTIVE DESKTOP DASHBOARD ==================== -->
+  <div class="pt-desktop-dashboard">
+
+    <!-- LEFT MAIN COLUMN: Next Visit (Mobile), 4 Quick Actions & Available Health Services -->
+    <div>
+      <!-- Mobile-Only Next Upcoming Clinic Visit Banner -->
+      <% if user_signed_in? && @next_appointment.present? %>
+        <div class="pt-card p-3 mb-4 pt-only-mobile" style="border-left: 5px solid var(--pt-sky-600); background: #f8fbff;">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge badge-soft-sky fw-bold">
+              <i class="bi bi-bell-fill me-1"></i>YOUR NEXT CLINIC VISIT
+            </span>
+            <span class="badge <%= soft_badge_class(@next_appointment.status) %>">
+              <%= @next_appointment.status.titleize %>
+            </span>
+          </div>
+          <h6 class="fw-bold mb-1"><%= @next_appointment.announcement.name %></h6>
+          <div class="small text-secondary mb-3">
+            <div>
+              <i class="bi bi-calendar-event text-primary me-1"></i>
+              <strong><%= @next_appointment.scheduled_at.strftime("%A, %b %d, %Y at %I:%M %p") %></strong>
+            </div>
+            <div>
+              <i class="bi bi-geo-alt text-success me-1"></i><%= @next_appointment.announcement.location %>
+            </div>
+          </div>
+          <%= link_to appointment_path(@next_appointment.public_uid), class: "btn btn-sm btn-primary w-100 fw-semibold rounded-3 py-2" do %>
+            <i class="bi bi-ticket-perforated me-1"></i>Open My Clinic Pass (#<%= @next_appointment.public_uid %>)
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- 4 Large Touch-Friendly Quick Action Tiles (Fixes all dead # links) -->
+      <h6 class="fw-bold text-uppercase text-secondary small mb-2" style="letter-spacing: 0.04em;">
+        What would you like to do?
+      </h6>
+      <div class="row g-2 mb-4">
+        <div class="col-6 col-md-3">
+          <%= link_to root_path(anchor: "AnnouncementCarousel"), class: "pt-action-tile" do %>
+            <div class="pt-icon-circle circle-emerald"><i class="bi bi-calendar2-plus-fill"></i></div>
+            <div class="fw-bold" style="font-size: 0.88rem;">Book Check-Up</div>
+            <small class="text-secondary" style="font-size: 0.72rem; line-height: 1.1;">View open slots</small>
+          <% end %>
+        </div>
+        <div class="col-6 col-md-3">
+          <%= link_to (user_signed_in? ? appointments_path : new_user_session_path), class: "pt-action-tile" do %>
+            <div class="pt-icon-circle circle-sky"><i class="bi bi-ticket-detailed-fill"></i></div>
+            <div class="fw-bold" style="font-size: 0.88rem;">My Visits</div>
+            <small class="text-secondary" style="font-size: 0.72rem; line-height: 1.1;">Check approval &amp; notes</small>
+          <% end %>
+        </div>
+        <div class="col-6 col-md-3">
+          <%= link_to (user_signed_in? ? edit_profile_path(current_user) : new_user_session_path), class: "pt-action-tile" do %>
+            <div class="pt-icon-circle circle-amber"><i class="bi bi-person-vcard-fill"></i></div>
+            <div class="fw-bold" style="font-size: 0.88rem;">My Profile</div>
+            <small class="text-secondary" style="font-size: 0.72rem; line-height: 1.1;">Purok &amp; phone number</small>
+          <% end %>
+        </div>
+        <div class="col-6 col-md-3">
+          <%= link_to contact_us_pages_path, class: "pt-action-tile" do %>
+            <div class="pt-icon-circle circle-rose"><i class="bi bi-telephone-outbound-fill"></i></div>
+            <div class="fw-bold" style="font-size: 0.88rem;">Emergency Help</div>
+            <small class="text-secondary" style="font-size: 0.72rem; line-height: 1.1;">Hotlines &amp; Clinic Map</small>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Available Health Services Section -->
+      <div id="AnnouncementCarousel">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <h5 class="fw-bold mb-0">
+            <i class="bi bi-heart-pulse-fill text-success me-1"></i>Available Health Services
+          </h5>
+          <span class="badge badge-soft-emerald"><%= @announcements.size %> Active</span>
+        </div>
+        <p class="text-secondary small mb-3">Select a service below to reserve your free appointment slot.</p>
+
+        <%= turbo_frame_tag :announcements_carousel_frame do %>
+          <% if @announcements.any? %>
+            <div class="pt-desktop-grid-2 mb-4">
+              <% @announcements.each do |announcement| %>
+                <%= render partial: "barangay/announcements/card", locals: { announcement: announcement } %>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="pt-card p-4 text-center mb-4">
+              <div class="pt-icon-circle circle-emerald mx-auto mb-2">
+                <i class="bi bi-calendar2-check"></i>
+              </div>
+              <h6 class="fw-bold mb-1">No Active Health Service Schedules Right Now</h6>
+              <p class="text-secondary small mb-0">
+                New free check-up and vaccination schedules for Brgy. <%= ActsAsTenant.current_tenant&.name %> will be posted here soon.
+              </p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- RIGHT STICKY SIDEBAR ON DESKTOP: Next Visit + Community Events + Health Center Info -->
+    <aside class="pt-sticky-side">
+      <!-- Desktop-Only Next Upcoming Clinic Visit Card -->
+      <% if user_signed_in? && @next_appointment.present? %>
+        <div class="pt-card p-3 p-lg-4 mb-4 pt-only-desktop" style="border-left: 5px solid var(--pt-sky-600); background: #f8fbff;">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge badge-soft-sky fw-bold">
+              <i class="bi bi-bell-fill me-1"></i>YOUR NEXT CLINIC VISIT
+            </span>
+            <span class="badge <%= soft_badge_class(@next_appointment.status) %>">
+              <%= @next_appointment.status.titleize %>
+            </span>
+          </div>
+          <h6 class="fw-bold mb-1"><%= @next_appointment.announcement.name %></h6>
+          <div class="small text-secondary mb-3">
+            <div>
+              <i class="bi bi-calendar-event text-primary me-1"></i>
+              <strong><%= @next_appointment.scheduled_at.strftime("%a, %b %d, %Y at %I:%M %p") %></strong>
+            </div>
+            <div>
+              <i class="bi bi-geo-alt text-success me-1"></i><%= @next_appointment.announcement.location %>
+            </div>
+          </div>
+          <%= link_to appointment_path(@next_appointment.public_uid), class: "btn btn-sm btn-primary w-100 fw-semibold rounded-3 py-2" do %>
+            <i class="bi bi-ticket-perforated me-1"></i>Open My Clinic Pass (#<%= @next_appointment.public_uid %>)
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Community Health Events Section -->
+      <div id="EventCarousel">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <h5 class="fw-bold mb-0">
+            <i class="bi bi-megaphone-fill text-primary me-1"></i>Community Health Events
+          </h5>
+          <span class="badge badge-soft-sky"><%= @events.size %> Upcoming</span>
+        </div>
+        <p class="text-secondary small mb-3">No booking needed—just attend at the scheduled time and venue!</p>
+
+        <%= turbo_frame_tag :events_carousel_frame do %>
+          <% if @events.any? %>
+            <div class="d-flex flex-column gap-3 mb-4">
+              <% @events.each do |event| %>
+                <%= render partial: "barangay/events/card", locals: { event: event } %>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="pt-card p-4 text-center mb-4">
+              <div class="pt-icon-circle circle-sky mx-auto mb-2">
+                <i class="bi bi-calendar-event"></i>
+              </div>
+              <h6 class="fw-bold mb-1">No Upcoming Community Events</h6>
+              <p class="text-secondary small mb-0">
+                Check back soon for upcoming barangay wellness seminars and medical missions.
+              </p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <!-- Health Center Hours & Hotline Card -->
+      <div class="pt-card p-3 p-lg-4 bg-light border">
+        <h6 class="fw-bold mb-2">
+          <i class="bi bi-hospital text-success me-2"></i>Brgy. <%= ActsAsTenant.current_tenant&.name %> Health Center
+        </h6>
+        <div class="small text-secondary d-flex flex-column gap-1 mb-3">
+          <div><i class="bi bi-clock text-success me-2"></i>Mon – Fri: 8:00 AM – 5:00 PM</div>
+          <div>
+            <i class="bi bi-telephone text-success me-2"></i>Hotline:
+            <strong><%= @admin_contact&.phone_number.presence || "Contact Barangay Hall" %></strong>
+          </div>
+          <div><i class="bi bi-geo-alt text-success me-2"></i><%= ActsAsTenant.current_tenant&.full_address %></div>
+        </div>
+        <%= link_to contact_us_pages_path, class: "btn btn-sm btn-white bg-white border w-100 fw-semibold" do %>
+          <i class="bi bi-map me-1 text-success"></i>View Location Map &amp; Contact
+        <% end %>
+      </div>
+    </aside>
+
+  </div>
+</div>

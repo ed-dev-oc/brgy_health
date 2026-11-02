@@ -1,0 +1,108 @@
+<% content_for :title, "Slot Capacity & Roster — #{@announcement.name}" %>
+<% pct = @capacity_percentage.round.clamp(0, 100) %>
+<% bar_class = pct >= 90 ? "bg-danger" : (pct >= 70 ? "bg-warning" : "bg-success") %>
+
+<!-- Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <span class="badge <%= soft_badge_class(@announcement.status) %>"><%= @announcement.status.titleize %></span>
+      <span class="text-secondary small">#<%= @announcement.public_uid %></span>
+    </div>
+    <h3 class="fw-bold mb-0"><%= @announcement.name %> &mdash; Slot Roster</h3>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2">
+    <%= link_to admin_announcement_path(@announcement.public_uid), class: "btn btn-light border btn-sm" do %>
+      <i class="bi bi-arrow-left me-1"></i>Back to Announcement
+    <% end %>
+    <%= link_to admin_announcement_appointment_reports_path(@announcement.public_uid, format: :pdf), target: "_blank", class: "btn btn-emerald btn-sm" do %>
+      <i class="bi bi-file-earmark-pdf-fill me-1"></i>Download Attendance PDF
+    <% end %>
+  </div>
+</div>
+
+<!-- 4 KPI Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="sa-kpi-card p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="text-secondary small fw-semibold text-uppercase" style="font-size: 0.72rem;">Scheduled Today</div>
+          <div class="fs-2 fw-bold text-dark mt-1"><%= @announcement.today_appointments_count %></div>
+        </div>
+        <div class="sa-icon-well well-sky"><i class="bi bi-calendar-day"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="sa-kpi-card p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="text-secondary small fw-semibold text-uppercase" style="font-size: 0.72rem;">Available Capacity</div>
+          <div class="fs-2 fw-bold text-success mt-1"><%= [100 - pct, 0].max %>%</div>
+        </div>
+        <div class="sa-icon-well well-emerald"><i class="bi bi-people"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="sa-kpi-card p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="text-secondary small fw-semibold text-uppercase" style="font-size: 0.72rem;">Pending Approvals</div>
+          <div class="fs-2 fw-bold text-warning mt-1"><%= @announcement.pending_patients_count %></div>
+        </div>
+        <div class="sa-icon-well well-amber"><i class="bi bi-hourglass-split"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="sa-kpi-card p-3 h-100">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="text-secondary small fw-semibold text-uppercase" style="font-size: 0.72rem;">Cancelled Bookings</div>
+          <div class="fs-2 fw-bold text-danger mt-1"><%= @announcement.canceled_patients_count %></div>
+        </div>
+        <div class="sa-icon-well well-rose"><i class="bi bi-x-circle"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Capacity Meter Banner -->
+<div class="sa-card p-4 mb-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+    <div>
+      <h6 class="fw-bold mb-0"><i class="bi bi-speedometer2 text-success me-2"></i>Slot Capacity Utilization</h6>
+      <small class="text-secondary">
+        This service schedule accommodates up to <strong><%= @announcement.max_patients %> patients</strong>.
+      </small>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge badge-soft-emerald">
+        <%= @announcement.approved_patients_count %> / <%= @announcement.max_patients %> Approved
+      </span>
+      <span class="badge badge-soft-slate">
+        <%= [@announcement.max_patients - @announcement.approved_patients_count, 0].max %> Slots Remaining
+      </span>
+    </div>
+  </div>
+  <div class="progress" style="height: 10px;">
+    <div class="progress-bar <%= bar_class %>" role="progressbar" style="width: <%= pct %>%" aria-valuenow="<%= pct %>" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+</div>
+
+<!-- Patient Appointments Roster Table -->
+<div class="sa-card overflow-hidden">
+  <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+    <h6 class="fw-bold mb-0">
+      <i class="bi bi-person-lines-fill text-success me-2"></i>Booked Patients Roster
+    </h6>
+    <span class="badge badge-soft-slate"><%= @pagy.count %> Total Bookings</span>
+  </div>
+  <%= render partial: "admin/appointments/list_appointment_table" %>
+</div>

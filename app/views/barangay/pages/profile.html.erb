@@ -1,0 +1,60 @@
+<% content_for :title, "Account Profile — #{@user.full_name}" %>
+
+<div class="container py-3">
+  <!-- Header Banner -->
+  <div class="sa-card p-4 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <%= image_tag(profile_url(@user), class: "rounded-circle object-fit-cover border", size: "64x64") %>
+        <div>
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+            <h4 class="fw-bold text-dark mb-0"><%= @user.full_name %></h4>
+            <span class="badge <%= soft_badge_class(@user.role) %>"><%= @user.role.titleize %></span>
+            <% if @user.subdivision.present? %>
+              <span class="badge badge-soft-slate"><i class="bi bi-geo-alt me-1"></i><%= @user.subdivision.name %></span>
+            <% end %>
+          </div>
+          <div class="text-secondary small">
+            <i class="bi bi-building me-1 text-success"></i>Brgy. <%= @user.barangay&.name %> &middot; <%= @user.email %>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <% if current_user.admin? || current_user.staff? %>
+          <%= link_to admin_dashboard_index_path, class: "btn btn-light border btn-sm" do %>
+            <i class="bi bi-speedometer2 me-1"></i>Admin Dashboard
+          <% end %>
+        <% else %>
+          <%= link_to root_path, class: "btn btn-light border btn-sm" do %>
+            <i class="bi bi-arrow-left me-1"></i>Back to Portal
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <% if @user.subdivision.nil? || @user.phone_number.blank? %>
+    <div class="p-3 rounded-3 mb-4 d-flex align-items-start gap-2" style="background: var(--pt-amber-50, #fffbeb); border: 1px solid #fde68a;">
+      <i class="bi bi-exclamation-circle-fill text-warning fs-5"></i>
+      <div class="small">
+        <strong>Complete Your Resident Profile:</strong> Please select your <strong>Subdivision / Purok</strong> and add your <strong>Cellphone Number</strong> below so our Barangay Health Workers can coordinate your check-ups and send reminders.
+      </div>
+    </div>
+  <% end %>
+
+  <!-- 2-Column Adaptive Desktop Grid for the 4 Profile Forms -->
+  <div class="row g-4">
+    <!-- Left Column: Avatar Photo & Subdivision / Purok -->
+    <div class="col-12 col-lg-5 d-flex flex-column gap-4">
+      <%= render "barangay/partials/profile/profile_form" %>
+      <%= render "barangay/partials/profile/address_form" %>
+    </div>
+
+    <!-- Right Column: Personal Information & Security Credentials -->
+    <div class="col-12 col-lg-7 d-flex flex-column gap-4">
+      <%= render "barangay/partials/profile/personal_information_form" %>
+      <%= render "barangay/partials/profile/credentials_form" %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+<%= turbo_stream.replace :flash do %>
+  <%= render FlashComponent.new(flash: flash) %>
+<% end %>
+
+<% if @issue_report.persisted? %>
+  <%= turbo_stream.update :issue_report_frame,
+    partial: "issue_reports/form",
+    locals: { issue_report: IssueReport.new } %>
+<% else %>
+  <%= turbo_stream.update :issue_report_frame,
+    partial: "issue_reports/form",
+    locals: { issue_report: @issue_report } %>
+<% end %>

@@ -1,0 +1,60 @@
+<%= form_with(model: event, url: event.new_record? ? admin_events_path : admin_event_path(event.public_uid), html: { multipart: true }) do |form| %>
+  <% if event.errors.any? %>
+    <div class="alert alert-danger rounded-3 mb-4">
+      <div class="fw-bold mb-1">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        <%= pluralize(event.errors.count, "error") %> prohibited this event from being saved:
+      </div>
+      <ul class="mb-0 small">
+        <% event.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-8">
+      <%= form.label :name, "Event Name *", class: "form-label fw-semibold small" %>
+      <%= form.text_field :name, class: "form-control", placeholder: "e.g. Barangay Dengue Awareness & Clean-Up Drive", required: true %>
+    </div>
+
+    <div class="col-md-4">
+      <%= form.label :status, "Status *", class: "form-label fw-semibold small" %>
+      <%= form.select :status, Event.statuses.map { |key, _value| [key.titleize, key] }, { prompt: "Select status" }, { class: "form-select", required: true } %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :start_date, "Event Start & End Date Time *", class: "form-label fw-semibold small" %>
+      <div class="input-group">
+        <%= form.datetime_field :start_date, class: "form-control", required: true %>
+        <%= form.datetime_field :end_date, class: "form-control", required: true %>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :location, "Venue / Location *", class: "form-label fw-semibold small" %>
+      <%= form.text_field :location, class: "form-control", placeholder: "Barangay Covered Court, Health Center...", required: true %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :audience, "Target Audience *", class: "form-label fw-semibold small" %>
+      <%= form.select :audience, Event.audiences.map { |key, _value| [key.titleize, key] }, { prompt: "Select target audience" }, { class: "form-select", required: true } %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.label :images, "Event Banner / Photos #{event.new_record? ? '*' : ''}", class: "form-label fw-semibold small" %>
+      <%= form.file_field :images, multiple: true, class: "form-control" %>
+    </div>
+
+    <div class="col-12">
+      <%= form.label :description, "Event Description & Activities *", class: "form-label fw-semibold small" %>
+      <%= form.rich_text_area :description, class: "form-control", required: true %>
+    </div>
+
+    <div class="col-12 d-flex justify-content-end gap-2 pt-3 border-top">
+      <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+      <%= form.submit(event.new_record? ? "Publish Event" : "Save Changes", class: "btn btn-emerald px-4", data: { turbo_submits_with: "Saving...", turbo_confirm: "Save this event?" }) %>
+    </div>
+  </div>
+<% end %>

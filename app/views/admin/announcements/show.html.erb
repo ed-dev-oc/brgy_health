@@ -1,0 +1,263 @@
+<% content_for :title, "#{@announcement.name} — Service Announcement" %>
+<%= render partial: "admin/announcements/form_modal", locals: { announcement: @announcement } %>
+
+<% pct = @announcement.capacity_percentage.round.clamp(0, 100) %>
+<% bar_class = pct >= 90 ? "bg-danger" : (pct >= 70 ? "bg-warning" : "bg-success") %>
+<% recent_bookings = @announcement.appointments.includes(:patient).order(created_at: :desc).limit(5) %>
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4">
+  <div>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+      <span class="badge <%= soft_badge_class(@announcement.status) %>">
+        <%= @announcement.status.titleize %>
+      </span>
+      <% if @announcement.health_program.present? %>
+        <span class="badge badge-soft-emerald">
+          <i class="bi bi-heart-pulse me-1"></i><%= @announcement.health_program.name %>
+        </span>
+      <% end %>
+      <span class="text-secondary small">#<%= @announcement.public_uid %></span>
+    </div>
+    <h3 class="fw-bold mb-0"><%= @announcement.name %></h3>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2">
+    <%= link_to admin_announcements_path, class: "btn btn-light border btn-sm" do %>
+      <i class="bi bi-arrow-left me-1"></i>Back to List
+    <% end %>
+    <button type="button" class="btn btn-emerald btn-sm" data-bs-toggle="modal" data-bs-target="#<%= dom_id(@announcement, 'form_modal') %>">
+      <i class="bi bi-pencil me-1"></i>Edit Announcement
+    </button>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Left Column: Media, Description & Schedule Details -->
+  <div class="col-12 col-lg-8">
+    <!-- Schedule & Venue Card -->
+    <div class="sa-card p-4 mb-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        <i class="bi bi-calendar-range text-success me-1"></i>Service Schedule &amp; Venue
+      </h6>
+      <div class="row g-3">
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Start Date</small>
+          <span class="fw-semibold text-dark"><%= @announcement.start_date.strftime("%b %d, %Y · %I:%M %p") %></span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">End Date</small>
+          <span class="fw-semibold text-dark"><%= @announcement.end_date.strftime("%b %d, %Y · %I:%M %p") %></span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Operating Hours</small>
+          <span class="fw-semibold text-dark">
+            <%= @announcement.open_time.strftime("%I:%M %p") %> &ndash; <%= @announcement.close_time.strftime("%I:%M %p") %>
+          </span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Location</small>
+          <span class="fw-semibold text-dark"><i class="bi bi-geo-alt-fill text-success me-1"></i><%= @announcement.location %></span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Maximum Capacity</small>
+          <span class="fw-semibold text-dark"><i class="bi bi-people-fill text-primary me-1"></i><%= @announcement.max_patients %> Patients</span>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <small class="text-secondary d-block">Target Audience</small>
+          <div class="d-flex flex-wrap gap-1 mt-1">
+            <% @announcement.audience.to_s.split(",").each do |aud| %>
+              <span class="badge badge-soft-slate"><%= aud.strip %></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Card -->
+    <div class="sa-card p-4 mb-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        <i class="bi bi-file-earmark-text text-success me-1"></i>Announcement Description &amp; Instructions
+      </h6>
+      <div class="rich-text-content text-dark" style="line-height: 1.7;">
+        <%= @announcement.description %>
+      </div>
+    </div>
+
+    <!-- Media Gallery Card -->
+    <% if @announcement.images.attached? %>
+      <div class="sa-card p-4 mb-4">
+        <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+          <i class="bi bi-images text-success me-1"></i>Attached Media (<%= @announcement.images.count %>)
+        </h6>
+        <div data-controller="splide-loader">
+          <div data-splide-loader-target="thumbnailSlides" class="splide" style="padding-top: 1px !important; padding-bottom: 1px !important;">
+            <div class="splide__track">
+              <ul class="splide__list">
+                <% @announcement.images.each do |image| %>
+                  <li class="splide__slide">
+                    <%= image_tag(image.variant(resize_to_fill: [200, 130]), class: "rounded-3 border") %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Recent Patient Bookings Card (Replaces hardcoded fake Activity Log!) -->
+    <div class="sa-card overflow-hidden">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold mb-0">
+          <i class="bi bi-people-fill text-success me-2"></i>Recent Patient Bookings
+        </h6>
+        <%= link_to appointment_details_admin_announcement_path(@announcement.public_uid), class: "btn btn-sm btn-light border" do %>
+          View Full Roster (<%= @announcement.appointments.count %>) <i class="bi bi-arrow-right ms-1"></i>
+        <% end %>
+      </div>
+
+      <% if recent_bookings.any? %>
+        <div class="table-responsive">
+          <table class="table sa-table mb-0">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Scheduled Date</th>
+                <th>Status</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% recent_bookings.each do |appt| %>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <%= image_tag(profile_url(appt.patient), class: "rounded-circle object-fit-cover", size: "30x30") %>
+                      <div>
+                        <div class="fw-semibold text-dark"><%= appt.patient.full_name %></div>
+                        <small class="text-secondary">#<%= appt.public_uid %></small>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="small"><%= appt.scheduled_at.strftime("%b %d, %Y · %I:%M %p") %></td>
+                  <td>
+                    <span class="badge <%= soft_badge_class(appt.status) %>"><%= appt.status.titleize %></span>
+                  </td>
+                  <td class="text-end">
+                    <%= link_to admin_appointment_path(appt.public_uid), class: "btn btn-sm btn-light border" do %>
+                      <i class="bi bi-eye"></i> View
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="p-4 text-center text-secondary small">
+          No patient bookings recorded for this announcement yet.
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Right Column: Slot Capacity Meter, Quick Actions & Metadata -->
+  <div class="col-12 col-lg-4">
+    <!-- Live Slot Capacity Meter -->
+    <div class="sa-card p-4 mb-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        <i class="bi bi-speedometer2 text-success me-1"></i>Live Slot Capacity
+      </h6>
+      <div class="d-flex justify-content-between align-items-end mb-2">
+        <div>
+          <div class="fs-3 fw-bold text-dark lh-1">
+            <%= @announcement.approved_patients_count %> <span class="fs-6 fw-normal text-secondary">/ <%= @announcement.max_patients %></span>
+          </div>
+          <small class="text-secondary">Approved patient slots</small>
+        </div>
+        <span class="badge <%= pct >= 90 ? 'badge-soft-rose' : 'badge-soft-emerald' %>"><%= pct %>% Full</span>
+      </div>
+
+      <div class="progress mb-3" style="height: 8px;">
+        <div class="progress-bar <%= bar_class %>" style="width: <%= pct %>%;"></div>
+      </div>
+
+      <div class="row g-2 text-center small pt-2 border-top">
+        <div class="col-4">
+          <div class="fw-bold text-warning"><%= @announcement.pending_patients_count %></div>
+          <span class="text-secondary" style="font-size: 0.72rem;">Pending</span>
+        </div>
+        <div class="col-4 border-start border-end">
+          <div class="fw-bold text-primary"><%= @announcement.today_appointments_count %></div>
+          <span class="text-secondary" style="font-size: 0.72rem;">Today</span>
+        </div>
+        <div class="col-4">
+          <div class="fw-bold text-danger"><%= @announcement.canceled_patients_count %></div>
+          <span class="text-secondary" style="font-size: 0.72rem;">Cancelled</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="sa-card p-4 mb-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        Quick Actions
+      </h6>
+      <div class="d-grid gap-2">
+        <%= link_to appointment_details_admin_announcement_path(@announcement.public_uid), class: "btn btn-emerald" do %>
+          <i class="bi bi-people-fill me-2"></i>Manage Slot Roster (<%= @announcement.approved_patients_count %>)
+        <% end %>
+
+        <%= link_to admin_announcement_appointment_reports_path(@announcement.public_uid, format: :pdf), target: "_blank", class: "btn btn-outline-emerald" do %>
+          <i class="bi bi-file-earmark-pdf-fill me-2"></i>Download Attendance PDF
+        <% end %>
+
+        <button type="button" class="btn btn-light border" data-bs-toggle="modal" data-bs-target="#<%= dom_id(@announcement, 'form_modal') %>">
+          <i class="bi bi-pencil me-2"></i>Edit Announcement
+        </button>
+
+        <%= link_to announcement_path(@announcement.public_uid), class: "btn btn-light border" do %>
+          <i class="bi bi-box-arrow-up-right me-2"></i>View Resident Page
+        <% end %>
+
+        <% unless @announcement.archived? %>
+          <%= link_to archive_admin_announcement_path(@announcement.public_uid),
+            class: "btn btn-outline-danger",
+            data: { turbo_method: :PATCH, turbo_submits_with: "Archiving...", turbo_confirm: "Are you sure you want to archive this announcement?" } do %>
+            <i class="bi bi-archive me-2"></i>Archive Announcement
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Metadata Card -->
+    <div class="sa-card p-4">
+      <h6 class="fw-bold text-uppercase text-secondary small mb-3" style="letter-spacing: 0.05em;">
+        Record Metadata
+      </h6>
+      <div class="d-flex flex-column gap-2 small">
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Public UID</span>
+          <code class="fw-semibold text-dark">#<%= @announcement.public_uid %></code>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Posted By</span>
+          <span class="fw-semibold text-dark"><%= @announcement.posted_by.full_name %></span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Barangay</span>
+          <span class="fw-semibold text-dark"><%= @announcement.barangay.name %></span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Created</span>
+          <span class="text-dark"><%= @announcement.created_at.strftime("%b %d, %Y") %></span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Last Updated</span>
+          <span class="text-dark"><%= @announcement.updated_at.strftime("%b %d, %Y %I:%M %p") %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

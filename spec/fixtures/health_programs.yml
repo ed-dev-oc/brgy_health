@@ -1,0 +1,17 @@
+bagong_buhay_prenatal:
+  id: 1
+  name: "Prenatal"
+  description: "Prenatal Health Program"
+  barangay_id: 2
+
+bagong_buhay_newborn_screening:
+  id: 2
+  name: "Newborn screening"
+  description: "Newborn screening Health Program"
+  barangay_id: 2
+
+lao_prenatal:
+  id: 3
+  name: "Prenatal"
+  description: "Prenatal Health Program"
+  barangay_id: 1

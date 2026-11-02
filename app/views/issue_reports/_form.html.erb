@@ -1,0 +1,139 @@
+<%= form_with(model: issue_report, url: issue_reports_path, html: { multipart: true }, data: { controller: "issue-report" }) do |form| %>
+  <% if issue_report.errors.any? %>
+    <div class="alert alert-danger rounded-3 mb-4">
+      <div class="fw-bold mb-1">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        <%= pluralize(issue_report.errors.count, "error") %> prohibited this Issue Report from being saved:
+      </div>
+      <ul class="mb-0 small">
+        <% issue_report.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="d-flex flex-column">
+    <div class="mb-3">
+      <h6 class="fw-bold text-dark mb-3">
+        <i class="bi bi-tag-fill text-success me-1"></i>
+        1. Select Issue Type
+      </h6>
+
+      <div class="row g-2">
+        <div class="col-md-6">
+          <%= form.radio_button :issue_type, :bug, class: "d-none" %>
+          <div class="card issue-type-card p-3" data-type="issue_report_issue_type_bug" data-action="click->issue-report#issueTypeSelected">
+            <div class="d-flex align-items-center">
+              <div class="bg-danger bg-opacity-10 p-2 rounded-3 me-3">
+                <i class="bi bi-bug-fill text-danger fs-5"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0 small text-dark">Bug Report</h6>
+                <small class="text-secondary">Something isn't working as expected</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.radio_button :issue_type, :feature_request, class: "d-none" %>
+          <div class="card issue-type-card p-3" data-type="issue_report_issue_type_feature_request" data-action="click->issue-report#issueTypeSelected">
+            <div class="d-flex align-items-center">
+              <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
+                <i class="bi bi-lightbulb-fill text-primary fs-5"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0 small text-dark">Feature Request</h6>
+                <small class="text-secondary">Suggest an improvement or new feature</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.radio_button :issue_type, :ui_ux, class: "d-none" %>
+          <div class="card issue-type-card p-3" data-type="issue_report_issue_type_ui_ux" data-action="click->issue-report#issueTypeSelected">
+            <div class="d-flex align-items-center">
+              <div class="bg-info bg-opacity-10 p-2 rounded-3 me-3">
+                <i class="bi bi-brush-fill text-info fs-5"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0 small text-dark">UI / UX Issue</h6>
+                <small class="text-secondary">Problem with design or user experience</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.radio_button :issue_type, :security, class: "d-none" %>
+          <div class="card issue-type-card p-3" data-type="issue_report_issue_type_security" data-action="click->issue-report#issueTypeSelected">
+            <div class="d-flex align-items-center">
+              <div class="bg-warning bg-opacity-10 p-2 rounded-3 me-3">
+                <i class="bi bi-shield-shaded text-warning fs-5"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0 small text-dark">Security Concern</h6>
+                <small class="text-secondary">Report a potential security vulnerability</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-3">
+
+    <div class="mb-3">
+      <h6 class="fw-bold text-dark mb-3">
+        <i class="bi bi-info-circle-fill text-success me-1"></i>
+        2. Issue Details
+      </h6>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <%= form.label :email, "Your Email Address *", class: "form-label fw-semibold small" %>
+          <%= form.email_field :email, value: current_user&.email, class: "form-control", placeholder: "you@example.com", required: true %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :title, "Issue Title *", class: "form-label fw-semibold small" %>
+          <%= form.text_field :title, class: "form-control", placeholder: "Brief summary of the problem", required: true %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :priority, "Priority *", class: "form-label fw-semibold small" %>
+          <%= form.select :priority, IssueReport.priorities.map { |key, _value| [key.titleize, key] }, { prompt: "Select priority" }, { class: "form-select", required: true } %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :module_area, "Module Area *", class: "form-label fw-semibold small" %>
+          <%= form.select :module_area, IssueReport.module_areas.map { |key, _value| [key.titleize, key] }, { prompt: "Select affected area" }, { class: "form-select", required: true } %>
+        </div>
+
+        <div class="col-12">
+          <%= form.label :description, "Description *", class: "form-label fw-semibold small" %>
+          <%= form.text_area :description, class: "form-control", rows: 4, placeholder: "Include steps to reproduce, expected behavior, and actual behavior...", required: true %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :url, "Page URL (optional)", class: "form-label fw-semibold small" %>
+          <%= form.text_field :url, class: "form-control", placeholder: "https://example.com/page" %>
+        </div>
+
+        <div class="col-md-6">
+          <%= form.label :images, "Screenshot (optional)", class: "form-label fw-semibold small" %>
+          <%= form.file_field :images, multiple: true, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-2">
+      <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+      <button type="submit" class="btn btn-emerald px-4" data-turbo-submits-with="Submitting...">
+        <i class="bi bi-send-fill me-1"></i>Submit Report
+      </button>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,273 @@
+<% content_for :title, "Clinic Pass ##{@appointment.public_uid} — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
+<% can_reschedule = display_resceduled_button?(@appointment) %>
+<% can_cancel = Appointment::VALID_FOR_CANCELLATION_STATUS.include?(@appointment.status.to_sym) %>
+
+<div class="container py-3 py-lg-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <%= link_to appointments_path, class: "btn btn-sm btn-light border fw-semibold" do %>
+      <i class="bi bi-arrow-left me-1"></i>Back to My Visits
+    <% end %>
+
+    <%= link_to announcement_path(@appointment.announcement.public_uid), class: "btn btn-sm btn-light border fw-semibold" do %>
+      <i class="bi bi-megaphone text-success me-1"></i>View Service Details
+    <% end %>
+  </div>
+
+  <!-- Mobile-Only Top 3-Step Status Tracker -->
+  <div class="pt-card p-3 mb-3 pt-only-mobile">
+    <div class="text-center small fw-bold text-secondary mb-2">APPOINTMENT STATUS</div>
+    <div class="step-tracker">
+      <div class="step-item done">
+        <div class="step-dot"><i class="bi bi-check-lg"></i></div>
+        <div style="font-size: 0.72rem;" class="fw-bold text-success">1. Requested</div>
+      </div>
+
+      <% if @appointment.cancelled? || @appointment.rejected? %>
+        <div class="step-item cancelled">
+          <div class="step-dot"><i class="bi bi-x-lg"></i></div>
+          <div style="font-size: 0.72rem;" class="fw-bold text-danger">2. <%= @appointment.status.titleize %></div>
+        </div>
+      <% else %>
+        <div class="step-item <%= @appointment.completed? ? 'done' : (@appointment.approved? ? 'current' : '') %>">
+          <div class="step-dot">
+            <% if @appointment.approved? || @appointment.completed? %>
+              <i class="bi bi-check2-circle"></i>
+            <% else %>
+              2
+            <% end %>
+          </div>
+          <div style="font-size: 0.72rem;" class="fw-bold <%= @appointment.approved? || @appointment.completed? ? 'text-primary' : 'text-secondary' %>">
+            2. Approved
+          </div>
+        </div>
+      <% end %>
+
+      <div class="step-item <%= @appointment.completed? ? 'done' : '' %>">
+        <div class="step-dot">
+          <% if @appointment.completed? %>
+            <i class="bi bi-check2-all"></i>
+          <% else %>
+            3
+          <% end %>
+        </div>
+        <div style="font-size: 0.72rem;" class="fw-bold <%= @appointment.completed? ? 'text-success' : 'text-secondary' %>">
+          3. Completed
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-desktop-split">
+    <!-- LEFT COLUMN: Official Digital Clinic Pass Ticket Card -->
+    <div class="pt-card overflow-hidden mb-3">
+      <div class="p-3 p-lg-4 text-white d-flex flex-wrap justify-content-between align-items-center gap-2"
+           style="background: linear-gradient(135deg, #059669, #0d9488);">
+        <div>
+          <small class="text-uppercase fw-semibold opacity-75" style="font-size: 0.7rem;">OFFICIAL CLINIC PASS</small>
+          <h4 class="fw-bold mb-0">Visit #<%= @appointment.public_uid %></h4>
+        </div>
+        <div class="d-flex flex-wrap gap-1">
+          <span class="badge bg-white text-success fw-bold px-3 py-2"><%= @appointment.status.titleize %></span>
+          <% @appointment.flag_list.each do |flag| %>
+            <span class="badge bg-warning text-dark fw-bold px-2 py-2"><%= flag.titleize %></span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="p-3 p-md-4">
+        <h5 class="fw-bold mb-3"><%= @appointment.announcement.name %></h5>
+
+        <!-- Highlighted Date & Time Box -->
+        <div class="p-3 rounded-3 mb-3" style="background: var(--pt-emerald-50); border: 1px solid #a7f3d0;">
+          <div class="row g-2">
+            <div class="col-6 border-end border-success border-opacity-25">
+              <small class="text-secondary d-block">DATE</small>
+              <strong class="text-dark"><%= @appointment.scheduled_at.strftime("%b %d, %Y") %></strong>
+              <small class="d-block text-success fw-semibold"><%= @appointment.scheduled_at.strftime("%A") %></small>
+            </div>
+            <div class="col-6 ps-3">
+              <small class="text-secondary d-block">TIME</small>
+              <strong class="text-dark"><%= @appointment.scheduled_at.strftime("%I:%M %p") %></strong>
+              <small class="d-block text-secondary">Arrive 15 mins early</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column gap-2 small mb-3">
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span class="text-secondary"><i class="bi bi-person-fill text-success me-1"></i>Patient Name</span>
+            <span class="fw-semibold text-end">
+              <%= @appointment.patient&.full_name %>
+              <% if @appointment.patient&.subdivision.present? %>
+                (<%= @appointment.patient.subdivision.name %>)
+              <% end %>
+            </span>
+          </div>
+
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span class="text-secondary"><i class="bi bi-geo-alt-fill text-success me-1"></i>Location</span>
+            <span class="fw-semibold text-end">
+              <%= @appointment.announcement.location %>, Brgy. <%= @appointment.barangay.name %>
+            </span>
+          </div>
+
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span class="text-secondary"><i class="bi bi-person-badge-fill text-success me-1"></i>Health Worker</span>
+            <span class="fw-semibold text-end">
+              <%= @appointment.health_worker&.full_name.presence || "Assigned at Clinic" %>
+            </span>
+          </div>
+
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span class="text-secondary"><i class="bi bi-clipboard2-pulse-fill text-success me-1"></i>Reason for Visit</span>
+            <span class="fw-semibold text-end"><%= @appointment.reason.presence || "General Check-Up" %></span>
+          </div>
+        </div>
+
+        <!-- Health Worker Notes & Instructions Box -->
+        <div class="p-3 rounded-3 bg-light border mb-3">
+          <div class="fw-bold small mb-1">
+            <i class="bi bi-journal-medical text-primary me-1"></i>Health Worker Notes &amp; Instructions
+          </div>
+          <p class="small text-secondary mb-0">
+            <%= @appointment.notes.presence || "No clinical notes recorded yet. Notes from your Barangay Health Worker will appear here after your visit." %>
+          </p>
+        </div>
+
+        <!-- Linked Previous Visit (Only rendered when follow_up_id is present) -->
+        <% if @appointment.follow_up_id.present? && @appointment.follow_up.present? %>
+          <div class="p-3 rounded-3 border mb-3 d-flex justify-content-between align-items-center" style="background: #f8fbff;">
+            <div class="small">
+              <div class="fw-bold text-primary"><i class="bi bi-link-45deg me-1"></i>Follow-Up Visit</div>
+              <div class="text-secondary">Linked to previous Visit #<%= @appointment.follow_up.public_uid %></div>
+            </div>
+            <%= link_to appointment_path(@appointment.follow_up.public_uid), class: "btn btn-sm btn-outline-primary fw-semibold" do %>
+              View Previous Visit
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @appointment.cancelled? && @appointment.cancel_reason.present? %>
+          <div class="alert alert-danger small py-2 px-3 rounded-3 mb-3">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            <strong>Cancellation Reason:</strong> <%= @appointment.cancel_reason %>
+          </div>
+        <% end %>
+
+        <% if @appointment.flag_list.include?("rescheduled") && @appointment.reschedule_reason.present? %>
+          <div class="alert alert-warning small py-2 px-3 rounded-3 mb-3">
+            <i class="bi bi-calendar-range me-1"></i>
+            <strong>Reschedule Note:</strong> <%= @appointment.reschedule_reason %>
+          </div>
+        <% end %>
+
+        <!-- Mobile-Only Reminders & Direct Action Buttons -->
+        <div class="pt-only-mobile mt-3">
+          <div class="p-3 rounded-3 small mb-3" style="background: var(--pt-sky-50); color: #0369a1;">
+            <i class="bi bi-bell-fill me-1"></i>
+            <strong>Automatic Reminders Active:</strong> We will send you an alert 24 hours, 1 hour, 30 minutes, and 5 minutes before your check-up.
+          </div>
+
+          <div class="row g-2 pt-1">
+            <% if can_reschedule %>
+              <div class="<%= can_cancel ? 'col-6' : 'col-12' %>">
+                <button type="button" class="btn btn-outline-primary w-100 fw-semibold py-2 rounded-3"
+                        data-bs-toggle="modal" data-bs-target="#<%= dom_id(@appointment, 'reschedule_modal') %>">
+                  <i class="bi bi-calendar-range me-1"></i>Change Date
+                </button>
+              </div>
+            <% end %>
+            <% if can_cancel %>
+              <div class="<%= can_reschedule ? 'col-6' : 'col-12' %>">
+                <button type="button" class="btn btn-outline-danger w-100 fw-semibold py-2 rounded-3"
+                        data-bs-toggle="modal" data-bs-target="#<%= dom_id(@appointment, 'cancel_schedule_modal') %>">
+                  <i class="bi bi-x-circle me-1"></i>Cancel Visit
+                </button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT STICKY SIDEBAR ON DESKTOP: Status Tracker, Reminders & Direct Actions -->
+    <aside class="pt-only-desktop pt-sticky-side">
+      <div class="pt-card p-4 mb-3">
+        <div class="text-center small fw-bold text-secondary mb-3">APPOINTMENT PROGRESS</div>
+        <div class="step-tracker">
+          <div class="step-item done">
+            <div class="step-dot"><i class="bi bi-check-lg"></i></div>
+            <div style="font-size: 0.75rem;" class="fw-bold text-success">1. Requested</div>
+          </div>
+
+          <% if @appointment.cancelled? || @appointment.rejected? %>
+            <div class="step-item cancelled">
+              <div class="step-dot"><i class="bi bi-x-lg"></i></div>
+              <div style="font-size: 0.75rem;" class="fw-bold text-danger">2. <%= @appointment.status.titleize %></div>
+            </div>
+          <% else %>
+            <div class="step-item <%= @appointment.completed? ? 'done' : (@appointment.approved? ? 'current' : '') %>">
+              <div class="step-dot">
+                <% if @appointment.approved? || @appointment.completed? %>
+                  <i class="bi bi-check2-circle"></i>
+                <% else %>
+                  2
+                <% end %>
+              </div>
+              <div style="font-size: 0.75rem;" class="fw-bold <%= @appointment.approved? || @appointment.completed? ? 'text-primary' : 'text-secondary' %>">
+                2. Approved
+              </div>
+            </div>
+          <% end %>
+
+          <div class="step-item <%= @appointment.completed? ? 'done' : '' %>">
+            <div class="step-dot">
+              <% if @appointment.completed? %>
+                <i class="bi bi-check2-all"></i>
+              <% else %>
+                3
+              <% end %>
+            </div>
+            <div style="font-size: 0.75rem;" class="fw-bold <%= @appointment.completed? ? 'text-success' : 'text-secondary' %>">
+              3. Completed
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-card p-4">
+        <h6 class="fw-bold mb-1">Manage Your Appointment</h6>
+        <p class="small text-secondary mb-3">Need to pick another day or cancel your slot?</p>
+
+        <div class="p-3 rounded-3 small mb-3" style="background: var(--pt-sky-50); color: #0369a1;">
+          <i class="bi bi-bell-fill me-1"></i>
+          <strong>Automatic Reminders Active:</strong> You will receive a reminder 24 hours, 1 hour, 30 minutes, and 5 minutes before your scheduled check-up.
+        </div>
+
+        <div class="p-3 rounded-3 bg-light border small mb-3">
+          <i class="bi bi-clock-history text-success me-1"></i>
+          <strong>Arrival Tip:</strong> Please arrive at <strong><%= @appointment.announcement.location %></strong> at least 15 minutes before your schedule.
+        </div>
+
+        <div class="d-grid gap-2">
+          <% if can_reschedule %>
+            <button type="button" class="btn btn-outline-primary fw-semibold py-2 rounded-3"
+                    data-bs-toggle="modal" data-bs-target="#<%= dom_id(@appointment, 'reschedule_modal') %>">
+              <i class="bi bi-calendar-range me-1"></i>Change Appointment Date
+            </button>
+          <% end %>
+
+          <% if can_cancel %>
+            <button type="button" class="btn btn-outline-danger fw-semibold py-2 rounded-3"
+                    data-bs-toggle="modal" data-bs-target="#<%= dom_id(@appointment, 'cancel_schedule_modal') %>">
+              <i class="bi bi-x-circle me-1"></i>Cancel This Visit
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<%= render partial: "barangay/appointments/reschedule_modal" if can_reschedule %>
+<%= render partial: "barangay/appointments/cancel_modal" if can_cancel %>

@@ -1,0 +1,337 @@
+// =============================================================================
+// Barangay Resident / Patient Portal Design System
+// Mobile-First with Adaptive Multi-Column Desktop Layout
+// =============================================================================
+
+:root {
+  --pt-emerald-700: #047857;
+  --pt-emerald-600: #059669;
+  --pt-emerald-500: #10b981;
+  --pt-emerald-50: #ecfdf5;
+  --pt-teal-600: #0d9488;
+  --pt-slate-900: #0f172a;
+  --pt-slate-700: #334155;
+  --pt-slate-500: #64748b;
+  --pt-slate-200: #e2e8f0;
+  --pt-slate-100: #f1f5f9;
+  --pt-amber-500: #f59e0b;
+  --pt-amber-50: #fffbeb;
+  --pt-sky-600: #0284c7;
+  --pt-sky-50: #f0f9ff;
+  --pt-rose-600: #e11d48;
+  --pt-rose-50: #fff1f2;
+}
+
+.pt-body {
+  background-color: #f8fafc;
+  color: var(--pt-slate-900);
+
+  @media (max-width: 991.98px) {
+    padding-bottom: 72px; // Space for fixed mobile bottom tab bar
+  }
+}
+
+// Sticky Mobile Bottom Navigation Bar (Hidden on Desktop >= 992px)
+.pt-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  min-height: 64px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: #ffffff;
+  border-top: 1px solid var(--pt-slate-200);
+  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.06);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1030;
+
+  @media (min-width: 992px) {
+    display: none !important;
+  }
+}
+
+.pt-tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--pt-slate-500);
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.35rem 0;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+
+  i {
+    font-size: 1.25rem;
+    line-height: 1.1;
+    margin-bottom: 2px;
+  }
+
+  &:hover {
+    color: var(--pt-emerald-600);
+  }
+
+  &.active {
+    color: var(--pt-emerald-600);
+    font-weight: 700;
+  }
+}
+
+// Cards & Touch-Friendly Action Tiles
+.pt-card {
+  background: #ffffff;
+  border: 1px solid var(--pt-slate-200);
+  border-radius: 1rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+}
+
+.pt-action-tile {
+  background: #ffffff;
+  border: 1.5px solid var(--pt-slate-200);
+  border-radius: 1rem;
+  padding: 1rem 0.75rem;
+  text-align: center;
+  text-decoration: none;
+  color: var(--pt-slate-900);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  min-height: 108px;
+  height: 100%;
+
+  &:hover,
+  &:active {
+    border-color: var(--pt-emerald-500);
+    background-color: var(--pt-emerald-50);
+    transform: translateY(-2px);
+    color: var(--pt-emerald-700);
+  }
+}
+
+.pt-icon-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+
+.circle-emerald { background: var(--pt-emerald-50); color: var(--pt-emerald-600); }
+.circle-sky     { background: var(--pt-sky-50);     color: var(--pt-sky-600); }
+.circle-amber   { background: var(--pt-amber-50);   color: #d97706; }
+.circle-rose    { background: var(--pt-rose-50);    color: var(--pt-rose-600); }
+
+// Large Non-Tech Buttons
+.btn-emerald-lg {
+  background-color: var(--pt-emerald-600);
+  border-color: var(--pt-emerald-600);
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.7rem 1.25rem;
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: var(--pt-emerald-700) !important;
+    border-color: var(--pt-emerald-700) !important;
+    color: #ffffff !important;
+  }
+}
+
+// Quick Reason Chips in Booking Modal
+.reason-chip {
+  border: 1px solid var(--pt-slate-200);
+  background: #f8fafc;
+  color: var(--pt-slate-700);
+  border-radius: 2rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  user-select: none;
+
+  &:hover,
+  &.active {
+    background: var(--pt-emerald-50);
+    border-color: var(--pt-emerald-600);
+    color: var(--pt-emerald-700);
+    font-weight: 600;
+  }
+}
+
+// 3-Step Visual Status Tracker on Clinic Pass
+.step-tracker {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 16px;
+    left: 12%;
+    right: 12%;
+    height: 3px;
+    background: var(--pt-slate-200);
+    z-index: 1;
+  }
+}
+
+.step-item {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  flex: 1;
+}
+
+.step-dot {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--pt-slate-200);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--pt-slate-500);
+  margin-bottom: 4px;
+}
+
+.step-item.done .step-dot {
+  background: var(--pt-emerald-600);
+  border-color: var(--pt-emerald-600);
+  color: #ffffff;
+}
+
+.step-item.current .step-dot {
+  background: var(--pt-sky-600);
+  border-color: var(--pt-sky-600);
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2);
+}
+
+.step-item.cancelled .step-dot {
+  background: var(--pt-rose-600);
+  border-color: var(--pt-rose-600);
+  color: #ffffff;
+}
+
+// Mobile 2x2 Filter Button Grid -> Desktop Horizontal Row
+.pt-filter-scroll {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+
+  > .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 576px) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    > .btn {
+      width: auto;
+    }
+  }
+}
+
+// Adaptive Desktop Layout Engine (>= 992px)
+.pt-only-desktop {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .pt-only-desktop {
+    display: block;
+  }
+
+  .pt-only-mobile {
+    display: none !important;
+  }
+
+  .pt-desktop-dashboard {
+    display: grid;
+    grid-template-columns: minmax(0, 1.85fr) minmax(320px, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .pt-desktop-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .pt-desktop-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+
+    > .pt-card {
+      margin-bottom: 0 !important;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+  }
+
+  .pt-info-4grid > .col-6 {
+    width: 25%;
+  }
+
+  .pt-hero-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 2.25rem 2.5rem !important;
+
+    .pt-hero-cta {
+      width: auto !important;
+      padding: 0.85rem 1.75rem !important;
+      flex-shrink: 0;
+    }
+  }
+
+  .pt-btn-adaptive {
+    width: auto !important;
+    padding-left: 1.75rem !important;
+    padding-right: 1.75rem !important;
+  }
+
+  .pt-sticky-side {
+    position: sticky;
+    top: 86px;
+  }
+}

@@ -1,0 +1,184 @@
+<% content_for :title, "#{announcement.name} — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
+<% slots_left = [announcement.max_patients.to_i - announcement.approved_patients_count, 0].max %>
+<% capacity_pct = announcement.capacity_percentage.round.clamp(0, 100) %>
+
+<div class="container py-3 py-lg-4">
+  <div class="mb-3">
+    <%= link_to root_path(anchor: "AnnouncementCarousel"), class: "btn btn-sm btn-light border fw-semibold" do %>
+      <i class="bi bi-arrow-left me-1"></i>Back to Home
+    <% end %>
+  </div>
+
+  <div class="pt-desktop-split">
+    <!-- LEFT COLUMN: Service Details Card -->
+    <div class="pt-card overflow-hidden mb-3">
+      <!-- Service Header Banner -->
+      <div class="p-4 text-white" style="background: linear-gradient(135deg, #065f46, #0f766e);">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+          <% if announcement.health_program.present? %>
+            <span class="badge bg-white text-success fw-bold"><%= announcement.health_program.name %></span>
+          <% else %>
+            <span class="badge bg-white text-success fw-bold">Health Service</span>
+          <% end %>
+
+          <% if slots_left > 0 %>
+            <span class="badge bg-warning text-dark fw-bold">
+              <%= slots_left %> of <%= announcement.max_patients %> Slots Left
+            </span>
+          <% else %>
+            <span class="badge bg-warning text-dark fw-bold">Waitlist Open</span>
+          <% end %>
+        </div>
+        <h3 class="fw-bold mb-1"><%= announcement.name %></h3>
+        <small class="opacity-90">
+          Posted by <%= announcement.posted_by&.full_name || "Barangay #{ActsAsTenant.current_tenant&.name} Health Center" %>
+        </small>
+      </div>
+
+      <% if announcement.images.attached? %>
+        <div class="p-3 pb-0">
+          <div class="row g-2">
+            <% announcement.images.first(2).each do |image| %>
+              <div class="<%= announcement.images.size == 1 ? 'col-12' : 'col-12 col-sm-6' %>">
+                <%= image_tag(image.variant(resize_to_fill: [800, 450]), class: "img-fluid rounded-3 w-100 object-fit-cover border", style: "max-height: 240px;") %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="p-3 p-md-4">
+        <!-- 4-Box Plain-Language Info Grid (2x2 on Mobile, 4-across on Desktop) -->
+        <div class="row g-2 mb-4 pt-info-4grid">
+          <div class="col-6">
+            <div class="p-3 rounded-3 bg-light h-100">
+              <div class="text-secondary small fw-semibold"><i class="bi bi-calendar-event text-success me-1"></i>WHEN</div>
+              <div class="fw-bold small mt-1">
+                <%= announcement.start_date.strftime("%b %d") %> – <%= announcement.end_date.strftime("%b %d, %Y") %>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-3 rounded-3 bg-light h-100">
+              <div class="text-secondary small fw-semibold"><i class="bi bi-clock text-success me-1"></i>CLINIC HOURS</div>
+              <div class="fw-bold small mt-1">
+                <%= announcement.open_time.strftime("%I:%M %p") %> – <%= announcement.close_time.strftime("%I:%M %p") %>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-3 rounded-3 bg-light h-100">
+              <div class="text-secondary small fw-semibold"><i class="bi bi-geo-alt text-success me-1"></i>WHERE</div>
+              <div class="fw-bold small mt-1"><%= announcement.location %></div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="p-3 rounded-3 bg-light h-100">
+              <div class="text-secondary small fw-semibold"><i class="bi bi-people text-success me-1"></i>WHO CAN JOIN</div>
+              <div class="fw-bold small mt-1"><%= announcement.audience.to_s.titleize %></div>
+            </div>
+          </div>
+        </div>
+
+        <h6 class="fw-bold mb-2">About This Health Service</h6>
+        <div class="text-secondary small mb-4 rich-text-content" style="line-height: 1.65;">
+          <%= announcement.description %>
+        </div>
+
+        <% if announcement.health_program.present? && announcement.health_program.description.present? %>
+          <div class="p-3 rounded-3 mb-4 border" style="background-color: var(--pt-emerald-50);">
+            <div class="fw-bold small text-success mb-1">
+              <i class="bi bi-heart-pulse-fill me-1"></i>Program: <%= announcement.health_program.name %>
+            </div>
+            <div class="small text-secondary rich-text-content mb-0">
+              <%= announcement.health_program.description %>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="p-3 rounded-3 bg-light border small mb-4 mb-lg-0">
+          <div class="fw-bold mb-1"><i class="bi bi-clipboard2-check text-success me-1"></i>What to Bring on Your Visit:</div>
+          <ul class="mb-0 ps-3 text-secondary">
+            <li>Barangay ID or any valid government ID</li>
+            <li>Previous health booklet or vaccination card (if applicable)</li>
+            <li>Your Digital Clinic Pass (#UID) on your phone</li>
+          </ul>
+        </div>
+
+        <!-- Mobile-Only Bottom Booking CTA -->
+        <div class="pt-only-mobile mt-3">
+          <% if user_signed_in? %>
+            <button type="button" class="btn btn-emerald-lg w-100 shadow" data-bs-toggle="modal" data-bs-target="#<%= dom_id(@appointment, 'form') %>">
+              <i class="bi bi-calendar-check-fill me-2"></i>Book My Free Slot Now
+            </button>
+          <% else %>
+            <div class="d-grid gap-2">
+              <%= link_to new_user_session_path, class: "btn btn-emerald-lg w-100 shadow" do %>
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Book This Service
+              <% end %>
+              <%= link_to new_user_registration_path, class: "btn btn-light border fw-semibold py-2 rounded-3" do %>
+                <i class="bi bi-person-plus me-1 text-success"></i>Create Free Resident Account
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT STICKY SIDEBAR ON DESKTOP: Dedicated Slot Reservation Card -->
+    <aside class="pt-card p-4 pt-only-desktop pt-sticky-side">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="badge badge-soft-emerald"><%= announcement.status.titleize %></span>
+        <span class="small fw-bold text-success">
+          <%= slots_left > 0 ? "#{slots_left} Slots Remaining" : "Waitlist Open" %>
+        </span>
+      </div>
+      <h5 class="fw-bold mb-1">Reserve Your Free Slot</h5>
+      <p class="text-secondary small mb-3">
+        Instant online reservation for Brgy. <%= ActsAsTenant.current_tenant&.name %> residents.
+      </p>
+
+      <div class="mb-3">
+        <div class="d-flex justify-content-between small mb-1">
+          <span class="text-secondary">Booked Capacity</span>
+          <span class="fw-semibold"><%= announcement.approved_patients_count %> / <%= announcement.max_patients %> Residents</span>
+        </div>
+        <div class="progress" style="height: 8px;">
+          <div class="progress-bar bg-success" style="width: <%= capacity_pct %>%;"></div>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-3 bg-light small mb-3 d-flex flex-column gap-2">
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Cost:</span>
+          <strong class="text-success">100% Free</strong>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Available Dates:</span>
+          <strong><%= announcement.start_date.strftime("%b %d") %> – <%= announcement.end_date.strftime("%b %d") %></strong>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-secondary">Venue:</span>
+          <strong class="text-end"><%= announcement.location %></strong>
+        </div>
+      </div>
+
+      <% if user_signed_in? %>
+        <button type="button" class="btn btn-emerald-lg w-100 shadow-sm" data-bs-toggle="modal" data-bs-target="#<%= dom_id(@appointment, 'form') %>">
+          <i class="bi bi-calendar-check-fill me-2"></i>Book My Free Slot Now
+        </button>
+      <% else %>
+        <div class="d-grid gap-2">
+          <%= link_to new_user_session_path, class: "btn btn-emerald-lg w-100 shadow-sm" do %>
+            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In to Book This Service
+          <% end %>
+          <%= link_to new_user_registration_path, class: "btn btn-light border fw-semibold py-2 rounded-3" do %>
+            <i class="bi bi-person-plus me-1 text-success"></i>Create Free Resident Account
+          <% end %>
+        </div>
+      <% end %>
+    </aside>
+  </div>
+</div>
+
+<%= render partial: "barangay/announcements/modal_form" if user_signed_in? %>

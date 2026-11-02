@@ -1,0 +1,97 @@
+<% content_for :title, "Residents & Health Staff Directory — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
+
+<!-- Page Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+  <div>
+    <h3 class="fw-bold mb-1">Residents &amp; Health Staff Directory</h3>
+    <p class="text-secondary small mb-0">
+      Manage barangay resident accounts, electronic health records (EHR), and Barangay Health Worker (BHW) staff access.
+    </p>
+  </div>
+
+  <% if current_user&.admin? %>
+    <div>
+      <button type="button" class="btn btn-emerald" data-bs-toggle="modal" data-bs-target="#newUserModal">
+        <i class="bi bi-person-plus-fill me-1"></i>New Staff Account
+      </button>
+    </div>
+  <% end %>
+</div>
+
+<!-- Role Filter Tabs & Search Form -->
+<div class="sa-card p-3 mb-4">
+  <% current_role = params[:role].to_s %>
+  <div class="d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3">
+    <ul class="nav sa-filter-pills bg-light p-1 rounded-3">
+      <li class="nav-item">
+        <%= link_to "All Barangay Users", admin_users_path(status: params[:status]),
+          class: "nav-link #{current_role.blank? ? 'active' : ''}" %>
+      </li>
+      <li class="nav-item">
+        <%= link_to admin_users_path(role: "patient", status: params[:status]),
+          class: "nav-link #{current_role == 'patient' ? 'active' : ''}" do %>
+          <i class="bi bi-person-heart me-1"></i>Patients / Residents
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to admin_users_path(role: "staff", status: params[:status]),
+          class: "nav-link #{current_role == 'staff' ? 'active' : ''}" do %>
+          <i class="bi bi-person-badge me-1"></i>Health Staff (BHW)
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to admin_users_path(role: "admin", status: params[:status]),
+          class: "nav-link #{current_role == 'admin' ? 'active' : ''}" do %>
+          <i class="bi bi-shield-lock me-1"></i>Barangay Admins
+        <% end %>
+      </li>
+    </ul>
+
+    <div class="flex-grow-1" style="max-width: 540px;">
+      <%= render partial: "search_form" %>
+    </div>
+  </div>
+</div>
+
+<!-- Users Table Card -->
+<div class="sa-card overflow-hidden">
+  <% if @staff_users.any? %>
+    <div class="table-responsive">
+      <table class="table sa-table mb-0">
+        <thead>
+          <tr>
+            <th>User &amp; UID</th>
+            <th>Contact Details</th>
+            <th>Purok / Subdivision</th>
+            <th>Role</th>
+            <th>Account Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users">
+          <% @staff_users.each do |user| %>
+            <%= render partial: "user", locals: { user: user } %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if @pagy.pages > 1 %>
+      <div class="p-3 border-top d-flex justify-content-end">
+        <%== pagy_bootstrap_nav(@pagy) %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="p-5 text-center">
+      <div class="sa-icon-well well-slate mx-auto mb-3">
+        <i class="bi bi-people"></i>
+      </div>
+      <h5 class="fw-bold mb-1">No Users Found</h5>
+      <p class="text-secondary small mb-0">No barangay users match your current role or search filters.</p>
+    </div>
+  <% end %>
+</div>
+
+<% if current_user&.admin? %>
+  <%= render "new_user_modal", user: User.new %>
+<% end %>

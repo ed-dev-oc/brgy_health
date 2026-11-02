@@ -1,0 +1,55 @@
+<% cache(announcement) do %>
+  <% slots_left = [announcement.max_patients.to_i - announcement.approved_patients_count, 0].max %>
+  <div class="pt-card p-3 p-lg-4 mb-3" id="<%= dom_id(announcement, "card") %>">
+    <div>
+      <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+        <% if announcement.health_program.present? %>
+          <span class="badge badge-soft-emerald text-truncate" style="max-width: 60%;">
+            <%= announcement.health_program.name %>
+          </span>
+        <% else %>
+          <span class="badge badge-soft-slate">Health Service</span>
+        <% end %>
+
+        <% if slots_left > 0 %>
+          <span class="badge bg-success">
+            <i class="bi bi-check-circle me-1"></i><%= pluralize(slots_left, "Slot") %> Left
+          </span>
+        <% else %>
+          <span class="badge badge-soft-amber">
+            <i class="bi bi-exclamation-circle me-1"></i>Waitlist Open
+          </span>
+        <% end %>
+      </div>
+
+      <h5 class="fw-bold mb-2 text-dark"><%= announcement.name %></h5>
+
+      <div class="p-2 px-3 rounded-3 bg-light small mb-3 d-flex flex-column gap-1">
+        <div>
+          <i class="bi bi-calendar3 text-success me-2"></i>
+          <strong>Dates:</strong>
+          <%= announcement.start_date.strftime("%b %d") %> – <%= announcement.end_date.strftime("%b %d, %Y") %>
+        </div>
+        <div>
+          <i class="bi bi-clock text-success me-2"></i>
+          <strong>Hours:</strong>
+          <%= announcement.open_time.strftime("%I:%M %p") %> – <%= announcement.close_time.strftime("%I:%M %p") %>
+        </div>
+        <div>
+          <i class="bi bi-geo-alt text-success me-2"></i>
+          <strong>Where:</strong>
+          <%= announcement.location %>
+        </div>
+        <div>
+          <i class="bi bi-people text-success me-2"></i>
+          <strong>Who:</strong>
+          <%= announcement.audience.to_s.titleize %>
+        </div>
+      </div>
+    </div>
+
+    <%= link_to announcement_path(announcement.public_uid), class: "btn btn-emerald-lg w-100", data: { turbo: false } do %>
+      View Details &amp; Book Slot <i class="bi bi-arrow-right ms-1"></i>
+    <% end %>
+  </div>
+<% end %>

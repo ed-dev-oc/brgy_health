@@ -1,0 +1,44 @@
+<div class="sa-card p-4">
+  <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+    <span class="sa-icon-well well-sky" style="width: 36px; height: 36px; font-size: 1rem;">
+      <i class="bi bi-person-vcard-fill"></i>
+    </span>
+    <div>
+      <h6 class="fw-bold text-dark mb-0">Personal Information</h6>
+      <small class="text-secondary">Your legal name and contact number for clinic records</small>
+    </div>
+  </div>
+
+  <%= form_with model: @user, url: profile_path(@user.id), local: true do |form| %>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <%= form.label :first_name, "First Name *", class: "form-label fw-semibold small" %>
+        <%= form.text_field :first_name, class: "form-control", required: true %>
+      </div>
+
+      <div class="col-md-6">
+        <%= form.label :middle_name, "Middle Name", class: "form-label fw-semibold small" %>
+        <%= form.text_field :middle_name, class: "form-control" %>
+      </div>
+
+      <div class="col-md-8">
+        <%= form.label :last_name, "Last Name *", class: "form-label fw-semibold small" %>
+        <%= form.text_field :last_name, class: "form-control", required: true %>
+      </div>
+
+      <div class="col-md-4">
+        <%= form.label :suffix, "Suffix", class: "form-label fw-semibold small" %>
+        <%= form.text_field :suffix, class: "form-control", placeholder: "Jr., III" %>
+      </div>
+
+      <div class="col-12">
+        <%= form.label :phone_number, "Mobile / Contact Number", class: "form-label fw-semibold small" %>
+        <%= form.text_field :phone_number, class: "form-control", placeholder: "09XX-XXX-XXXX" %>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-3 pt-3 border-top">
+      <%= form.submit "Save Personal Information", class: "btn btn-emerald px-4" %>
+    </div>
+  <% end %>
+</div>

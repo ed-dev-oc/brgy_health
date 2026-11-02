@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brgy. Lao Health Center — Admin Dashboard Prototype</title>
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --ad-emerald-600: #059669;
+      --ad-emerald-500: #10b981;
+      --ad-emerald-50: #ecfdf5;
+      --ad-teal-600: #0d9488;
+      --ad-slate-900: #0f172a;
+      --ad-slate-800: #1e293b;
+      --ad-slate-500: #64748b;
+      --ad-slate-200: #e2e8f0;
+      --ad-slate-100: #f1f5f9;
+      --ad-amber-500: #f59e0b;
+      --ad-amber-50: #fffbeb;
+      --ad-rose-600: #e11d48;
+      --ad-rose-50: #fff1f2;
+      --ad-sky-600: #0284c7;
+      --ad-sky-50: #f0f9ff;
+      --ad-sidebar-width: 276px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--ad-slate-100);
+      color: var(--ad-slate-900);
+      overflow-x: hidden;
+    }
+
+    .ad-wrapper { display: flex; min-height: 100vh; width: 100%; }
+
+    /* Clinical Sidebar */
+    .ad-sidebar {
+      width: var(--ad-sidebar-width);
+      background: linear-gradient(180deg, #0b192c 0%, #071e22 100%);
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: margin-left 0.25s ease-in-out;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 1030;
+    }
+    .ad-sidebar.collapsed { margin-left: calc(-1 * var(--ad-sidebar-width)); }
+
+    .ad-brand { padding: 1.2rem 1.25rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+    .ad-brand-icon {
+      width: 40px; height: 40px; border-radius: 11px;
+      background: linear-gradient(135deg, var(--ad-emerald-500), var(--ad-teal-600));
+      display: inline-flex; align-items: center; justify-content: center;
+      color: white; font-size: 1.25rem;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .ad-tenant-box {
+      margin: 0.85rem 0.85rem 0.25rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 0.6rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .ad-nav-section-label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #64748b; padding: 0.9rem 1.25rem 0.35rem;
+    }
+
+    .ad-nav-link {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.62rem 1rem; margin: 0.15rem 0.75rem; border-radius: 0.5rem;
+      color: #cbd5e1; text-decoration: none; font-size: 0.88rem; font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    .ad-nav-link:hover { background-color: rgba(255, 255, 255, 0.06); color: #ffffff; }
+    .ad-nav-link.active {
+      background: rgba(16, 185, 129, 0.16); color: #34d399; font-weight: 600;
+      box-shadow: inset 3px 0 0 var(--ad-emerald-500);
+    }
+    .ad-nav-link i { font-size: 1.05rem; width: 24px; margin-right: 0.5rem; }
+
+    /* Main Content */
+    .ad-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .ad-topbar {
+      height: 64px; background-color: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px); border-bottom: 1px solid var(--ad-slate-200);
+      padding: 0 1.5rem; position: sticky; top: 0; z-index: 1020;
+    }
+
+    .ad-card {
+      background: #ffffff; border: 1px solid var(--ad-slate-200);
+      border-radius: 0.85rem; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .ad-kpi-card { text-decoration: none; color: inherit; display: block; }
+    .ad-kpi-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.07); color: inherit; }
+
+    .ad-icon-well {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 1.35rem; flex-shrink: 0;
+    }
+    .well-emerald { background-color: var(--ad-emerald-50); color: var(--ad-emerald-600); }
+    .well-amber   { background-color: var(--ad-amber-50);   color: #d97706; }
+    .well-rose    { background-color: var(--ad-rose-50);    color: var(--ad-rose-600); }
+    .well-sky     { background-color: var(--ad-sky-50);     color: var(--ad-sky-600); }
+
+    .badge-soft-emerald { background-color: var(--ad-emerald-50); color: var(--ad-emerald-600); border: 1px solid #a7f3d0; }
+    .badge-soft-amber   { background-color: var(--ad-amber-50);   color: #b45309; border: 1px solid #fde68a; }
+    .badge-soft-rose    { background-color: var(--ad-rose-50);    color: var(--ad-rose-600); border: 1px solid #fecdd3; }
+    .badge-soft-sky     { background-color: var(--ad-sky-50);     color: var(--ad-sky-600); border: 1px solid #bae6fd; }
+    .badge-soft-slate   { background-color: #f8fafc;              color: #475569; border: 1px solid #e2e8f0; }
+
+    .btn, .badge, .ad-nav-link {
+      white-space: nowrap;
+    }
+    .ad-table td:last-child, .ad-table th:last-child {
+      white-space: nowrap;
+    }
+    .btn-emerald { background-color: var(--ad-emerald-600); border-color: var(--ad-emerald-600); color: #fff; font-weight: 500; }
+    .btn-emerald:hover { background-color: #047857; border-color: #047857; color: #fff; }
+
+    .ad-table th {
+      font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--ad-slate-500);
+      background-color: #f8fafc; border-bottom: 1px solid var(--ad-slate-200);
+      padding: 0.75rem 1rem;
+    }
+    .ad-table td {
+      padding: 0.85rem 1rem; vertical-align: middle;
+      border-bottom: 1px solid #f1f5f9; font-size: 0.87rem;
+    }
+
+    .ad-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 600; font-size: 0.8rem; flex-shrink: 0;
+    }
+
+    .ad-nav-pills .nav-link {
+      font-size: 0.82rem; font-weight: 600; color: var(--ad-slate-500);
+      padding: 0.42rem 0.85rem; border-radius: 0.5rem;
+    }
+    .ad-nav-pills .nav-link.active {
+      background-color: var(--ad-slate-900); color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+<div class="ad-wrapper">
+  <!-- ==================== CLINICAL SIDEBAR ==================== -->
+  <aside id="adSidebar" class="ad-sidebar">
+    <div class="ad-brand d-flex align-items-center gap-2">
+      <span class="ad-brand-icon"><i class="bi bi-hospital-fill"></i></span>
+      <div>
+        <div class="fw-bold lh-1" style="font-size: 1.02rem;">BrgyHealth</div>
+        <small class="fw-semibold" style="font-size: 0.68rem; color: #34d399;">HEALTH CENTER PORTAL</small>
+      </div>
+    </div>
+
+    <!-- Active Barangay Tenant Badge -->
+    <div class="ad-tenant-box">
+      <div class="d-flex align-items-center justify-content-between">
+        <span class="fw-bold text-white" style="font-size: 0.86rem;"><i class="bi bi-geo-alt-fill text-success me-1"></i>Brgy. Lao</span>
+        <span class="badge bg-success" style="font-size: 0.65rem;">Verified</span>
+      </div>
+      <div class="text-secondary mt-1" style="font-size: 0.73rem;">lao.lvh.me:3000 · Ormoc City</div>
+    </div>
+
+    <div class="flex-grow-1 overflow-y-auto py-1">
+      <div class="ad-nav-section-label">Clinical Operations</div>
+
+      <a href="admin_dashboard_prototype.html" class="ad-nav-link active">
+        <span><i class="bi bi-grid-1x2-fill"></i> Dashboard</span>
+      </a>
+
+      <a href="admin_pages_prototype.html" class="ad-nav-link">
+        <span><i class="bi bi-calendar2-check-fill"></i> Appointments</span>
+        <span class="badge rounded-pill bg-warning text-dark" id="sidebarPendingBadge">4</span>
+      </a>
+
+      <a href="admin_pages_prototype.html" class="ad-nav-link">
+        <span><i class="bi bi-megaphone-fill"></i> Announcements</span>
+      </a>
+
+      <a href="admin_pages_prototype.html" class="ad-nav-link">
+        <span><i class="bi bi-heart-pulse-fill"></i> Health Programs</span>
+      </a>
+
+      <a href="admin_pages_prototype.html" class="ad-nav-link">
+        <span><i class="bi bi-calendar-event-fill"></i> Community Events</span>
+      </a>
+
+      <div class="ad-nav-section-label">Barangay Administration</div>
+
+      <a href="admin_pages_prototype.html" class="ad-nav-link">
+        <span><i class="bi bi-people-fill"></i> Residents &amp; Staff</span>
+      </a>
+
+      <a href="admin_pages_prototype.html" class="ad-nav-link">
+        <span><i class="bi bi-window-stack"></i> Barangay CMS</span>
+      </a>
+
+      <a href="#" class="ad-nav-link" data-bs-toggle="modal" data-bs-target="#testimonialModal">
+        <span><i class="bi bi-chat-heart-fill"></i> Platform Feedback</span>
+      </a>
+
+      <a href="#" onclick="showToast('Opening Resident Subdomain Portal (http://lao.lvh.me:3000)...'); return false;" class="ad-nav-link">
+        <span><i class="bi bi-box-arrow-up-right"></i> Resident View</span>
+      </a>
+    </div>
+
+    <div class="p-3 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
+      <div class="d-flex align-items-center gap-2">
+        <div class="ad-avatar" style="background: linear-gradient(135deg, #10b981, #0d9488); color: white;">LA</div>
+        <div class="overflow-hidden">
+          <div class="fw-semibold text-truncate" style="font-size: 0.85rem;">Lao Admin</div>
+          <div class="text-secondary text-truncate" style="font-size: 0.72rem;">Barangay Administrator</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN CONTENT AREA ==================== -->
+  <div class="ad-main">
+    <!-- Dedicated Topbar -->
+    <header class="ad-topbar d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3">
+        <button onclick="document.getElementById('adSidebar').classList.toggle('collapsed')" class="btn btn-sm btn-light border">
+          <i class="bi bi-layout-sidebar-inset fs-6"></i>
+        </button>
+        <nav aria-label="breadcrumb" class="d-none d-sm-block">
+          <ol class="breadcrumb mb-0" style="font-size: 0.85rem;">
+            <li class="breadcrumb-item text-muted">Brgy. Lao Health Center</li>
+            <li class="breadcrumb-item active fw-semibold text-dark">Clinic Dashboard</li>
+          </ol>
+        </nav>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge badge-soft-slate d-none d-md-inline-flex align-items-center gap-2 py-2 px-3 fw-medium">
+          <i class="bi bi-calendar3 text-success"></i>
+          <span>Sunday, November 01, 2026</span>
+        </span>
+
+        <!-- Quick Create Menu -->
+        <div class="dropdown">
+          <button class="btn btn-sm btn-emerald dropdown-toggle d-flex align-items-center gap-1" data-bs-toggle="dropdown">
+            <i class="bi bi-plus-circle-fill"></i>
+            <span>Quick Create</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="font-size: 0.875rem;">
+            <li><a class="dropdown-item" href="admin_pages_prototype.html"><i class="bi bi-megaphone text-success me-2"></i>New Service Announcement</a></li>
+            <li><a class="dropdown-item" href="admin_pages_prototype.html"><i class="bi bi-heart-pulse text-primary me-2"></i>New Health Program</a></li>
+            <li><a class="dropdown-item" href="admin_pages_prototype.html"><i class="bi bi-calendar-event text-info me-2"></i>New Community Event</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="admin_pages_prototype.html"><i class="bi bi-person-plus text-secondary me-2"></i>New Health Staff Account</a></li>
+          </ul>
+        </div>
+
+        <button class="btn btn-sm btn-light border position-relative" onclick="showToast('Opening Notifications Modal...')">
+          <i class="bi bi-bell"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.62rem;">3</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="container-fluid p-3 p-md-4">
+
+      <!-- Clinic Header & Shortcuts -->
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4 gap-3">
+        <div>
+          <h3 class="fw-bold mb-1" style="letter-spacing: -0.02em;">Brgy. Lao Clinic Operations Overview</h3>
+          <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+            Manage today's patient consultations, approve incoming appointment requests, and monitor service capacity.
+          </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+          <a href="admin_pages_prototype.html" class="btn btn-sm btn-emerald d-inline-flex align-items-center gap-1">
+            <i class="bi bi-megaphone-fill"></i> Publish Announcement
+          </a>
+          <a href="admin_pages_prototype.html" class="btn btn-sm btn-white bg-white border shadow-sm d-inline-flex align-items-center gap-1">
+            <i class="bi bi-calendar-event text-success"></i> Schedule Event
+          </a>
+          <a href="admin_pages_prototype.html" class="btn btn-sm btn-white bg-white border shadow-sm d-inline-flex align-items-center gap-1">
+            <i class="bi bi-people text-primary"></i> Patient EHR Directory
+          </a>
+        </div>
+      </div>
+
+      <!-- ==================== ROW 1: 4 CLINICAL KPI CARDS ==================== -->
+      <div class="row g-3 mb-4">
+        <!-- KPI 1: Today's Scheduled Appointments (Fixed query!) -->
+        <div class="col-12 col-sm-6 col-xl-3">
+          <a href="admin_pages_prototype.html" class="ad-card ad-kpi-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <div class="text-uppercase fw-semibold text-secondary" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                  Today's Clinic Schedule
+                </div>
+                <div class="fs-2 fw-bold mt-1 lh-1">18</div>
+              </div>
+              <div class="ad-icon-well well-emerald"><i class="bi bi-calendar2-check"></i></div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between pt-2 border-top" style="font-size: 0.78rem;">
+              <span class="badge badge-soft-emerald"><i class="bi bi-check2-all me-1"></i>7 Completed</span>
+              <span class="text-secondary fw-medium">11 remaining today</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- KPI 2: Pending Appointment Approvals -->
+        <div class="col-12 col-sm-6 col-xl-3">
+          <a href="#clinicQueueCard" class="ad-card ad-kpi-card p-3 h-100" style="border-left: 4px solid var(--ad-amber-500);">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <div class="text-uppercase fw-semibold text-secondary" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                  Pending Approvals
+                </div>
+                <div class="fs-2 fw-bold mt-1 lh-1 text-warning-emphasis" id="kpiPendingAppt">4</div>
+              </div>
+              <div class="ad-icon-well well-amber"><i class="bi bi-hourglass-split"></i></div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between pt-2 border-top" style="font-size: 0.78rem;">
+              <span class="badge badge-soft-amber">Needs Review</span>
+              <span class="text-secondary">2 waitlisted slots</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- KPI 3: Total Registered Patients -->
+        <div class="col-12 col-sm-6 col-xl-3">
+          <a href="admin_pages_prototype.html" class="ad-card ad-kpi-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <div class="text-uppercase fw-semibold text-secondary" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                  Registered Residents
+                </div>
+                <div class="fs-2 fw-bold mt-1 lh-1">136</div>
+              </div>
+              <div class="ad-icon-well well-sky"><i class="bi bi-people"></i></div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between pt-2 border-top" style="font-size: 0.78rem;">
+              <span class="badge badge-soft-sky">Across 6 Puroks</span>
+              <span class="text-success fw-semibold">+14 this mo</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- KPI 4: Active Health Programs & Workers -->
+        <div class="col-12 col-sm-6 col-xl-3">
+          <a href="admin_pages_prototype.html" class="ad-card ad-kpi-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <div class="text-uppercase fw-semibold text-secondary" style="font-size: 0.72rem; letter-spacing: 0.05em;">
+                  Programs &amp; Health Staff
+                </div>
+                <div class="fs-2 fw-bold mt-1 lh-1">4 <small class="fs-6 fw-normal text-secondary">programs</small></div>
+              </div>
+              <div class="ad-icon-well well-emerald"><i class="bi bi-heart-pulse"></i></div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between pt-2 border-top" style="font-size: 0.78rem;">
+              <span class="badge badge-soft-emerald">3 Active Schedules</span>
+              <span class="text-secondary">6 Health Workers</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- ==================== ROW 2: LIVE CLINICAL QUEUES ==================== -->
+      <div class="row g-3 mb-4">
+        <!-- Left (col-xl-7): Tabbed Pending Approvals & Today's Schedule Queue -->
+        <div class="col-12 col-xl-7">
+          <div class="ad-card h-100 overflow-hidden" id="clinicQueueCard">
+            <div class="p-3 p-md-4 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+              <ul class="nav nav-pills ad-nav-pills gap-1" role="tablist">
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pendingQueuePane" type="button">
+                    <i class="bi bi-hourglass-split me-1"></i>Pending Approvals <span class="badge bg-warning text-dark ms-1" id="tabPendingBadge">4</span>
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#todaySchedulePane" type="button">
+                    <i class="bi bi-calendar-day me-1"></i>Scheduled Today <span class="badge bg-success ms-1">18</span>
+                  </button>
+                </li>
+              </ul>
+              <a href="admin_pages_prototype.html" class="btn btn-sm btn-outline-secondary">All Appointments &rarr;</a>
+            </div>
+
+            <div class="tab-content">
+              <!-- TAB 1: Pending Approvals -->
+              <div class="tab-pane fade show active" id="pendingQueuePane">
+                <div class="table-responsive">
+                  <table class="table ad-table mb-0">
+                    <thead>
+                      <tr>
+                        <th>Patient</th>
+                        <th>Service Announcement</th>
+                        <th>Requested Slot</th>
+                        <th>Capacity</th>
+                        <th class="text-end">Quick Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr id="apptRow1">
+                        <td>
+                          <div class="d-flex align-items-center gap-2">
+                            <div class="ad-avatar well-sky">LP</div>
+                            <div>
+                              <div class="fw-semibold">Lao Patient</div>
+                              <small class="text-secondary">Purok One · #204918</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="fw-medium">Free Vaccination Drive</div>
+                          <small class="text-secondary">Reason: Booster Dose</small>
+                        </td>
+                        <td><span class="fw-medium">Nov 02, 2026</span><br><small class="text-secondary">08:30 AM</small></td>
+                        <td><span class="badge badge-soft-emerald">78 / 100</span></td>
+                        <td class="text-end">
+                          <div class="d-inline-flex gap-1">
+                            <button class="btn btn-sm btn-emerald" onclick="approveBooking('apptRow1', 'Lao Patient')">
+                              <i class="bi bi-check-lg"></i> Approve
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="approveBooking('apptRow1', 'Lao Patient (Rejected)')">
+                              <i class="bi bi-x-lg"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr id="apptRow2">
+                        <td>
+                          <div class="d-flex align-items-center gap-2">
+                            <div class="ad-avatar well-amber">RD</div>
+                            <div>
+                              <div class="fw-semibold">Rosa Dizon</div>
+                              <small class="text-secondary">Purok Three · #391042</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="fw-medium">Maternal &amp; Prenatal Checkup</div>
+                          <small class="text-secondary">Reason: 2nd Trimester</small>
+                        </td>
+                        <td><span class="fw-medium">Nov 02, 2026</span><br><small class="text-secondary">09:30 AM</small></td>
+                        <td><span class="badge badge-soft-amber">29 / 30 (97%)</span></td>
+                        <td class="text-end">
+                          <div class="d-inline-flex gap-1">
+                            <button class="btn btn-sm btn-emerald" onclick="approveBooking('apptRow2', 'Rosa Dizon')">
+                              <i class="bi bi-check-lg"></i> Approve
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="approveBooking('apptRow2', 'Rosa Dizon (Rejected)')">
+                              <i class="bi bi-x-lg"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- TAB 2: Today's Scheduled Patients -->
+              <div class="tab-pane fade" id="todaySchedulePane">
+                <div class="table-responsive">
+                  <table class="table ad-table mb-0">
+                    <thead>
+                      <tr>
+                        <th>Time</th>
+                        <th>Patient</th>
+                        <th>Service &amp; Reason</th>
+                        <th>Status</th>
+                        <th class="text-end">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="fw-semibold">08:00 AM</td>
+                        <td><strong>Pedro Penduko</strong><br><small class="text-secondary">Purok Two</small></td>
+                        <td>Free Vaccination Drive<br><small class="text-secondary">Flu Vaccine</small></td>
+                        <td><span class="badge badge-soft-emerald">Completed</span></td>
+                        <td class="text-end"><a href="admin_pages_prototype.html" class="btn btn-sm btn-light border">View Notes</a></td>
+                      </tr>
+                      <tr>
+                        <td class="fw-semibold">09:00 AM</td>
+                        <td><strong>Elena Gomez</strong><br><small class="text-secondary">Purok One</small></td>
+                        <td>Senior Blood Pressure Monitoring<br><small class="text-secondary">Routine Check</small></td>
+                        <td><span class="badge badge-soft-sky">Approved · Arrived</span></td>
+                        <td class="text-end"><a href="admin_pages_prototype.html" class="btn btn-sm btn-emerald">Record Notes</a></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right (col-xl-5): Active Announcements & Capacity Progress Monitor -->
+        <div class="col-12 col-xl-5">
+          <div class="ad-card p-3 p-md-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <h6 class="fw-bold mb-0">Active Service Announcements</h6>
+                  <small class="text-secondary">Live booking capacity &amp; quick PDF export</small>
+                </div>
+                <a href="admin_pages_prototype.html" class="btn btn-sm btn-light border">Manage All</a>
+              </div>
+
+              <!-- Announcement 1 -->
+              <div class="p-3 rounded-3 border mb-3">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                  <div>
+                    <span class="fw-bold" style="font-size: 0.9rem;">Free Vaccination Drive</span>
+                    <span class="badge badge-soft-emerald ms-1">Immunization</span>
+                  </div>
+                  <a href="#" onclick="showToast('Generating A4 Landscape PDF Report via Grover...'); return false;" class="btn btn-sm btn-light border py-0 px-2" title="Download PDF Report">
+                    <i class="bi bi-file-earmark-pdf text-danger"></i> PDF
+                  </a>
+                </div>
+                <small class="text-secondary d-block mb-2"><i class="bi bi-clock me-1"></i>Nov 01 – Nov 08 · 8:00 AM – 5:00 PM · Brgy. Hall</small>
+                <div class="d-flex justify-content-between small mb-1">
+                  <span class="text-secondary">Booked Capacity</span>
+                  <span class="fw-semibold">78 / 100 patients (78%)</span>
+                </div>
+                <div class="progress" style="height: 7px;">
+                  <div class="progress-bar bg-success" style="width: 78%"></div>
+                </div>
+              </div>
+
+              <!-- Announcement 2 -->
+              <div class="p-3 rounded-3 border mb-2">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                  <div>
+                    <span class="fw-bold" style="font-size: 0.9rem;">Maternal &amp; Prenatal Checkup</span>
+                    <span class="badge badge-soft-sky ms-1">Maternal Care</span>
+                  </div>
+                  <a href="#" onclick="showToast('Generating A4 Landscape PDF Report via Grover...'); return false;" class="btn btn-sm btn-light border py-0 px-2" title="Download PDF Report">
+                    <i class="bi bi-file-earmark-pdf text-danger"></i> PDF
+                  </a>
+                </div>
+                <small class="text-secondary d-block mb-2"><i class="bi bi-clock me-1"></i>Nov 02 – Nov 05 · 8:00 AM – 12:00 PM · Health Center</small>
+                <div class="d-flex justify-content-between small mb-1">
+                  <span class="text-secondary">Booked Capacity</span>
+                  <span class="fw-semibold text-warning-emphasis">29 / 30 patients (97% — Nearly Full)</span>
+                </div>
+                <div class="progress" style="height: 7px;">
+                  <div class="progress-bar bg-warning" style="width: 97%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3 pt-2 border-top text-end">
+              <a href="admin_pages_prototype.html" class="small text-success fw-semibold text-decoration-none">
+                View Slot Capacity Breakdown <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== ROW 3: ANALYTICS CHARTS ==================== -->
+      <div class="row g-3">
+        <div class="col-12 col-xl-8">
+          <div class="ad-card p-3 p-md-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h6 class="fw-bold mb-0">Appointments Overview by Service</h6>
+                <small class="text-secondary">Weekly booking volume across active announcements</small>
+              </div>
+            </div>
+            <div style="height: 270px;">
+              <canvas id="appointmentsLineChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-xl-4">
+          <div class="ad-card p-3 p-md-4 h-100">
+            <h6 class="fw-bold mb-0">Health Program Distribution</h6>
+            <small class="text-secondary">Announcements grouped by active health program</small>
+            <div class="mt-3" style="height: 240px;">
+              <canvas id="programsDonutChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="liveToast" class="toast align-items-center text-bg-dark border-0 shadow-lg" role="alert">
+    <div class="d-flex">
+      <div class="toast-body d-flex align-items-center gap-2">
+        <i class="bi bi-check-circle-fill text-success fs-5"></i>
+        <span id="toastMessage">Action completed.</span>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let pendingApptCount = 4;
+
+  function approveBooking(rowId, patientName) {
+    const row = document.getElementById(rowId);
+    if (row) {
+      row.style.opacity = '0';
+      setTimeout(() => {
+        row.remove();
+        pendingApptCount = Math.max(0, pendingApptCount - 1);
+        document.getElementById('kpiPendingAppt').textContent = pendingApptCount;
+        document.getElementById('tabPendingBadge').textContent = pendingApptCount;
+        document.getElementById('sidebarPendingBadge').textContent = pendingApptCount;
+      }, 200);
+    }
+    showToast(`Updated booking for ${patientName}! Patient notified via WebPush & Email.`);
+  }
+
+  function showToast(msg) {
+    document.getElementById('toastMessage').textContent = msg;
+    bootstrap.Toast.getOrCreateInstance(document.getElementById('liveToast'), { delay: 3200 }).show();
+  }
+
+  // Charts
+  const lineCtx = document.getElementById('appointmentsLineChart').getContext('2d');
+  new Chart(lineCtx, {
+    type: 'line',
+    data: {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+      datasets: [
+        {
+          label: 'Free Vaccination Drive',
+          data: [12, 19, 24, 31, 42, 54],
+          borderColor: '#059669',
+          backgroundColor: 'rgba(5, 150, 105, 0.1)',
+          tension: 0.35,
+          fill: true
+        },
+        {
+          label: 'Maternal & Prenatal Care',
+          data: [6, 10, 14, 18, 22, 29],
+          borderColor: '#0284c7',
+          backgroundColor: 'rgba(2, 132, 199, 0.08)',
+          tension: 0.35,
+          fill: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' } },
+      scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+    }
+  });
+
+  const donutCtx = document.getElementById('programsDonutChart').getContext('2d');
+  new Chart(donutCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Immunization Drive', 'Maternal & Child Care', 'Senior Citizen Wellness', 'TB-DOTS Consultation'],
+      datasets: [{
+        data: [5, 3, 3, 2],
+        backgroundColor: ['#059669', '#0284c7', '#f59e0b', '#0d9488'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '64%',
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } }
+    }
+  });
+</script>
+</body>
+</html>

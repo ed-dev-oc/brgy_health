@@ -1,0 +1,99 @@
+<% if @appointments.any? %>
+  <div class="table-responsive">
+    <table class="table sa-table mb-0">
+      <thead>
+        <tr>
+          <th>UID &amp; Patient</th>
+          <th>Service / Announcement</th>
+          <th>Scheduled Date &amp; Time</th>
+          <th>Status &amp; Clinical Flags</th>
+          <th>Attending Staff</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @appointments.each do |appointment| %>
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <%= image_tag(profile_url(appointment.patient), class: "rounded-circle object-fit-cover", size: "34x34") %>
+                <div>
+                  <div class="fw-bold text-dark">
+                    <%= link_to appointment.patient.full_name, admin_appointment_path(appointment.public_uid), class: "text-dark text-decoration-none" %>
+                  </div>
+                  <small class="text-secondary">#<%= appointment.public_uid %></small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="fw-semibold text-dark text-truncate" style="max-width: 220px;">
+                <%= link_to appointment.announcement.name, admin_announcement_path(appointment.announcement.public_uid), class: "text-dark text-decoration-none" %>
+              </div>
+              <small class="text-secondary text-truncate d-block" style="max-width: 220px;">
+                <%= appointment.reason.presence || "Routine consultation" %>
+              </small>
+            </td>
+            <td>
+              <div class="small fw-semibold text-dark"><%= appointment.scheduled_at.strftime("%b %d, %Y") %></div>
+              <small class="text-secondary"><%= appointment.scheduled_at.strftime("%I:%M %p") %></small>
+            </td>
+            <td>
+              <div class="d-flex flex-wrap gap-1 align-items-center">
+                <span class="badge <%= soft_badge_class(appointment.status) %>">
+                  <%= appointment.status.humanize %>
+                </span>
+                <% appointment.flag_list.each do |flag| %>
+                  <span class="badge <%= soft_badge_class(flag) %>">
+                    <%= flag.humanize %>
+                  </span>
+                <% end %>
+              </div>
+            </td>
+            <td class="small text-secondary">
+              <% if appointment.health_worker.present? %>
+                <i class="bi bi-person-check text-success me-1"></i><%= appointment.health_worker.full_name %>
+              <% else %>
+                <span class="text-muted">Unassigned</span>
+              <% end %>
+            </td>
+            <td class="text-end">
+              <div class="d-inline-flex align-items-center gap-1">
+                <% if Appointment::ADMIN_VALID_FOR_APPROVE_AND_REJECTED_STATUS.include?(appointment.status.to_sym) %>
+                  <%= link_to flag_as_approved_admin_appointment_path(appointment.public_uid),
+                    data: { turbo_method: :PATCH, turbo_confirm: "Approve appointment ##{appointment.public_uid} for #{appointment.patient.full_name}?" },
+                    class: "btn btn-sm btn-emerald", title: "Approve Booking" do %>
+                    <i class="bi bi-check-lg"></i> Approve
+                  <% end %>
+
+                  <%= link_to flag_as_rejected_admin_appointment_path(appointment.public_uid),
+                    data: { turbo_method: :PATCH, turbo_confirm: "Reject appointment ##{appointment.public_uid}?" },
+                    class: "btn btn-sm btn-outline-danger", title: "Reject Booking" do %>
+                    <i class="bi bi-x-lg"></i>
+                  <% end %>
+                <% end %>
+
+                <%= link_to admin_appointment_path(appointment.public_uid), class: "btn btn-sm btn-light border", title: "Open Clinical View" do %>
+                  <i class="bi bi-eye me-1"></i>View
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if @pagy&.pages.to_i > 1 %>
+    <div class="p-3 border-top d-flex justify-content-end">
+      <%== pagy_bootstrap_nav(@pagy) %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="p-5 text-center">
+    <div class="sa-icon-well well-slate mx-auto mb-3">
+      <i class="bi bi-calendar2-x"></i>
+    </div>
+    <h5 class="fw-bold mb-1">No Appointments Found</h5>
+    <p class="text-secondary small mb-0">Try adjusting your status tab or search filters.</p>
+  </div>
+<% end %>

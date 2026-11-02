@@ -1,0 +1,140 @@
+<% content_for :title, "My Clinic Visits — Brgy. #{ActsAsTenant.current_tenant&.name}" %>
+
+<div class="container py-3 py-lg-4">
+  <!-- Header & Working "+ Book New Visit" Button (Fixes dead href="#") -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+      <h3 class="fw-bold mb-0">My Clinic Visits</h3>
+      <small class="text-secondary">Tap any visit below to open your Digital Clinic Pass</small>
+    </div>
+
+    <%= link_to root_path(anchor: "AnnouncementCarousel"), class: "btn btn-emerald-lg py-2 px-3" do %>
+      <i class="bi bi-plus-lg me-1"></i>Book New Visit
+    <% end %>
+  </div>
+
+  <!-- 2x2 Filter Button Grid on Mobile / Horizontal Row on Desktop -->
+  <div class="pt-filter-scroll mb-3" role="tablist" aria-label="Filter visits by status">
+    <%= link_to appointments_path,
+        class: "btn btn-sm rounded-pill px-3 py-2 #{params[:filter].blank? ? 'btn-dark fw-semibold' : 'btn-white bg-white border fw-medium'}" do %>
+      <i class="bi bi-collection me-1"></i>All Visits (<%= @all_visits_count.to_i %>)
+    <% end %>
+
+    <%= link_to appointments_path(filter: "upcoming"),
+        class: "btn btn-sm rounded-pill px-3 py-2 #{params[:filter] == 'upcoming' ? 'btn-dark fw-semibold' : 'btn-white bg-white border fw-medium'}" do %>
+      <i class="bi bi-calendar-check text-success me-1"></i>Upcoming (<%= @upcoming_visits_count.to_i %>)
+    <% end %>
+
+    <%= link_to appointments_path(filter: "completed"),
+        class: "btn btn-sm rounded-pill px-3 py-2 #{params[:filter] == 'completed' ? 'btn-dark fw-semibold' : 'btn-white bg-white border fw-medium'}" do %>
+      <i class="bi bi-check2-all text-primary me-1"></i>Completed (<%= @completed_visits_count.to_i %>)
+    <% end %>
+
+    <%= link_to appointments_path(filter: "cancelled"),
+        class: "btn btn-sm rounded-pill px-3 py-2 #{params[:filter] == 'cancelled' ? 'btn-dark fw-semibold' : 'btn-white bg-white border fw-medium'}" do %>
+      <i class="bi bi-x-circle text-danger me-1"></i>Cancelled (<%= @cancelled_visits_count.to_i %>)
+    <% end %>
+  </div>
+
+  <!-- Search / Date Filter Bar -->
+  <div class="pt-card p-3 mb-4">
+    <%= render partial: "barangay/appointments/search_form" %>
+  </div>
+
+  <!-- 2-Column Card Grid on Desktop / 1-Column Stacked on Mobile -->
+  <% if @appointments.any? %>
+    <div class="pt-desktop-grid-2 mb-4">
+      <% @appointments.each do |appointment| %>
+        <% border_color = case appointment.status.to_s
+             when "approved" then "var(--pt-emerald-600)"
+             when "pending" then "var(--pt-amber-500)"
+             when "completed" then "var(--pt-sky-600)"
+             else "var(--pt-rose-600)"
+           end %>
+
+        <%= link_to appointment_path(appointment.public_uid),
+            class: "pt-card p-3 p-lg-4 mb-3 text-decoration-none text-dark d-flex flex-column justify-content-between",
+            style: "border-left: 5px solid #{border_color};" do %>
+          <div>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+              <div class="d-flex flex-wrap align-items-center gap-1">
+                <% if appointment.approved? %>
+                  <span class="badge badge-soft-emerald fw-bold">
+                    <i class="bi bi-check-circle-fill me-1"></i>APPROVED &middot; CONFIRMED
+                  </span>
+                <% elsif appointment.pending? %>
+                  <span class="badge badge-soft-amber fw-bold">
+                    <i class="bi bi-hourglass-split me-1"></i>WAITING FOR APPROVAL
+                  </span>
+                <% elsif appointment.completed? %>
+                  <span class="badge badge-soft-sky fw-bold">
+                    <i class="bi bi-check2-all me-1"></i>COMPLETED VISIT
+                  </span>
+                <% else %>
+                  <span class="badge badge-soft-rose fw-bold">
+                    <i class="bi bi-x-circle-fill me-1"></i><%= appointment.status.upcase %>
+                  </span>
+                <% end %>
+
+                <% appointment.flag_list.each do |flag| %>
+                  <span class="badge <%= soft_badge_class(flag) %>"><%= flag.titleize %></span>
+                <% end %>
+              </div>
+
+              <small class="text-secondary fw-semibold">Pass #<%= appointment.public_uid %></small>
+            </div>
+
+            <h5 class="fw-bold mb-2 text-dark"><%= appointment.announcement.name %></h5>
+
+            <div class="p-2 px-3 rounded-3 bg-light small mb-2">
+              <div class="fw-bold text-dark">
+                <i class="bi bi-calendar-event text-success me-2"></i>
+                <%= appointment.scheduled_at.strftime("%A, %b %d, %Y at %I:%M %p") %>
+              </div>
+              <div class="text-secondary mt-1">
+                <i class="bi bi-geo-alt text-success me-2"></i>Location: <%= appointment.announcement.location %>
+              </div>
+              <% if appointment.notes.present? %>
+                <div class="text-secondary mt-1 text-truncate">
+                  <i class="bi bi-journal-medical text-primary me-2"></i>Notes: <%= appointment.notes %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top mt-2">
+            <small class="text-secondary">
+              <% if appointment.health_worker.present? %>
+                <i class="bi bi-person-badge me-1"></i>BHW: <%= appointment.health_worker.full_name %>
+              <% elsif appointment.pending? %>
+                We will notify you once approved
+              <% else %>
+                Assigned at Health Center
+              <% end %>
+            </small>
+            <span class="text-success fw-bold small">Open Clinic Pass &rarr;</span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <% if @pagy.pages > 1 %>
+      <nav class="mt-3 d-flex justify-content-center">
+        <%== pagy_bootstrap_nav(@pagy) %>
+      </nav>
+    <% end %>
+  <% else %>
+    <div class="pt-card p-5 text-center">
+      <div class="pt-icon-circle circle-emerald mx-auto mb-3">
+        <i class="bi bi-ticket-perforated"></i>
+      </div>
+      <h5 class="fw-bold mb-1">No Clinic Visits Found</h5>
+      <p class="text-secondary small mb-3">
+        You haven't booked any clinic visits matching this filter yet.
+      </p>
+      <%= link_to root_path(anchor: "AnnouncementCarousel"), class: "btn btn-emerald-lg" do %>
+        <i class="bi bi-calendar-plus me-1"></i>Browse Free Health Services
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,93 @@
+<header class="sa-topbar d-flex align-items-center justify-content-between">
+  <!-- Left: Sidebar Toggle & Breadcrumb -->
+  <div class="d-flex align-items-center gap-3">
+    <button type="button" class="btn btn-light border btn-sm" onclick="document.getElementById('adminSidebar').classList.toggle('collapsed')" title="Toggle Sidebar">
+      <i class="bi bi-layout-sidebar-inset"></i>
+    </button>
+
+    <nav aria-label="breadcrumb" class="d-none d-sm-block">
+      <ol class="breadcrumb mb-0 small">
+        <li class="breadcrumb-item">
+          <%= link_to "Brgy. #{ActsAsTenant.current_tenant&.name}", admin_dashboard_index_path, class: "text-secondary text-decoration-none" %>
+        </li>
+        <li class="breadcrumb-item active fw-semibold text-dark" aria-current="page">
+          <%= admin_breadcrumb_title %>
+        </li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Right: Quick Actions, Resident View, Notifications & Profile -->
+  <div class="d-flex align-items-center gap-2">
+    <div class="dropdown">
+      <button class="btn btn-emerald btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-plus-lg me-1"></i>Quick Navigate
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-1">
+        <li>
+          <%= link_to admin_appointments_path(q: { status_eq: 0 }), class: "dropdown-item py-2 small" do %>
+            <i class="bi bi-hourglass-split text-warning me-2"></i>Review Pending Appointments
+          <% end %>
+        </li>
+        <li>
+          <%= link_to admin_announcements_path, class: "dropdown-item py-2 small" do %>
+            <i class="bi bi-megaphone text-success me-2"></i>Manage Service Announcements
+          <% end %>
+        </li>
+        <li>
+          <%= link_to admin_health_programs_path, class: "dropdown-item py-2 small" do %>
+            <i class="bi bi-heart-pulse text-danger me-2"></i>Health Programs Catalog
+          <% end %>
+        </li>
+        <li>
+          <%= link_to admin_events_path, class: "dropdown-item py-2 small" do %>
+            <i class="bi bi-calendar-event text-primary me-2"></i>Community Health Events
+          <% end %>
+        </li>
+        <li>
+          <%= link_to admin_users_path, class: "dropdown-item py-2 small" do %>
+            <i class="bi bi-people text-info me-2"></i>Residents &amp; Health Staff
+          <% end %>
+        </li>
+      </ul>
+    </div>
+
+    <%= link_to root_path, class: "btn btn-light border btn-sm d-none d-md-inline-flex align-items-center gap-1" do %>
+      <i class="bi bi-box-arrow-up-right text-secondary"></i>
+      <span>Resident View</span>
+    <% end %>
+
+    <span class="mx-1">
+      <%= render partial: "shared/notification_parent" %>
+    </span>
+
+    <div class="dropdown">
+      <%= link_to "#", class: "d-flex align-items-center gap-2 text-decoration-none dropdown-toggle p-1 rounded-pill border bg-white", data: { bs_toggle: "dropdown" } do %>
+        <%= image_tag(profile_url(current_user), class: "rounded-circle object-fit-cover", size: "28x28") %>
+        <span class="small fw-semibold text-dark d-none d-lg-inline pe-1"><%= current_user.first_name %></span>
+      <% end %>
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2">
+        <li class="px-3 py-2 border-bottom">
+          <div class="fw-bold small text-dark"><%= current_user.full_name %></div>
+          <div class="text-secondary" style="font-size: 0.75rem;"><%= current_user.role.titleize %> &middot; Brgy. <%= ActsAsTenant.current_tenant&.name %></div>
+        </li>
+        <li>
+          <%= link_to edit_profile_path(current_user), class: "dropdown-item py-2 small" do %>
+            <i class="bi bi-person-gear me-2 text-secondary"></i>My Profile
+          <% end %>
+        </li>
+        <li>
+          <%= link_to root_path, class: "dropdown-item py-2 small" do %>
+            <i class="bi bi-house-door me-2 text-secondary"></i>Resident Portal
+          <% end %>
+        </li>
+        <li><hr class="dropdown-divider my-1"></li>
+        <li>
+          <%= link_to destroy_user_session_path, data: { turbo_method: :DELETE, turbo_confirm: "Are you sure you want to sign out?" }, class: "dropdown-item py-2 small text-danger fw-medium" do %>
+            <i class="bi bi-box-arrow-right me-2"></i>Sign Out
+          <% end %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>

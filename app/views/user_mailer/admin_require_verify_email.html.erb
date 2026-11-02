@@ -1,0 +1,35 @@
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #f8f9fa;
+    padding: 20px;
+  }
+  .container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .footer {
+    font-size: 12px;
+    color: #888;
+    margin-top: 20px;
+    text-align: center;
+  }
+</style>
+
+<div class="container">
+  <h2>Registration Submitted</h2>
+  <p>Hi <strong><%= @user.full_name %></strong>,</p>
+  <p>Thank you for registering with <strong><a href="brgyhealth.to">brgyhealth.to</a></strong>.</p>
+  <p>Your registration has been successfully received and is currently pending <strong>admin verification</strong>. You will receive an email notification once your account has been reviewed and approved.</p>
+  <p>If you have any questions, feel free to contact us at <a href="mailto:junjunpojr@gmail.com">junjunpojr@gmail.com</a>.</p>
+  <p>Best regards,<br>
+    <strong><a href="brgyhealth.to">brgyhealth.to</a> Team</strong></p>
+</div>
+<div class="footer">
+  &copy; <%= Time.current.year %> <a href="brgyhealth.to">brgyhealth.to</a>. All rights reserved.
+</div>

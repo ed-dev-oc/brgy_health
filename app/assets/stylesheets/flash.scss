@@ -1,31 +1,186 @@
-.flash{
-    border-radius: 0px;
-    background-color: white;
+// =============================================================================
+// Modern Floating Toast Flash Notification Component
+// =============================================================================
 
-    &.error{
-        background-color: #df4759;
-        color: white;
-        cursor: pointer;
+.flash-toast-stack {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1090;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-width: min(400px, calc(100vw - 2rem));
+  width: 100%;
+  pointer-events: none;
+}
+
+.flash {
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem 1.05rem;
+  border-radius: 0.875rem;
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  border-left: 5px solid #059669;
+  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.16), 0 4px 10px -3px rgba(15, 23, 42, 0.08);
+  animation: flashSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+
+  &.flash-closing {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  .flash-icon-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+    background-color: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+  }
+
+  .flash-content {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .flash-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.15rem;
+    color: #0f172a;
+  }
+
+  .flash-message {
+    font-size: 0.86rem;
+    line-height: 1.4;
+    color: #475569;
+    word-break: break-word;
+  }
+
+  .flash-close-btn {
+    border: none;
+    background: transparent;
+    color: #64748b;
+    width: 28px;
+    height: 28px;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover,
+    &:focus {
+      background-color: #f1f5f9;
+      color: #0f172a;
     }
-    
-    &.notice{
-        // background-color: #0275d8;
-        background-color: #0d6efd;
-        color: white;
-        cursor: pointer;
+  }
+
+  .flash-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background-color: #10b981;
+    transform-origin: left center;
+    animation: flashProgressShrink 6s linear forwards;
+  }
+
+  // Success / Notice Variant (Emerald)
+  &.notice,
+  &.success {
+    border-left-color: #059669;
+
+    .flash-icon-badge {
+      background-color: #ecfdf5;
+      color: #059669;
+      border-color: #a7f3d0;
     }
 
-    &.alert{
-        // background-color: #0275d8;
-        // background-color: #ffc107;
-        background-color: #df4759;
-        color: white;
-        cursor: pointer;
+    .flash-title {
+      color: #047857;
     }
 
-    &.success{
-        background-color: #198754;
-        color: white;
-        cursor: pointer;
+    .flash-progress-bar {
+      background-color: #10b981;
     }
+  }
+
+  // Error / Alert Variant (Rose)
+  &.error,
+  &.alert,
+  &.danger {
+    border-left-color: #e11d48;
+
+    .flash-icon-badge {
+      background-color: #fff1f2;
+      color: #e11d48;
+      border-color: #fecdd3;
+    }
+
+    .flash-title {
+      color: #be123c;
+    }
+
+    .flash-progress-bar {
+      background-color: #f43f5e;
+    }
+  }
+
+  // Warning Variant (Amber)
+  &.warning {
+    border-left-color: #d97706;
+
+    .flash-icon-badge {
+      background-color: #fffbeb;
+      color: #d97706;
+      border-color: #fde68a;
+    }
+
+    .flash-title {
+      color: #b45309;
+    }
+
+    .flash-progress-bar {
+      background-color: #f59e0b;
+    }
+  }
+}
+
+@keyframes flashSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes flashProgressShrink {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
 }

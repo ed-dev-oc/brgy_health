@@ -1,0 +1,29 @@
+<ul class="nav nav-underline-success nav-underline justify-content-center d-flex">
+  <li class="nav-item flex-grow-1 text-center">
+    <%= link_to "All", notifications_path(format: :turbo_stream), 
+      class: "nav-link #{ navbar_link_status(notifications_path(format: :turbo_stream)) } #{ current_page?(notifications_path(format: :turbo_stream)) ? "text-green-600" : "" }", 
+      data: { turbo_prefetch: :false } %>
+  </li>
+  <li class="nav-item flex-grow-1 text-center">
+    <%= link_to "Unread", unread_notifications_path(format: :turbo_stream), 
+      class: "nav-link #{ navbar_link_status(unread_notifications_path(format: :turbo_stream)) } #{ current_page?(unread_notifications_path(format: :turbo_stream)) ? "text-green-600" : "" }", 
+      data: { turbo_prefetch: :false } %>
+  </li>
+  <li class="nav-item flex-grow-1 text-center">
+    <%= link_to "Read", read_notifications_path(format: :turbo_stream), 
+      class: "nav-link #{ navbar_link_status(read_notifications_path(format: :turbo_stream)) } #{ current_page?(read_notifications_path(format: :turbo_stream)) ? "text-green-600" : "" }", 
+      data: { turbo_prefetch: :false } %>
+  </li>
+</ul>
+
+<div class="py-3" id="notifications_list">
+  <% if notifications.present? %>
+    <% notifications.each do |notification| %>
+      <%= render partial: "notifications/notification", locals: { notification: notification } %>
+    <% end %>
+  <% else %>
+    <div class="text-center">
+      <span class="badge bg-green-600">Empty Notifications</span>
+    </div>
+  <% end %>
+</div>

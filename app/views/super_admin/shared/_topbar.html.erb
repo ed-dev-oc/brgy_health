@@ -1,0 +1,74 @@
+<header class="sa-topbar d-flex align-items-center justify-content-between">
+  <div class="d-flex align-items-center gap-3">
+    <button type="button" onclick="document.getElementById('saSidebar').classList.toggle('collapsed')" class="btn btn-sm btn-light border" title="Toggle Sidebar">
+      <i class="bi bi-layout-sidebar-inset fs-6"></i>
+    </button>
+
+    <nav aria-label="breadcrumb" class="d-none d-sm-block">
+      <ol class="breadcrumb mb-0" style="font-size: 0.85rem;">
+        <li class="breadcrumb-item">
+          <%= link_to "SuperAdmin", super_admin_dashboard_index_path, class: "text-muted text-decoration-none" %>
+        </li>
+        <li class="breadcrumb-item active fw-semibold text-dark" aria-current="page">
+          <%= sa_breadcrumb_title %>
+        </li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="d-flex align-items-center gap-3">
+    <span class="d-none d-md-inline-flex align-items-center gap-2 text-secondary bg-light px-3 py-1 rounded-pill border" style="font-size: 0.8rem;">
+      <i class="bi bi-calendar3 text-success"></i>
+      <span><%= Date.current.strftime("%a, %b %d, %Y") %></span>
+    </span>
+
+    <%= link_to root_path, class: "btn btn-sm btn-light border d-none d-lg-inline-flex align-items-center gap-1", title: "Public Platform Home" do %>
+      <i class="bi bi-globe2 text-secondary"></i>
+      <span>Public Site</span>
+    <% end %>
+
+    <% if user_signed_in? %>
+      <span>
+        <%= render partial: "shared/notification_parent" %>
+      </span>
+
+      <div class="dropdown">
+        <a href="#" class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle text-dark" data-bs-toggle="dropdown" aria-expanded="false">
+          <%= image_tag(profile_url(current_user), class: "rounded-circle border", size: "34x34", alt: current_user.full_name) %>
+          <span class="d-none d-xl-inline fw-semibold" style="font-size: 0.85rem;"><%= current_user.full_name %></span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border">
+          <li class="px-3 py-2 border-bottom">
+            <div class="fw-bold small"><%= current_user.full_name %></div>
+            <div class="text-secondary" style="font-size: 0.75rem;"><%= current_user.email %></div>
+          </li>
+          <li>
+            <%= link_to super_admin_dashboard_index_path, class: "dropdown-item d-flex align-items-center gap-2 py-2" do %>
+              <i class="bi bi-grid-1x2 text-success"></i>
+              <span>Dashboard</span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to edit_profile_path(current_user), class: "dropdown-item d-flex align-items-center gap-2 py-2" do %>
+              <i class="bi bi-person-gear text-primary"></i>
+              <span>My Profile</span>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to root_path, class: "dropdown-item d-flex align-items-center gap-2 py-2" do %>
+              <i class="bi bi-house-door text-secondary"></i>
+              <span>Public Home</span>
+            <% end %>
+          </li>
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <%= link_to destroy_user_session_path, data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to sign out?" }, class: "dropdown-item d-flex align-items-center gap-2 text-danger py-2" do %>
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Sign Out</span>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    <% end %>
+  </div>
+</header>

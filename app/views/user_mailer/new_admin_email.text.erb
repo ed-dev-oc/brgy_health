@@ -1,0 +1,10 @@
+New Admin Registration
+
+A new admin account has been submitted and requires your approval.
+
+Name: <%= @admin.full_name %>
+Email: <%= @admin.email %>
+Barangay: <%= @admin.barangay&.full_address %>
+
+Review in the admin dashboard:
+<%= super_admin_dashboard_index_url %>

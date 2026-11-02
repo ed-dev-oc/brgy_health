@@ -1,0 +1,36 @@
+<div class="sa-card p-4">
+  <h6 class="fw-bold mb-3"><i class="bi bi-person-lines-fill text-success me-2"></i>1. Update Personal Information</h6>
+
+  <%= form_with model: @user, url: profile_path(@user.id), local: true do |form| %>
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-sm-6">
+        <%= form.label :first_name, "First Name", class: "form-label small fw-semibold" %>
+        <%= form.text_field :first_name, class: "form-control", required: true %>
+      </div>
+
+      <div class="col-12 col-sm-6">
+        <%= form.label :middle_name, "Middle Name", class: "form-label small fw-semibold" %>
+        <%= form.text_field :middle_name, class: "form-control", placeholder: "Optional" %>
+      </div>
+
+      <div class="col-12 col-sm-6">
+        <%= form.label :last_name, "Last Name", class: "form-label small fw-semibold" %>
+        <%= form.text_field :last_name, class: "form-control", required: true %>
+      </div>
+
+      <div class="col-12 col-sm-6">
+        <%= form.label :suffix, "Suffix", class: "form-label small fw-semibold" %>
+        <%= form.text_field :suffix, class: "form-control", placeholder: "Jr., Sr., III" %>
+      </div>
+
+      <div class="col-12">
+        <%= form.label :phone_number, "Phone Number", class: "form-label small fw-semibold" %>
+        <%= form.telephone_field :phone_number, class: "form-control", placeholder: "09XX-XXX-XXXX" %>
+      </div>
+    </div>
+
+    <div class="text-end">
+      <%= form.submit "Update Personal Info", class: "btn btn-emerald px-4" %>
+    </div>
+  <% end %>
+</div>

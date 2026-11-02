@@ -1,0 +1,91 @@
+<div class="container py-5">
+  <div class="auth-split-card">
+    <div class="row g-0">
+      <!-- Left Column: Sign In Form -->
+      <div class="col-12 col-lg-6 p-4 p-md-5 bg-white">
+        <div class="d-flex align-items-center gap-2 mb-4">
+          <span class="pub-brand-icon">
+            <i class="bi bi-heart-pulse-fill"></i>
+          </span>
+          <div>
+            <div class="fw-bold lh-1 text-dark">BrgyHealth</div>
+            <% if ActsAsTenant.current_tenant.present? %>
+              <small class="text-success fw-semibold text-uppercase">
+                BARANGAY <%= ActsAsTenant.current_tenant.name %> PORTAL
+              </small>
+            <% else %>
+              <small class="text-success fw-semibold text-uppercase">
+                MAIN PLATFORM SIGN IN
+              </small>
+            <% end %>
+          </div>
+        </div>
+
+        <% if ActsAsTenant.current_tenant.present? %>
+          <h3 class="fw-bold mb-1">Barangay <%= ActsAsTenant.current_tenant.name %> Sign In</h3>
+          <p class="text-secondary small mb-4">
+            Sign in with your Resident, Health Staff, or Barangay Admin credentials for Barangay <%= ActsAsTenant.current_tenant.name %>.
+          </p>
+          <%= render partial: "devise/sessions/barangay_form" %>
+        <% else %>
+          <h3 class="fw-bold mb-1">Welcome Back</h3>
+          <p class="text-secondary small mb-4">
+            Sign in to the Global SuperAdmin Portal, or select your Barangay below to sign in as a Barangay Admin, Staff, or Resident.
+          </p>
+          <%= render partial: "devise/sessions/main_form" %>
+        <% end %>
+
+        <div class="text-center pt-3 mt-3 border-top">
+          <span class="text-secondary small">
+            <%= ActsAsTenant.current_tenant.present? ? "Don't have a resident account yet?" : "Want to onboard your Barangay Health Center?" %>
+          </span>
+          <%= link_to new_registration_path(resource_name), class: "small fw-semibold text-success text-decoration-none ms-1" do %>
+            <%= ActsAsTenant.current_tenant.present? ? "Create Resident Account" : "Register Barangay" %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Right Column: Authentic Healthcare Visual Panel -->
+      <div class="col-lg-6 d-none d-lg-flex auth-visual-side">
+        <div>
+          <span class="badge bg-white bg-opacity-10 text-white px-3 py-2 mb-3">
+            <i class="bi bi-shield-check text-success me-1"></i>Verified Community Healthcare
+          </span>
+          <h3 class="fw-bold mt-2">Modernizing Primary Care for Every Purok</h3>
+          <p class="opacity-75 mt-2">
+            Real-time appointment slot tracking, automated countdown reminders, and longitudinal patient charts built for Philippine Barangays.
+          </p>
+
+          <div class="d-flex flex-column gap-2 mt-4 small opacity-90">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span>Online appointment slot booking &amp; automatic waitlisting</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span>Multi-channel WebPush, email, and in-app reminders</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span>Dedicated verified subdomain for every Barangay Health Center</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-3 mt-4" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.12);">
+          <div class="text-warning small mb-1">
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+          </div>
+          <p class="small mb-2">
+            "Residents no longer have to line up at 5:00 AM just to secure a check-up slot. Everything is organized before the clinic doors open."
+          </p>
+          <div class="small fw-bold text-success">&mdash; Verified Barangay Health Center</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

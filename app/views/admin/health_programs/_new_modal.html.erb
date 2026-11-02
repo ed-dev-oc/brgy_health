@@ -1,0 +1,42 @@
+<div class="modal fade" id="newHealthProgramModal" tabindex="-1" aria-labelledby="newHealthProgramModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <%= form_with model: [:admin, admin_health_program], local: true do |form| %>
+        <div class="modal-header border-bottom px-4 py-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="sa-icon-well well-emerald" style="width: 36px; height: 36px; font-size: 1rem;">
+              <i class="bi bi-heart-pulse-fill"></i>
+            </span>
+            <h5 class="modal-title fw-bold mb-0" id="newHealthProgramModalLabel">New Health Program</h5>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="mb-3 d-none">
+            <%= form.label :barangay_id, class: "form-label" %>
+            <%= form.text_field :barangay_id, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :name, "Program Name *", class: "form-label fw-semibold small" %>
+            <%= form.text_field :name, class: "form-control", placeholder: "e.g. Maternal & Child Healthcare", required: true %>
+          </div>
+
+          <div class="mb-3">
+            <%= form.label :description, "Description *", class: "form-label fw-semibold small" %>
+            <%= form.text_area :description, class: "form-control", rows: 3, placeholder: "Describe the scope and goals of this health program...", required: true %>
+          </div>
+
+          <div class="mb-0">
+            <%= form.label :status, "Status", class: "form-label fw-semibold small" %>
+            <%= form.select :status, [["Active", "active"], ["Inactive", "inactive"]], {}, class: "form-select" %>
+          </div>
+        </div>
+        <div class="modal-footer bg-light px-4 py-3">
+          <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancel</button>
+          <%= form.submit "Create Program", class: "btn btn-emerald px-4" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

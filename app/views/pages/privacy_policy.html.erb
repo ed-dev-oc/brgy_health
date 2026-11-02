@@ -1,0 +1,33 @@
+<section class="pub-page-banner text-center">
+  <div class="container">
+    <span class="badge badge-soft-emerald mb-2 px-3 py-1">LEGAL &amp; DATA PRIVACY</span>
+    <h1 class="fw-bold display-5 mb-2"><%= @page.title %></h1>
+    <% if @page.subheadline.present? %>
+      <p class="lead opacity-75 mx-auto mb-0" style="max-width: 680px;">
+        <%= @page.subheadline %>
+      </p>
+    <% end %>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="pub-card p-4 p-md-5 mx-auto" style="max-width: 860px;">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4 pb-3 border-bottom">
+      <div class="d-flex gap-2">
+        <%= link_to main_page_path(:privacy_policy), class: "btn btn-sm btn-emerald" do %>
+          <i class="bi bi-shield-lock me-1"></i>Privacy Policy
+        <% end %>
+        <%= link_to main_page_path(:terms_of_use), class: "btn btn-sm btn-light border" do %>
+          <i class="bi bi-file-earmark-text me-1"></i>Terms of Use
+        <% end %>
+      </div>
+      <span class="badge badge-soft-slate">
+        <i class="bi bi-clock-history me-1"></i>Updated <%= @page.updated_at.strftime("%b %d, %Y") %>
+      </span>
+    </div>
+
+    <div class="prose text-secondary" style="line-height: 1.75;">
+      <%= @page.content %>
+    </div>
+  </div>
+</div>

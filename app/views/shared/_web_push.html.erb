@@ -1,0 +1,7 @@
+<% if user_signed_in? && Rails.application.credentials.dig(:web_push, :public_key).present? %>
+  <div data-controller="register-service-worker"
+       data-register-service-worker-public-key-value="<%= Base64.urlsafe_decode64(Rails.application.credentials.dig(:web_push, :public_key)).bytes %>"
+       data-register-service-worker-url-value="<%= pwa_service_worker_path(format: :js) %>"
+       data-register-service-worker-push-subscriptions-url-value="<%= push_subscriptions_path %>">
+  </div>
+<% end %>

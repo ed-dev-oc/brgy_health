@@ -1,0 +1,103 @@
+<!-- Page Header + Average Rating Pill -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+  <div>
+    <h3 class="fw-bold mb-1">Community Testimonials</h3>
+    <p class="text-secondary mb-0" style="font-size: 0.9rem;">
+      Review feedback and satisfaction ratings submitted by Barangay Administrators and residents.
+    </p>
+  </div>
+
+  <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-3 border shadow-sm">
+    <i class="bi bi-star-fill text-warning fs-5"></i>
+    <div>
+      <span class="fw-bold text-dark"><%= @average_rating %> / 5.0</span>
+      <small class="text-secondary ms-1">(<%= @total_testimonials_count %> Total Reviews)</small>
+    </div>
+  </div>
+</div>
+
+<!-- Search & Filter Bar -->
+<%= render "super_admin/testimonials/search_form" %>
+
+<!-- Testimonials Table Card -->
+<div class="sa-card overflow-hidden">
+  <div class="table-responsive">
+    <table class="table sa-table mb-0">
+      <thead>
+        <tr>
+          <th>Author &amp; Email</th>
+          <th>Barangay</th>
+          <th>Testimonial Excerpt</th>
+          <th>Rating</th>
+          <th>Submitted On</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @testimonials.any? %>
+          <% @testimonials.each do |testimonial| %>
+            <% user = testimonial.user %>
+            <% next unless user %>
+            <tr>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="sa-avatar well-emerald"><%= user.initials %></div>
+                  <div>
+                    <div class="fw-semibold text-dark"><%= user.full_name %></div>
+                    <small class="text-secondary"><%= user.email %></small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <% if user.barangay %>
+                  <span class="badge badge-soft-emerald"><i class="bi bi-geo-alt me-1"></i><%= user.barangay.name %></span>
+                <% else %>
+                  <span class="text-muted">—</span>
+                <% end %>
+              </td>
+              <td style="max-width: 340px;">
+                <span class="text-secondary fst-italic">"<%= truncate(testimonial.data, length: 75) %>"</span>
+              </td>
+              <td>
+                <div class="text-warning">
+                  <% testimonial.rating.to_i.times do %><i class="bi bi-star-fill"></i><% end %>
+                  <% (5 - testimonial.rating.to_i).times do %><i class="bi bi-star text-muted"></i><% end %>
+                  <span class="text-dark fw-semibold small ms-1">(<%= testimonial.rating %>)</span>
+                </div>
+              </td>
+              <td>
+                <span class="text-secondary small"><%= testimonial.created_at.strftime("%b %d, %Y") %></span>
+              </td>
+              <td class="text-end">
+                <button type="button"
+                        class="btn btn-sm btn-outline-emerald"
+                        data-bs-toggle="modal"
+                        data-bs-target="#testimonialModal_<%= testimonial.id %>">
+                  <i class="bi bi-eye me-1"></i>Read Full
+                </button>
+              </td>
+            </tr>
+            <%= render partial: "testimonial_modal", locals: { testimonial: testimonial, user: user } %>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="6" class="text-center py-5 text-secondary">
+              <i class="bi bi-chat-heart fs-2 d-block mb-2 text-muted"></i>
+              No testimonials matched your search criteria.
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if @pagy && @testimonials.any? && @pagy.pages > 1 %>
+    <div class="p-3 border-top bg-light bg-opacity-50 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <small class="text-secondary">Showing <strong><%= @pagy.from %>–<%= @pagy.to %></strong> of <strong><%= @pagy.count %></strong> testimonials</small>
+      <div>
+        <%== pagy_bootstrap_nav(@pagy) %>
+      </div>
+    </div>
+  <% end %>
+</div>
+<turbo-frame id="modal"></turbo-frame>

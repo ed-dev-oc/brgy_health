@@ -1,0 +1,41 @@
+<%= search_form_for @q, url: admin_events_path, class: "d-flex flex-wrap gap-2 justify-content-end" do |search_form| %>
+  <div class="input-group input-group-sm flex-grow-1" style="min-width: 220px;">
+    <span class="input-group-text bg-white border-end-0 text-secondary">
+      <i class="bi bi-search"></i>
+    </span>
+    <%= search_form.search_field :name_cont, class: "form-control border-start-0", placeholder: "Search event title..." %>
+  </div>
+
+  <div class="dropdown">
+    <button type="button" class="btn btn-sm btn-light border dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+      <i class="bi bi-sliders me-1"></i>Filters
+    </button>
+    <div class="dropdown-menu dropdown-menu-end p-3 shadow border-0 rounded-3" style="min-width: 290px;">
+      <h6 class="fw-bold small text-uppercase text-secondary mb-3">Filter Events</h6>
+      <div class="mb-2">
+        <%= search_form.label :audience_eq, "Target Audience", class: "form-label small fw-semibold mb-1" %>
+        <%= search_form.select :audience_eq, Event.audiences.map { |key, value| [key.titleize, value] }, { include_blank: "All Audiences" }, { class: "form-select form-select-sm" } %>
+      </div>
+      <div class="mb-2">
+        <%= search_form.label :status_eq, "Status", class: "form-label small fw-semibold mb-1" %>
+        <%= search_form.select :status_eq, Event.statuses.map { |key, value| [key.titleize, value] }, { include_blank: "All Statuses" }, { class: "form-select form-select-sm" } %>
+      </div>
+      <div class="mb-2">
+        <%= search_form.label :start_date_gteq, "Start Date From", class: "form-label small fw-semibold mb-1" %>
+        <%= search_form.datetime_field :start_date_gteq, class: "form-control form-control-sm" %>
+      </div>
+      <div class="mb-3">
+        <%= search_form.label :end_date_lteq, "End Date To", class: "form-label small fw-semibold mb-1" %>
+        <%= search_form.datetime_field :end_date_lteq, class: "form-control form-control-sm" %>
+      </div>
+      <div class="d-flex gap-2 pt-2 border-top">
+        <%= link_to "Reset", admin_events_path, class: "btn btn-sm btn-light border w-50" %>
+        <%= search_form.submit "Apply", class: "btn btn-sm btn-emerald w-50" %>
+      </div>
+    </div>
+  </div>
+
+  <%= button_tag class: "btn btn-sm btn-emerald", type: "submit", data: { turbo_submits_with: "..." } do %>
+    Search
+  <% end %>
+<% end %>

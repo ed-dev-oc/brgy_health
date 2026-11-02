@@ -1,0 +1,103 @@
+<div class="container py-5">
+  <div class="pub-card mx-auto overflow-hidden shadow" style="max-width: 720px;">
+    <!-- Top Banner -->
+    <div class="p-4 text-white" style="background: linear-gradient(135deg, #064e3b, #0f172a);">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-3">
+          <span class="pub-brand-icon">
+            <i class="bi bi-person-plus-fill"></i>
+          </span>
+          <div>
+            <h4 class="fw-bold mb-0">Create Your Resident Account &mdash; Brgy. <%= ActsAsTenant.current_tenant.name %></h4>
+            <small class="opacity-75">Book health center appointments and receive community alerts in Barangay <%= ActsAsTenant.current_tenant.name %></small>
+          </div>
+        </div>
+        <span class="badge badge-soft-emerald">Role: Resident / Patient</span>
+      </div>
+    </div>
+
+    <div class="p-4 p-md-5 bg-white">
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <!-- Step 1: Personal Information -->
+        <div class="mb-4 pb-4 border-bottom">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="badge rounded-circle bg-success">1</span>
+            <h6 class="fw-bold mb-0 text-dark">Personal Information</h6>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <%= f.label :first_name, "First Name *", class: "form-label fw-semibold small" %>
+              <%= f.text_field :first_name, required: true, autocomplete: "given-name", class: "form-control", placeholder: "Juan" %>
+            </div>
+            <div class="col-md-6">
+              <%= f.label :middle_name, "Middle Name", class: "form-label fw-semibold small" %>
+              <%= f.text_field :middle_name, autocomplete: "additional-name", class: "form-control", placeholder: "Santos" %>
+            </div>
+            <div class="col-md-8">
+              <%= f.label :last_name, "Last Name *", class: "form-label fw-semibold small" %>
+              <%= f.text_field :last_name, required: true, autocomplete: "family-name", class: "form-control", placeholder: "Dela Cruz" %>
+            </div>
+            <div class="col-md-4">
+              <%= f.label :suffix, "Suffix", class: "form-label fw-semibold small" %>
+              <%= f.text_field :suffix, autocomplete: "honorific-suffix", class: "form-control", placeholder: "Jr., III" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Account Credentials -->
+        <div class="mb-4">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="badge rounded-circle bg-success">2</span>
+            <h6 class="fw-bold mb-0 text-dark">Account Credentials</h6>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12">
+              <%= f.label :email, "Email Address *", class: "form-label fw-semibold small" %>
+              <%= f.email_field :email, autofocus: true, required: true, autocomplete: "email", class: "form-control", placeholder: "juan@example.com" %>
+            </div>
+
+            <div class="col-md-6">
+              <%= f.label :password, class: "form-label fw-semibold small" do %>
+                Password *
+                <% if @minimum_password_length %>
+                  <span class="text-secondary fw-normal">(<%= @minimum_password_length %> chars min)</span>
+                <% end %>
+              <% end %>
+              <div class="input-group" data-controller="password-visibility">
+                <%= f.password_field :password, autocomplete: "new-password", class: "form-control", data: { password_visibility_target: "passwordInput" }, required: true %>
+                <button type="button" class="btn btn-outline-secondary" data-action="click->password-visibility#togglePasswordVisibility" aria-label="Toggle password visibility">
+                  <i class="bi bi-eye" data-password-visibility-target="icon"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <%= f.label :password_confirmation, "Confirm Password *", class: "form-label fw-semibold small" %>
+              <div class="input-group" data-controller="password-visibility">
+                <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control", data: { password_visibility_target: "passwordInput" }, required: true %>
+                <button type="button" class="btn btn-outline-secondary" data-action="click->password-visibility#togglePasswordVisibility" aria-label="Toggle password visibility">
+                  <i class="bi bi-eye" data-password-visibility-target="icon"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-grid mb-3">
+          <%= button_tag type: "submit", class: "btn btn-emerald btn-lg" do %>
+            <i class="bi bi-person-check me-1"></i>Create Resident Account
+          <% end %>
+        </div>
+
+        <div class="text-center pt-3 border-top">
+          <span class="text-secondary small">Already have an account?</span>
+          <%= link_to "Sign In Here", new_session_path(resource_name), class: "small fw-semibold text-success text-decoration-none ms-1" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
