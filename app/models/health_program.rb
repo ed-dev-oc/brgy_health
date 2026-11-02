@@ -11,7 +11,7 @@ class HealthProgram < ApplicationRecord
   def self.program_performance_summary(barangay_id)
     sql = <<-SQL
       WITH program_base AS (
-        SELECT 
+        SELECT
           hp.id AS health_program_id,
           hp.name AS program_name,
           hp.status AS program_status,
@@ -22,15 +22,15 @@ class HealthProgram < ApplicationRecord
           COUNT(DISTINCT CASE WHEN appt.status = 0 THEN appt.id END) AS pending_appointments,
           COUNT(DISTINCT CASE WHEN appt.status = 4 THEN appt.id END) AS cancelled_appointments
         FROM health_programs hp
-        LEFT JOIN announcements ann 
+        LEFT JOIN announcements ann
           ON ann.health_program_id = hp.id AND ann.barangay_id = :barangay_id
-        LEFT JOIN appointments appt 
+        LEFT JOIN appointments appt
           ON appt.announcement_id = ann.id AND appt.barangay_id = :barangay_id
         WHERE hp.barangay_id = :barangay_id
         GROUP BY hp.id, hp.name, hp.status
       ),
       program_metrics AS (
-        SELECT 
+        SELECT
           health_program_id,
           program_name,
           program_status,
@@ -40,19 +40,19 @@ class HealthProgram < ApplicationRecord
           approved_appointments,
           pending_appointments,
           cancelled_appointments,
-          CASE 
-            WHEN total_appointments > 0 
+          CASE
+            WHEN total_appointments > 0
             THEN ROUND((completed_appointments::numeric / total_appointments::numeric) * 100, 1)
             ELSE 0.0
           END AS completion_rate
         FROM program_base
       )
-      SELECT * 
+      SELECT *
       FROM program_metrics
       ORDER BY total_appointments DESC, announcements_count DESC, program_name ASC;
     SQL
 
-    sanitized = sanitize_sql_array([sql, { barangay_id: barangay_id }])
+    sanitized = sanitize_sql_array([ sql, { barangay_id: barangay_id } ])
     connection.select_all(sanitized).to_a
   end
 end

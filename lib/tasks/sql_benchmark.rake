@@ -14,11 +14,11 @@ namespace :sql do
     puts "Index: index_users_on_full_name ON users(first_name, middle_name, last_name, suffix)"
     query1 = <<-SQL
       EXPLAIN (ANALYZE, BUFFERS)
-      SELECT id, email, first_name, last_name 
-      FROM users 
-      WHERE first_name = 'Lao' 
-        AND middle_name IS NULL 
-        AND last_name = 'Admin' 
+      SELECT id, email, first_name, last_name
+      FROM users
+      WHERE first_name = 'Lao'
+        AND middle_name IS NULL
+        AND last_name = 'Admin'
         AND suffix IS NULL;
     SQL
     plan1 = conn.execute(query1).map { |r| r["QUERY PLAN"] }.join("\n")
@@ -31,8 +31,8 @@ namespace :sql do
     sample_uid = Appointment.first&.public_uid || "11111"
     query2 = <<-SQL
       EXPLAIN (ANALYZE, BUFFERS)
-      SELECT id, status, scheduled_at 
-      FROM appointments 
+      SELECT id, status, scheduled_at
+      FROM appointments
       WHERE public_uid = '#{sample_uid}';
     SQL
     plan2 = conn.execute(query2).map { |r| r["QUERY PLAN"] }.join("\n")
@@ -59,7 +59,7 @@ namespace :sql do
     query4 = <<-SQL
       EXPLAIN (ANALYZE, BUFFERS)
       WITH program_base AS (
-        SELECT 
+        SELECT
           hp.id AS health_program_id,
           hp.name AS program_name,
           COUNT(DISTINCT ann.id) AS announcements_count,
